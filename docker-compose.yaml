@@ -15,6 +15,15 @@ services:
     volumes:
       - db:/var/lib/postgresql/data
 
+  server:
+    build: ./server
+    depends_on:
+      - db
+    hostname: server
+    restart: unless-stopped
+    env_file:
+        - .env
+
 volumes:
   db:
     driver: local
