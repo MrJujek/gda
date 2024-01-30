@@ -1,3 +1,6 @@
+# _i512
+Zapraszamy do zapoznania się z rozwiązaniem zadania problemowego przez zespół _i512 z Technikum Łączności nr. 14 w Krakowie. Wykonali: Paweł Pasternak, Julian Dworzycki i Jakub Owoc.
+
 # GDA
 
 Nasze rozwiązanie składa się z dwóch części. Serwera napisanego
