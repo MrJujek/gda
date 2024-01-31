@@ -33,6 +33,7 @@ odpowiednie zmienne środowiskowe, które są podane poniżej w tabeli.
 | LDAP_USER_DN         | (WYMAGANE) DN użytkownika z prawami do odczytu w LDAP                                    |
 | LDAP_PASS            | (WYMAGANE) Hasło wyżej wspomnianego użytkownika                                          |
 | LDAP_BASE_DN         | (WYMAGANE) BASE DN serwera LDAP                                                          |
+| SESSION_KEY          | (WYMAGANE) Klucz (tekst) używany do szyfrowania sesji użytkowników w bazie danych        |
 
 ## Środowisko deweloperskie
 

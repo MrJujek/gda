@@ -74,6 +74,7 @@ LDAP_PASS=haslo_uzytkownika_w_ldap
 LDAP_BASE_DN=dc=demo,dc=org
 LDAP_USER_DN=cn=$LDAP_USER,$LDAP_BASE_DN
 LDAP_URL=ldap://127.0.0.1:389
+SESSION_KEY=losowy_tekst_najlepiej_dlugi
 ```
 
 Należy też odkomentować fragmenty w pliku `docker-compose.yaml` poprzedzone
