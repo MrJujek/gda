@@ -18,14 +18,20 @@ services:
   ### Go chat server
   server:
     build: ./server
-    depends_on:
-      - db
     hostname: server
     restart: unless-stopped
     env_file:
-        - .env
+      - .env
+    environment:
+      DB_HOST: db
+  ### DEV ONLY!!!
+  #     LDAP_URL: ldap://openldap:389
+    ports:
+      - 80:80
+    depends_on:
+      - db
 
-  ### DEV ONLY
+  ### DEV ONLY!!!
   # ldap:
   #   image: tiredofit/openldap:2.6
   #   hostname: openldap
@@ -41,6 +47,7 @@ services:
   #     - '636:636'
   #   volumes:
   #     - ldap-data:/var/lib/openldap
+  #     - ldap-cfg:/etc/openldap/slapd.d
 
   ### DEV ONLY!!!
   # ldap-ui:
@@ -70,4 +77,6 @@ volumes:
     driver: local
   ### DEV ONLY!!!
   # ldap-data:
+  #   driver: local
+  # ldap-cfg:
   #   driver: local

@@ -51,6 +51,15 @@ Nastepnie instalujemy pakiet `yarn` za pomocą komendy:
 npm install -g yarn
 ```
 
+## Klonowanie repozytorium
+
+Aby sklonować repozytorium na naszą maszynę, należy w wybranym folderze wywołać
+polecenie:
+
+```sh
+git clone https://github.com/MrJujek/gda.git
+```
+
 ## Plik `.env` i `docker-compose.yaml`
 
 Zanim uruchomimy nasze środowisko deweloperskie musimy jeszcze utworzyć
@@ -87,4 +96,15 @@ Aby je zamknąć należy wcisnąć `Ctrl-C`. A później użyć polecenia
 ```sh
 docker compose down
 ```
+
+## Dostępne serwisy
+
+pgAdmin - program do zarządzania bazą danych - http://localhost:8000
+
+phpLDAPadmin - program do zarządzania LDAP - http://localhost:8001
+
+## Uwagi
+
+Przez jakąś minutę serwer będzie się uruchamiał ponownie. Jest to spowodowane
+wolnym uruchamianiem się serwera LDAP.
 
