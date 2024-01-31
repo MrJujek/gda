@@ -34,6 +34,10 @@ odpowiednie zmienne środowiskowe, które są podane poniżej w tabeli.
 | LDAP_PASS            | (WYMAGANE) Hasło wyżej wspomnianego użytkownika                                          |
 | LDAP_BASE_DN         | (WYMAGANE) BASE DN serwera LDAP                                                          |
 
+## Środowisko deweloperskie
+
+Więcej o ustawianiu środowiska deweloperskiego znajduje się [tutaj](./docs/DevEnvironment.md).
+
 ## Serwer
 
 Kod źródłowy serwera znajduje się w folderze `server`.
@@ -62,3 +66,6 @@ Następnie używając polecenia `docker run` możemy uruchomić nasz serwer.
 docker build .
 ```
 
+## Klient
+
+<!-- TODO -->
