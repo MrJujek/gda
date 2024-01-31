@@ -11,7 +11,7 @@ Jeżeli jeszcze nie pobrałeś kodu źródłowego, to zalecamy aby zrobić to za
 pomocą git-a. Jest to system do kontroli wersji kodu, który bardzo ułatwia nam
 pracę. Można go pobrać [tutaj](https://git-scm.com/downloads).
 
-Proces klonowanie repozytorium jest opisany w następnej części.
+Proces klonowania repozytorium jest opisany w następnej części.
 
 ### Docker
 
@@ -40,17 +40,15 @@ Aby go zainstalować należy wejść na stronę [go.dev](https://go.dev/doc/inst
 i postępować według instrukcji.
 
 
-### Yarn
+### Node i Yarn
 
-<!-- TODO -->
-
-## Klonowanie repozytorium
-
-Aby sklonować repozytorium na naszą maszynę należy w wybranym folderze użyć
-polecenia:
-
+Jeżeli chcemy zająć się kodem serwera, to powinniśmy zainstalować program `node` oraz `yarn`,
+który służy zarządzaniu paczkami.
+Aby zainstalować `node` należy wejść na stronę [nodejs.org](https://nodejs.org/en/download)
+i postępować według instrukcji.
+Nastepnie instalujemy pakiet `yarn` za pomocą komendy:
 ```sh
-git clone https://github.com/MrJujek/gda.git
+npm install -g yarn
 ```
 
 ## Plik `.env` i `docker-compose.yaml`
