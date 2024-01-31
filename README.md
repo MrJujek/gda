@@ -30,7 +30,7 @@ odpowiednie zmienne środowiskowe, które są podane poniżej w tabeli.
 | DB_HOST              | Adres bazy danych PostgreSQL (IP/DNS)                                                    |
 | DB_PORT              | Port na którym działa baza danych                                                        |
 | LDAP_URL             | (WYMAGANE) URL do serwera LDAP, np: `ldap://127.0.0.1:398`, `ldap.local`                 |
-| LDAP_USER            | (WYMAGANE) Nazwa użytkownika z prawami do odczytu w LDAP                                 |
+| LDAP_USER_DN         | (WYMAGANE) DN użytkownika z prawami do odczytu w LDAP                                    |
 | LDAP_PASS            | (WYMAGANE) Hasło wyżej wspomnianego użytkownika                                          |
 | LDAP_BASE_DN         | (WYMAGANE) BASE DN serwera LDAP                                                          |
 
