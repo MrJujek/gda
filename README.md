@@ -68,4 +68,15 @@ docker build .
 
 ## Klient
 
-<!-- TODO -->
+Kod źródłowy aplikacji klienckiej znajduje się w folderze `frontend`.
+
+### Instalacja i kompilacja
+
+Należy wejść do folderu `frontend` i zainstalować paczki za pomocą komendy:
+```sh
+yarn
+```
+Następnie kompilujemy aplikację wpisując:
+```sh
+yarn build
+```
