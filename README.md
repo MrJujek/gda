@@ -22,18 +22,20 @@ docker compose up
 Zanim to jednak zrobimy należy uzupełnić plik `.env` lub wyeksportować
 odpowiednie zmienne środowiskowe, które są podane poniżej w tabeli.
 
-| Zmienna Środowiskowa | Opis                                                                                     |
-| -------------------- | ---------------------------------------------------------------------------------------- |
-| DB_NAME              | (WYMAGANE) Nazwa bazy danych, w której przechowywane będą wiadomości i inne dane serwera |
-| DB_USER              | (WYMAGANE) Nazwa użytkownika administrującego bazą danych                                |
-| DB_PASS              | (WYMAGANE) Hasło wyżej wspomnianego użytkownika                                          |
-| DB_HOST              | Adres bazy danych PostgreSQL (IP/DNS)                                                    |
-| DB_PORT              | Port na którym działa baza danych                                                        |
-| LDAP_URL             | (WYMAGANE) URL do serwera LDAP, np: `ldap://127.0.0.1:398`, `ldap.local`                 |
-| LDAP_USER_DN         | (WYMAGANE) DN użytkownika z prawami do odczytu w LDAP                                    |
-| LDAP_PASS            | (WYMAGANE) Hasło wyżej wspomnianego użytkownika                                          |
-| LDAP_BASE_DN         | (WYMAGANE) BASE DN serwera LDAP                                                          |
-| SESSION_KEY          | (WYMAGANE) Klucz (tekst) używany do szyfrowania sesji użytkowników w bazie danych        |
+| Zmienna Środowiskowa | Opis                                                                                                                                                                       |
+|----------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| DB_NAME              | (WYMAGANE) Nazwa bazy danych, w której przechowywane będą wiadomości i inne dane serwera                                                                                   |
+| DB_USER              | (WYMAGANE) Nazwa użytkownika administrującego bazą danych                                                                                                                  |
+| DB_PASS              | (WYMAGANE) Hasło wyżej wspomnianego użytkownika                                                                                                                            |
+| DB_HOST              | Adres bazy danych PostgreSQL (IP/DNS)                                                                                                                                      |
+| DB_PORT              | Port na którym działa baza danych                                                                                                                                          |
+| LDAP_URL             | (WYMAGANE) URL do serwera LDAP, np: `ldap://127.0.0.1:398`, `ldap.local`                                                                                                   |
+| LDAP_USER_DN         | (WYMAGANE) DN użytkownika z prawami do odczytu w LDAP                                                                                                                      |
+| LDAP_PASS            | (WYMAGANE) Hasło wyżej wspomnianego użytkownika                                                                                                                            |
+| LDAP_BASE_DN         | (WYMAGANE) BASE DN serwera LDAP                                                                                                                                            |
+| LDAP_USER_FILTER     | Filtr, który służy do wyszukiwania użytkowników w LDAP/AD. Przykładowy filtr: `(&(objectClass=organizationalPerson)(uid=%username%))`. Więcej o filtrach w opisie poniżej. |
+| SESSION_KEY          | (WYMAGANE) Klucz (tekst) używany do szyfrowania sesji użytkowników w bazie danych                                                                                          |
+
 
 ## Środowisko deweloperskie
 

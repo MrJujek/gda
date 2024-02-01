@@ -3,6 +3,7 @@ package data
 import (
 	"fmt"
 	"log"
+	"regexp"
 	u "server/util"
 
 	"github.com/go-ldap/ldap/v3"
@@ -13,6 +14,7 @@ var (
 	bindUser string
 	bindPass string
 	basedn   string
+	filter   string
 )
 
 func getLdapConn() (*ldap.Conn, error) {
@@ -34,6 +36,7 @@ func InitLDAP() {
 	bindUser = u.EnvExit("LDAP_USER_DN")
 	bindPass = u.EnvExit("LDAP_PASS")
 	basedn = u.EnvExit("LDAP_BASE_DN")
+	filter = u.EnvOr("LDAP_USER_FILTER", "(&(objectClass=organizationalPerson)(|(uid=%username%)(cn=%username%)))")
 
 	l, err := getLdapConn()
 	if err != nil {
@@ -52,14 +55,11 @@ func LDAPLogin(user, pass string) (bool, error) {
 		return false, err
 	}
 
+	re := regexp.MustCompile("%username%")
 	searchRequest := ldap.NewSearchRequest(
 		basedn,
 		ldap.ScopeWholeSubtree, ldap.NeverDerefAliases, 0, 0, false,
-		fmt.Sprintf(
-			// TODO udpate to filter from env or better idea?
-			"(&(objectClass=organizationalPerson)(uid=%s))",
-			ldap.EscapeFilter(user),
-		),
+		re.ReplaceAllString(filter, ldap.EscapeFilter(user)),
 		[]string{"dn"},
 		nil,
 	)
