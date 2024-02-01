@@ -1,10 +1,10 @@
-package network
+package controller 
 
 import (
 	"encoding/json"
 	"log"
 	"net/http"
-	"server/data"
+    lw "server/ldap_wrapper"
 )
 
 // TODO better session flow
@@ -25,7 +25,7 @@ func login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ok, err := data.LDAPLogin(loginData.User, loginData.Pass)
+	ok, err := lw.LDAPLogin(loginData.User, loginData.Pass)
 	if err != nil {
 		log.Print(err)
 		http.Error(w,
@@ -52,7 +52,7 @@ func login(w http.ResponseWriter, r *http.Request) {
 	}
 	defer store.Close()
 
-	session, err := store.New(r, "session")
+	session, err := store.New(r, "session-gda")
 	if err != nil {
 		log.Print(err)
 		http.Error(w,
@@ -92,7 +92,7 @@ func logout(w http.ResponseWriter, r *http.Request) {
 	}
 	defer store.Close()
 
-	session, err := store.Get(r, "session")
+	session, err := store.Get(r, "session-gda")
 	if err != nil {
 		log.Print(err)
 		http.Error(w,
@@ -129,7 +129,7 @@ func checkSession(w http.ResponseWriter, r *http.Request) {
 	}
 	defer store.Close()
 
-	session, err := store.Get(r, "session")
+	session, err := store.Get(r, "session-gda")
 	if err != nil {
 		log.Print(err)
 		http.Error(w,

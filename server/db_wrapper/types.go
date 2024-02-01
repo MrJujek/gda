@@ -1,4 +1,4 @@
-package data
+package db_wrapper
 
 import "database/sql"
 
@@ -9,10 +9,4 @@ type User struct {
 	DisplayName sql.NullString `db:"display_name"`
 	Active      bool           `db:"active"`
 	Deleted     bool           `db:"deleted"`
-}
-
-type LdapUser struct {
-	Dn          string `ldap:"dn"`
-	CommonName  string `ldap:"cn"`
-	DisplayName string `ldap:"displayName"`
 }

@@ -1,4 +1,4 @@
-package data
+package db_wrapper
 
 var db_schema = []string{
 	`

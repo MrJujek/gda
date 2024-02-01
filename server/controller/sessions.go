@@ -1,14 +1,14 @@
-package network
+package controller 
 
 import (
 	"log"
-	"server/data"
+    db "server/db_wrapper"
 
 	"github.com/antonlindstrom/pgstore"
 )
 
 func getStore() (*pgstore.PGStore, error) {
-	db, err := data.GetDB()
+	db, err := db.GetDB()
 	if err != nil {
 		log.Fatal("There was an error connecting to the database.")
 	}

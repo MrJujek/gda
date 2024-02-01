@@ -1,4 +1,4 @@
-package network
+package controller 
 
 import (
 	"log"
@@ -6,6 +6,7 @@ import (
 	u "server/util"
 
 	"github.com/gorilla/mux"
+	// "github.com/gorilla/websocket"
 )
 
 var (
@@ -20,6 +21,10 @@ func InitRouter() {
 	r.HandleFunc("/api/session", login).Methods("POST")
 	r.HandleFunc("/api/session", logout).Methods("DELETE")
 	r.HandleFunc("/api/session", checkSession).Methods("GET")
+	r.HandleFunc("/api/chat", func(w http.ResponseWriter, r *http.Request) {
+		// TODO
+		w.Write([]byte("chat"))
+	})
 
 	http.Handle("/", r)
 

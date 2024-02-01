@@ -1,12 +1,13 @@
 package main
 
 import (
-	"server/data"
-	"server/network"
+    db "server/db_wrapper"
+    lw "server/ldap_wrapper"
+    controller "server/controller"
 )
 
 func main() {
-	data.InitLDAP()
-	data.InitDB()
-	network.InitRouter()
+	lw.InitLDAP()
+	db.InitDB()
+	controller.InitRouter()
 }
