@@ -7,11 +7,11 @@ import (
 	"github.com/go-ldap/ldap/v3"
 )
 
-func LDAPLogin(user, pass string) (bool, error) {
+func LDAPLogin(user, pass string) (bool, string, error) {
 	l, err := getLdapConn()
 	if err != nil {
 		log.Print(err)
-		return false, err
+		return false, "", err
 	}
 
 	re := regexp.MustCompile("%username%")
@@ -26,19 +26,19 @@ func LDAPLogin(user, pass string) (bool, error) {
 	sr, err := l.Search(searchRequest)
 	if err != nil {
 		log.Print(err)
-		return false, nil
+		return false, "", nil
 	}
 
 	if len(sr.Entries) != 1 {
-		return false, nil
+		return false, "", nil
 	}
 
 	userdn := sr.Entries[0].DN
 	err = l.Bind(userdn, pass)
 	if err != nil {
 		log.Print(err)
-		return false, nil
+		return false, "", nil
 	}
 
-	return true, nil
+	return true, userdn, nil
 }

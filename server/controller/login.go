@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+
+	db "server/db_wrapper"
 	lw "server/ldap_wrapper"
 )
 
@@ -25,7 +27,7 @@ func login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ok, err := lw.LDAPLogin(loginData.User, loginData.Pass)
+	ok, userdn, err := lw.LDAPLogin(loginData.User, loginData.Pass)
 	if err != nil {
 		log.Print(err)
 		http.Error(w,
@@ -40,6 +42,15 @@ func login(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("wrong username or password"))
 		return
 	}
+
+    id, err := db.GetUserId(userdn)
+    if err != nil {
+		http.Error(w,
+			"Something went wrong during id acquisition",
+			http.StatusInternalServerError,
+		)
+        return
+    }
 
 	store, err := getStore()
 	if err != nil {
@@ -63,6 +74,7 @@ func login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	session.Values["ldap_name"] = loginData.User
+	session.Values["id"] = id
 	session.Options.HttpOnly = true
 	session.Options.Secure = true
 
