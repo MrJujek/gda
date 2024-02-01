@@ -29,9 +29,9 @@ func isLoggedIn(r *http.Request) (bool, uint32) {
 		return false, 0
 	}
 
-    if session.Values["id"] == nil {
+	if session.Values["id"] == nil {
 		return false, 0
-    }
+	}
 
-    return true, session.Values["id"].(uint32)
+	return true, session.Values["id"].(uint32)
 }

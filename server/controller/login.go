@@ -43,14 +43,14 @@ func login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-    id, err := db.GetUserId(userdn)
-    if err != nil {
+	id, err := db.GetUserId(userdn)
+	if err != nil {
 		http.Error(w,
 			"Something went wrong during id acquisition",
 			http.StatusInternalServerError,
 		)
-        return
-    }
+		return
+	}
 
 	store, err := getStore()
 	if err != nil {

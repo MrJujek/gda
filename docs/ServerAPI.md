@@ -24,3 +24,31 @@ stosowny komunika i status.
 Wysyłając zapytanie na ten endpoint użytkownik zostaje wylogowany, czyli jego
 sesja zostaje usunięta.
 
+## GET /api/users
+
+Wysyłając zapytanie na ten endpoint, otrzymamy listę użytkowników w formacie
+jak poniżej, o ile jesteśmy zalogowani.
+
+```json
+[
+    {
+        "ID": 1,
+        "CommonName": "nazwa użytkownika",
+        "DisplayName": {
+            "String": "nazwa użytkownika przeznaczona do wyświetlenia",
+            "Valid": true
+        },
+        "Active": false
+    },
+    {
+        "ID": 2,
+        "CommonName": "nazwa innego użytkownika",
+        "DisplayName": {
+            "String": "",
+            "Valid": false 
+        },
+        "Active": true
+    }
+]
+```
+
