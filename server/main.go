@@ -6,7 +6,7 @@ import (
 )
 
 func main() {
-	data.InitDB()
 	data.InitLDAP()
+	data.InitDB()
 	network.InitRouter()
 }
