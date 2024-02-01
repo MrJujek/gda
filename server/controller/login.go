@@ -1,10 +1,10 @@
-package controller 
+package controller
 
 import (
 	"encoding/json"
 	"log"
 	"net/http"
-    lw "server/ldap_wrapper"
+	lw "server/ldap_wrapper"
 )
 
 // TODO better session flow

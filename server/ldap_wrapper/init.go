@@ -38,11 +38,9 @@ func InitLDAP() {
 
 	l, err := getLdapConn()
 	if err != nil {
-		log.Fatal(`Connection with LDAP server could have not been established.
-Server is down or login credentials are wrong.`)
+		log.Fatal("Connection with LDAP server could have not been established. Server is down or login credentials are wrong.")
 	}
 	defer l.Close()
 
 	log.Print("Connection with LDAP server established.")
 }
-

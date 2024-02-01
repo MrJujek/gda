@@ -13,15 +13,9 @@ import (
 var connStr string
 
 const (
-	dbConnErr = `
-Connection with the database could have not been established. 
-Check if database is up and whether your configuration is correct.`
-	dbTxErr = `
-Unable to create database schema.
-Check if database is up and whether your configuration is correct.`
-	dbRollbackErr = `
-Unable to rollback changes, with error: %v
-Check if database is up and whether your configuration is correct.`
+	dbConnErr     = "Connection with the database could have not been established. Check if database is up and whether your configuration is correct."
+	dbTxErr       = "Unable to create database schema. Check if database is up and whether your configuration is correct."
+	dbRollbackErr = "Unable to rollback changes, with error: %v Check if database is up and whether your configuration is correct."
 )
 
 func getDbConn() (*sqlx.DB, error) {

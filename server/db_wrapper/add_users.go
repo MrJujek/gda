@@ -30,7 +30,6 @@ func addUsersFromLDAP() {
 
 	err = db.Select(&ids, "SELECT id, ldap_dn FROM users WHERE deleted = false")
 	if err != nil {
-		log.Print("select")
 		log.Print(err)
 		log.Fatal(ldapErr)
 	}

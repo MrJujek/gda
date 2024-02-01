@@ -1,8 +1,8 @@
-package controller 
+package controller
 
 import (
 	"log"
-    db "server/db_wrapper"
+	db "server/db_wrapper"
 
 	"github.com/antonlindstrom/pgstore"
 )

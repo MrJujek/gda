@@ -1,9 +1,9 @@
 package main
 
 import (
-    db "server/db_wrapper"
-    lw "server/ldap_wrapper"
-    controller "server/controller"
+	controller "server/controller"
+	db "server/db_wrapper"
+	lw "server/ldap_wrapper"
 )
 
 func main() {
