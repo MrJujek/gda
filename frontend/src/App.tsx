@@ -1,12 +1,15 @@
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, BrowserRouter } from 'react-router-dom'
 import SignIn from './pages/SignIn'
+import NotFound from './pages/NotFound'
 
 function App() {
   return (
-    <Routes>
-      <Route path="/" element={<SignIn />} />
-      <Route path="*" element={<h1>Not found</h1>} />
-    </Routes>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<SignIn />} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </BrowserRouter>
   )
 }
 
