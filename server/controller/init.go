@@ -4,9 +4,6 @@ import (
 	"log"
 	"net/http"
 	u "server/util"
-
-	"github.com/gorilla/mux"
-	// "github.com/gorilla/websocket"
 )
 
 var (
@@ -15,22 +12,25 @@ var (
 
 func InitRouter() {
 	port := u.EnvOr("GDA_PORT", "80")
-	r := mux.NewRouter()
 	// key = u.EnvExit("SESSION_KEY")
+	dMux := http.NewServeMux()
 
-	r.HandleFunc("/api/session", login).Methods("POST")
-	r.HandleFunc("/api/session", logout).Methods("DELETE")
-	r.HandleFunc("/api/session", checkSession).Methods("GET")
+	dMux.HandleFunc("POST /api/session", login)
+	dMux.HandleFunc("DELETE /api/session", logout)
+	dMux.HandleFunc("GET /api/session", checkSession)
 
-	r.HandleFunc("/api/users", userList).Methods("GET")
+	dMux.HandleFunc("GET /api/users", userList)
 
-	r.HandleFunc("/api/chat", func(w http.ResponseWriter, r *http.Request) {
+	dMux.HandleFunc("GET /api/chat", func(w http.ResponseWriter, r *http.Request) {
 		// TODO
 		w.Write([]byte("chat"))
 	})
 
-	http.Handle("/", r)
+	dServer := &http.Server{
+		Addr:    ":" + port,
+		Handler: dMux,
+	}
 
 	log.Print("Server listening on port " + port)
-	http.ListenAndServe(":"+port, nil)
+	dServer.ListenAndServe()
 }
