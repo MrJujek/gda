@@ -1,6 +1,12 @@
+import { Routes, Route } from 'react-router-dom'
+import SignIn from './pages/SignIn'
+
 function App() {
   return (
-    <h1 className="text-3xl font-bold text-red-500 underline text-center">Hello world!</h1>
+    <Routes>
+      <Route path="/" element={<SignIn />} />
+      <Route path="*" element={<h1>Not found</h1>} />
+    </Routes>
   )
 }
 
