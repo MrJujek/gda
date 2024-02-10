@@ -2,12 +2,12 @@ FROM node:21
 
 WORKDIR /frontend
 
-COPY yarn.lock package.json tailwind.config.js tsconfig.json ./
+COPY yarn.lock package.json tailwind.config.js ./
 
 RUN yarn
 
 COPY . ./
 
-RUN yarn tailwindcss -i ./src/input.css -o ./src/output.css
+RUN yarn tailwindcss -i ./src/style/input.css -o ./src/style/output.css
 
 RUN tsc
