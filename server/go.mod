@@ -7,6 +7,7 @@ require (
 	github.com/go-ldap/ldap/v3 v3.4.6
 	github.com/gorilla/mux v1.8.1
 	github.com/gorilla/sessions v1.2.2
+	github.com/google/uuid v1.3.1
 	github.com/jmoiron/sqlx v1.3.5
 	github.com/joho/godotenv v1.5.1
 	github.com/lib/pq v1.10.9

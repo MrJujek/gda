@@ -15,8 +15,8 @@ var (
 
 func InitRouter() {
 	port := u.EnvOr("GDA_PORT", "80")
-	key = u.EnvExit("SESSION_KEY")
 	r := mux.NewRouter()
+	// key = u.EnvExit("SESSION_KEY")
 
 	r.HandleFunc("/api/session", login).Methods("POST")
 	r.HandleFunc("/api/session", logout).Methods("DELETE")
