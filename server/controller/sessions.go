@@ -55,14 +55,20 @@ func delSession(w http.ResponseWriter, r *http.Request) error {
 	return nil
 }
 
-func newSession(w http.ResponseWriter, id uint32) error {
-	session, err := db.NewSession(id)
+func newSession(w http.ResponseWriter, id uint32, sessionType db.SessionType) error {
+	var cookieUUID *http.Cookie
+
+	session, err := db.NewSession(id, sessionType)
 	if err != nil {
 		return err
 	}
 
-	// 7776000 = ~ 3 months in seconds
-	cookieUUID := getNewCookie(session.UUID.String(), 7776000)
+	if sessionType != db.SessionNormal {
+		cookieUUID = getNewCookie(session.UUID.String(), int(db.SpecialLoginMaxLength))
+	} else {
+		cookieUUID = getNewCookie(session.UUID.String(), int(db.NormalLoginMaxLength))
+	}
+
 	http.SetCookie(w, cookieUUID)
 
 	return nil
@@ -78,6 +84,11 @@ func isLoggedIn(r *http.Request) (bool, uint32) {
 	if s.ExpiresAt.Before(time.Now()) {
 		return false, 0
 	}
+
+	// think about it...
+	// if s.Type != db.SessionNormal{
+	// 	return false, 0
+	// }
 
 	return true, s.UserId
 }

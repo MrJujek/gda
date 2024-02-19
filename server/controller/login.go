@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	db "server/db_wrapper"
+	encr "server/encryption"
 	lw "server/ldap_wrapper"
 )
 
@@ -42,7 +43,7 @@ func login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	id, err := db.GetUserId(userdn)
+	user, err := db.GetUserByDN(userdn)
 	if err != nil {
 		http.Error(w,
 			"Something went wrong during id acquisition",
@@ -51,7 +52,25 @@ func login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = newSession(w, id)
+	sessionType := db.SessionNormal
+
+	if !user.PassEncPrivateKey.Valid {
+		sessionType = db.SessionFirstLogin
+	} else {
+		ok, err = encr.CheckIfPasswordMatches(user, loginData.Pass)
+		if err != nil {
+			http.Error(w,
+				"Something went wrong during session creation - password check error",
+				http.StatusInternalServerError,
+			)
+			return
+		}
+		if !ok {
+			sessionType = db.SessionKeyUpdate
+		}
+	}
+
+	err = newSession(w, user.ID, sessionType)
 	if err != nil {
 		log.Print(err)
 		http.Error(w,
@@ -61,7 +80,17 @@ func login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Write([]byte("ok"))
+	if sessionType == db.SessionFirstLogin {
+		http.Redirect(w, r, RedirectAfterFirstLogin, http.StatusSeeOther)
+		return
+	}
+
+	if sessionType == db.SessionKeyUpdate {
+		http.Redirect(w, r, RedirectAfterPassChange, http.StatusSeeOther)
+		return
+	}
+
+	http.Redirect(w, r, RedirectAfterLogin, http.StatusSeeOther)
 	return
 }
 

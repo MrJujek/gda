@@ -7,7 +7,13 @@ import (
 )
 
 var (
-	key string
+// key string
+)
+
+const (
+	RedirectAfterFirstLogin = "/first_login.html"
+	RedirectAfterLogin      = "/chat.html"
+	RedirectAfterPassChange = "/reencrypt.html"
 )
 
 func InitRouter() {

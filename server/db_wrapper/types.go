@@ -22,6 +22,19 @@ type User struct {
 }
 
 
+func (user *User) GetPublicKey() (*ecdsa.PublicKey, error) {
+	if !user.PublicKey.Valid {
+		return nil, fmt.Errorf("Public key is null")
+	}
+
+	key, err := x509.ParsePKIXPublicKey(user.PublicKey.V)
+	if err != nil {
+		return nil, err
+	}
+
+	return key.(*ecdsa.PublicKey), nil
+}
+
 type SessionType string
 
 const (

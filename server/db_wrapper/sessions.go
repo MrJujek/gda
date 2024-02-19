@@ -1,11 +1,21 @@
 package db_wrapper
 
 import (
+	"time"
+
 	"github.com/google/uuid"
 )
 
-func NewSession(id uint32) (Session, error) {
-	var s Session
+const (
+	SpecialLoginMaxLength = 1 * time.Hour
+	NormalLoginMaxLength  = 3 * 30 * 24 * time.Hour
+)
+
+func NewSession(id uint32, sessionType SessionType) (Session, error) {
+	var (
+		s          Session
+		expiration time.Time
+	)
 
 	db, err := getDbConn()
 	if err != nil {
@@ -13,8 +23,15 @@ func NewSession(id uint32) (Session, error) {
 	}
 	defer db.Close()
 
-	row := db.QueryRowx(`INSERT INTO sessions (user_id) 
-                            VALUES ($1) RETURNING *`, id)
+	if sessionType != SessionNormal {
+		expiration = time.Now().Add(SpecialLoginMaxLength)
+	} else {
+		expiration = time.Now().Add(NormalLoginMaxLength)
+	}
+
+	row := db.QueryRowx(`INSERT INTO sessions (user_id, type, expires_at) 
+                            VALUES ($1, $2, $3) RETURNING *`,
+		id, sessionType, expiration)
 	err = row.StructScan(&s)
 
 	return s, err
