@@ -12,8 +12,8 @@ import (
 )
 
 var (
-    connStr string
-    updateMinutes int
+	connStr       string
+	updateMinutes int
 )
 
 const (
@@ -72,7 +72,7 @@ func InitDB() {
 	host := u.EnvOr("DB_HOST", "127.0.0.1")
 	port := u.EnvOr("DB_PORT", "5432")
 	dbname := u.EnvExit("DB_NAME")
-    updateMinutes = u.EnvOrInt("UPDATE_INTERVAL", 5)
+	updateMinutes = u.EnvOrInt("UPDATE_INTERVAL", 5)
 
 	connStr = fmt.Sprintf(
 		"dbname=%v user=%v password=%v host=%v port=%v sslmode=disable",
@@ -98,11 +98,11 @@ func InitDB() {
 
 	log.Print("Database is setup.")
 
-    go func() {
-        // todo add session cleanup
-        for range time.Tick(time.Minute * time.Duration(updateMinutes)) {
-	        addUsersFromLDAP()
-        }
-    }()
+	go func() {
+		// todo add session cleanup
+		for range time.Tick(time.Minute * time.Duration(updateMinutes)) {
+			addUsersFromLDAP()
+		}
+	}()
 
 }

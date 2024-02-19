@@ -31,7 +31,7 @@ var db_schema = []string{
         END IF;
     END $_$
     `,
-    `
+	`
     DO $$
     BEGIN
         -- adding types to sessions
