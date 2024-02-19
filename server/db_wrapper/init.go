@@ -5,12 +5,16 @@ import (
 	"fmt"
 	"log"
 	u "server/util"
+	"time"
 
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
 )
 
-var connStr string
+var (
+    connStr string
+    updateMinutes int
+)
 
 const (
 	dbConnErr     = "Connection with the database could have not been established. Check if database is up and whether your configuration is correct."
@@ -68,6 +72,7 @@ func InitDB() {
 	host := u.EnvOr("DB_HOST", "127.0.0.1")
 	port := u.EnvOr("DB_PORT", "5432")
 	dbname := u.EnvExit("DB_NAME")
+    updateMinutes = u.EnvOrInt("UPDATE_INTERVAL", 5)
 
 	connStr = fmt.Sprintf(
 		"dbname=%v user=%v password=%v host=%v port=%v sslmode=disable",
@@ -92,4 +97,12 @@ func InitDB() {
 	addUsersFromLDAP()
 
 	log.Print("Database is setup.")
+
+    go func() {
+        // todo add session cleanup
+        for range time.Tick(time.Minute * time.Duration(updateMinutes)) {
+	        addUsersFromLDAP()
+        }
+    }()
+
 }
