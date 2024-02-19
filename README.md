@@ -35,8 +35,26 @@ odpowiednie zmienne środowiskowe, które są podane poniżej w tabeli.
 | LDAP_BASE_DN         | (WYMAGANE) BASE DN serwera LDAP                                                                                                                                            |
 | LDAP_USER_FILTER     | Filtr, który służy do wyszukiwania użytkowników w LDAP/AD. Przykładowy filtr: `(&(objectClass=organizationalPerson)(uid=%username%))`. Więcej o filtrach w opisie poniżej. |
 | UPDATE_INTERVAL      | Liczba minut po której następuje aktualizacja danych o użytkownika z LDAP/AD. Domyślnie 5 minut.                                                                           |
+| GDA_PORT             | Port na którym zostanie uruchomiony serwer http aplikacji. Domyślnie 80.                                                                                                   |
+| GDA_SECURE_SERVER    | Opcja od której zależy czy zostanie włączony serwer https, a zapytania http zostaną przekierowane na https. Domyślnie 0, aby włączyć należy ustawić jako 1.                |
+| GDA_SECURE_PORT      | Port na którym zostanie uruchomiony serwer https aplikacji. Domyślnie 443.                                                                                                 |
+| GDA_CERT_PATH        | Ścieżka gdzie znajduje się certyfikat tls służący do zabezpieczenia serwera. Domyślnie `./config/server.crt`.                                                              |
+| GDA_KEY_PATH         | Ścieżka gdzie znajduje się klucz do certyfikatu tls służący do zabezpieczenia serwera. Domyślnie `./config/server.key`.                                                    |
 <!-- | SESSION_KEY          | (WYMAGANE) Klucz (tekst) używany do szyfrowania sesji użytkowników w bazie danych                                                                                          | -->
 
+### Konfiguracja HTTPS
+
+<!-- in future automate this process in app -->
+Aby zabezpieczyć nasz serwer wykorzystujemy self signed certificate, który
+umieszczamy w folderze `config`. Taki certyfikat możemy wygenerować za pomocą
+następujących poleceń.
+
+```sh
+openssl req -x509 -newkey ec:<(openssl ecparam -name prime256v1) -keyout server.key -out server.crt -days 365
+```
+
+Jeżeli chcemy by jego długość była inna, należy zmienić 365 na oczekiwaną liczbe
+dni.
 
 ## Środowisko deweloperskie
 
@@ -77,10 +95,14 @@ Kod źródłowy aplikacji klienckiej znajduje się w folderze `frontend`.
 ### Instalacja i kompilacja
 
 Należy wejść do folderu `frontend` i zainstalować paczki za pomocą komendy:
+
 ```sh
 yarn
 ```
+
 Następnie kompilujemy aplikację wpisując:
+
 ```sh
 yarn build
 ```
+
