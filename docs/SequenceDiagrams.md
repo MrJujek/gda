@@ -16,3 +16,21 @@ sequenceDiagram
     end
 ```
 
+Inicjacja komunikacji z innym użytkownikiem
+
+
+```mermaid
+sequenceDiagram
+    actor Alicja
+    actor Robert
+    Alicja->>Serwer: Prośba o listę użytkowników
+    Serwer->>Alicja: Wysłanie listy użytkowników
+    Alicja->>Serwer: Wybranie uzytkownika z listy i wysłanie<br/>zapytania o utworzenie z nim konwersacji
+    Serwer->>Alicja: Utworzenie konwersacji, wysłanie uuid nowego czatu
+    alt Robert jest aktywny
+        Serwer->>Robert: Wysłanie powiadomienia (używając websocketów) o konwersacji z Alicją
+    else Robert nie jest aktywny
+        Serwer->>Robert: Wysłanie powiadomienia web push o konwersacji z Alicją
+    end
+```
+
