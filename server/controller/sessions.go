@@ -86,9 +86,13 @@ func isLoggedIn(r *http.Request) (bool, uint32) {
 	}
 
 	// think about it...
-	// if s.Type != db.SessionNormal{
-	// 	return false, 0
-	// }
+	if s.Type != db.SessionNormal {
+		return false, 0
+	}
 
 	return true, s.UserId
+}
+
+func unauthorizedMessage(w http.ResponseWriter) {
+	http.Error(w, "You are not authorized to access this resource.", http.StatusUnauthorized)
 }

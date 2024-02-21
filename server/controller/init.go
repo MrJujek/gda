@@ -36,11 +36,9 @@ func InitRouter() {
 	dMux.HandleFunc("GET /api/my/salt", getSalt)
 	dMux.HandleFunc("GET /api/my/keys", getKeys)
 	dMux.HandleFunc("POST /api/my/keys", addKeys)
+	dMux.HandleFunc("GET /api/my/chats", chatList)
 
-	dMux.HandleFunc("GET /api/chat", func(w http.ResponseWriter, r *http.Request) {
-		// TODO
-		w.Write([]byte("chat"))
-	})
+	dMux.HandleFunc("POST /api/chat", newChat)
 
 	if enableSecureServer != 0 {
 		sServer := &http.Server{

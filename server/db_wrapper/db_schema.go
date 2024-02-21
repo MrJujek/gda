@@ -29,6 +29,35 @@ var db_schema = []string{
         IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'session_type') THEN
             CREATE TYPE session_type AS ENUM ('normal', 'first_login', 'key_reencryption');
         END IF;
+        IF NOT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'chats') THEN
+            CREATE TABLE chats(
+                chat_uuid   UUID NOT NULL DEFAULT gen_random_uuid() UNIQUE PRIMARY KEY,
+                encrypted   BOOLEAN NOT NULL DEFAULT false,
+                is_group    BOOLEAN NOT NULL DEFAULT false,
+                group_name  TEXT
+            );
+        END IF;
+        IF NOT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'users_chats') THEN
+            CREATE TABLE users_chats(
+                chat_uuid   UUID NOT NULL REFERENCES chats (chat_uuid),
+                user_id     INTEGER NOT NULL REFERENCES users (id),
+                enc_secret  TEXT
+            );
+        END IF;
+        IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'message_type') THEN
+            CREATE TYPE message_type AS ENUM ('text', 'file', 'image');
+        END IF;
+        IF NOT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'messages') THEN
+            CREATE TABLE messages(
+                message_id  SERIAL PRIMARY KEY,
+                author_id   INTEGER NOT NULL REFERENCES users (id),
+                timestamp   TIMESTAMP NOT NULL DEFAULT now(),
+                msg_type    message_type NOT NULL DEFAULT 'text',
+                encrypted   BOOLEAN NOT NULL DEFAULT false,
+                text        TEXT,
+                file_uuid   UUID
+            );
+        END IF;
     END $_$
     `,
 	`
