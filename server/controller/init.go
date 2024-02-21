@@ -25,6 +25,8 @@ func InitRouter() {
 	// key = u.EnvExit("SESSION_KEY")
 	dMux := http.NewServeMux()
 
+	dMux.Handle("GET /", http.FileServer(http.Dir("./public")))
+
 	dMux.HandleFunc("POST /api/session", login)
 	dMux.HandleFunc("DELETE /api/session", logout)
 	dMux.HandleFunc("GET /api/session", checkSession)
