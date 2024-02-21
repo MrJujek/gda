@@ -93,12 +93,12 @@ func chatList(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-    body, err := json.Marshal(chats)
+	body, err := json.Marshal(chats)
 	if err != nil {
 		http.Error(w, "We couldn't get list of your chats. Please try again later.", http.StatusInternalServerError)
 		return
 	}
 
-    w.Header().Add("Content-Type", "application/json")
-    w.Write(body)
+	w.Header().Add("Content-Type", "application/json")
+	w.Write(body)
 }

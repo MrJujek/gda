@@ -11,10 +11,11 @@ import (
 )
 
 type Chat struct {
-	ChatUUID  uuid.UUID      `db:"chat_uuid"`
-	Encrypted bool           `db:"encrypted"`
-	Group     bool           `db:"is_group"`
-	GroupName sql.NullString `db:"group_name"`
+	ChatUUID    uuid.UUID      `db:"chat_uuid"`
+	Encrypted   bool           `db:"encrypted"`
+	Group       bool           `db:"is_group"`
+	GroupName   sql.NullString `db:"group_name"`
+	LastMessage time.Time      `db:"last_message"`
 }
 
 type MessageType string

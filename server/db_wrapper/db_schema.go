@@ -65,7 +65,7 @@ var db_schema = []string{
     BEGIN
         -- adding types to sessions
         IF NOT EXISTS (
-            SELECT 1 FROM information_schema.columns 
+            SELECT 1 FROM information_schema.columns
             WHERE table_name = 'sessions' AND column_name = 'type'
         ) THEN
             ALTER TABLE sessions ADD COLUMN type session_type NOT NULL DEFAULT 'first_login';
@@ -74,7 +74,7 @@ var db_schema = []string{
         -- adding salt for PBKDF2 encryption
         CREATE EXTENSION IF NOT EXISTS pgcrypto;
         IF NOT EXISTS (
-            SELECT 1 FROM information_schema.columns 
+            SELECT 1 FROM information_schema.columns
             WHERE table_name = 'users' AND column_name = 'salt'
         ) THEN
             ALTER TABLE users ADD COLUMN salt BYTEA NOT NULL DEFAULT gen_random_bytes(16);
@@ -82,25 +82,33 @@ var db_schema = []string{
 
         -- changing key columns in users to use BYTEA type
         IF NOT EXISTS (
-            SELECT 1 FROM information_schema.columns 
+            SELECT 1 FROM information_schema.columns
             WHERE table_name = 'users' AND column_name = 'public_key' AND data_type = 'bytea'
         ) THEN
             ALTER TABLE users DROP COLUMN IF EXISTS public_key;
             ALTER TABLE users ADD COLUMN public_key BYTEA;
         END IF;
         IF NOT EXISTS (
-            SELECT 1 FROM information_schema.columns 
+            SELECT 1 FROM information_schema.columns
             WHERE table_name = 'users' AND column_name = 'pass_priv_key' AND data_type = 'bytea'
         ) THEN
             ALTER TABLE users DROP COLUMN IF EXISTS pass_priv_key;
             ALTER TABLE users ADD COLUMN pass_priv_key BYTEA;
         END IF;
         IF NOT EXISTS (
-            SELECT 1 FROM information_schema.columns 
+            SELECT 1 FROM information_schema.columns
             WHERE table_name = 'users' AND column_name = 'code_priv_key' AND data_type = 'bytea'
         ) THEN
             ALTER TABLE users DROP COLUMN IF EXISTS code_priv_key;
             ALTER TABLE users ADD COLUMN code_priv_key BYTEA;
+        END IF;
+
+        -- adding last message timestamp to chats table
+        IF NOT EXISTS (
+            SELECT 1 FROM information_schema.columns
+            WHERE table_name = 'chats' AND column_name = 'last_message'
+        ) THEN
+            ALTER TABLE chats ADD COLUMN last_message TIMESTAMP NOT NULL DEFAULT now();
         END IF;
     END $$
     `,
