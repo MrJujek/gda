@@ -1,7 +1,11 @@
 package db_wrapper
 
 import (
+	"crypto/ecdsa"
+	"crypto/x509"
 	"database/sql"
+	"encoding/base64"
+	"fmt"
 	"time"
 
 	"github.com/google/uuid"
@@ -21,6 +25,36 @@ type User struct {
 	CodeEncPrivateKey sql.Null[[]byte] `db:"code_priv_key" json:"-"`
 }
 
+type Base64Keys struct {
+	PublicKey      string `json:"PublicKey"`
+	PassPrivateKey string `json:"PassPrivateKey"`
+	CodePirvateKey string `json:"CodePirvateKey"`
+}
+
+func (user *User) GetBase64Keys() (Base64Keys, error) {
+	var keys Base64Keys
+
+	if !user.PublicKey.Valid || !user.CodeEncPrivateKey.Valid || !user.PassEncPrivateKey.Valid {
+		return keys, fmt.Errorf("Keys don't exist")
+	}
+
+	keys.PublicKey = base64.StdEncoding.EncodeToString(user.PublicKey.V)
+	keys.PassPrivateKey = base64.StdEncoding.EncodeToString(user.PassEncPrivateKey.V)
+	keys.CodePirvateKey = base64.StdEncoding.EncodeToString(user.CodeEncPrivateKey.V)
+
+	return keys, nil
+}
+
+func (user *User) SetPublicKey(key *ecdsa.PublicKey) error {
+	arr, err := x509.MarshalPKIXPublicKey(key)
+	if err != nil {
+		return err
+	}
+
+	user.PublicKey.Valid = true
+	user.PublicKey.V = arr
+	return nil
+}
 
 func (user *User) GetPublicKey() (*ecdsa.PublicKey, error) {
 	if !user.PublicKey.Valid {
