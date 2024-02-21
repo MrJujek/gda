@@ -33,6 +33,10 @@ func InitRouter() {
 
 	dMux.HandleFunc("GET /api/users", userList)
 
+	dMux.HandleFunc("GET /api/my/salt", getSalt)
+	dMux.HandleFunc("GET /api/my/keys", getKeys)
+	dMux.HandleFunc("POST /api/my/keys", addKeys)
+
 	dMux.HandleFunc("GET /api/chat", func(w http.ResponseWriter, r *http.Request) {
 		// TODO
 		w.Write([]byte("chat"))
@@ -50,7 +54,7 @@ func InitRouter() {
 		server := &http.Server{
 			Addr: ":" + port,
 			Handler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-                // can be done better for sure but good enough for now
+				// can be done better for sure but good enough for now
 				http.Redirect(w, r, "https://"+r.Host+r.URL.String(), http.StatusMovedPermanently)
 			}),
 		}
