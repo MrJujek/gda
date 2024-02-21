@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title></title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script defer type="module">
+        const wordNumber = 20;
+        const iterations = 10000; // needs to be the same on server -> 10000
+        const pass = sessionStorage.getItem("pass");
+
+        if (pass == null) {
+            console.error("no password in session storage -> handle it");
+        }
+
+        async function createKeys() {
+            return await window.crypto.subtle.generateKey(
+                {
+                    name: "ECDSA",
+                    namedCurve: "P-256",
+                },
+                true,
+                ["sign", "verify"],
+            );
+        }
+
+        async function getWords() {
+            // check for errors
+            const words = await (await fetch("/lista_slow.json")).json();
+            const array = new Uint32Array(wordNumber);
+            const selectedWords = [];
+
+            window.crypto.getRandomValues(array);
+            for (const num of array) {
+                selectedWords.push(words[num % words.length]);
+            }
+
+            document.getElementById("words").innerText = selectedWords.join(" ");
+            return selectedWords.join(" ");
+        }
+
+        async function getSalt() {
+            // check for errors
+            return await (await fetch("/api/my/salt")).arrayBuffer();
+        }
+
+        async function exportPubKey(pubKey) {
+            const keyBuffer = await window.crypto.subtle.exportKey(
+                "spki",
+                pubKey
+            );
+            return keyBuffer
+        }
+
+        async function exportPrivKey(privKey) {
+            const keyBuffer = await window.crypto.subtle.exportKey(
+                "pkcs8",
+                privKey
+            );
+            return keyBuffer
+        }
+
+        function bufToBase64(buf) {
+            return btoa(String.fromCharCode.apply(null, new Uint8Array(buf)));
+        }
+
+        async function deriveDbKey(encText, salt) {
+            const enc = new TextEncoder();
+            const dbEncKeyMaterial = await window.crypto.subtle.importKey(
+                "raw",
+                enc.encode(encText),
+                "PBKDF2",
+                false,
+                ["deriveBits", "deriveKey"],
+            );
+
+            return await window.crypto.subtle.deriveKey(
+                {
+                    name: "PBKDF2",
+                    salt,
+                    iterations,
+                    hash: "SHA-256",
+                },
+                dbEncKeyMaterial,
+                {name: "AES-GCM", length: 256},
+                true,
+                ["encrypt", "decrypt"],
+            )
+        }
+
+        async function encryptEncKey(encText, salt, data) {
+            const dbEncKey = await deriveDbKey(encText, salt)
+
+            // salt here is actually iv, but for simplicity we will use the same values
+            const buf = await window.crypto.subtle.encrypt(
+                {name: "AES-GCM", iv: salt}, dbEncKey, data
+            );
+
+            return bufToBase64(buf);
+        }
+
+        const words = await getWords();
+        const salt = await getSalt();
+        const encKey = await createKeys();
+
+        const base64PubKey = bufToBase64(await exportPubKey(encKey.publicKey));
+        const exportedPrivKey = await exportPrivKey(encKey.privateKey);
+
+        const codePrivKey = await encryptEncKey(words, salt, exportedPrivKey);
+        const passPrivKey = await encryptEncKey(pass, salt, exportedPrivKey);
+
+        async function sendKeys() {
+            sessionStorage.removeItem("pass");
+            const res = fetch("/api/my/keys", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    PublicKey: base64PubKey,
+                    PassPrivateKey: passPrivKey,
+                    CodePirvateKey: codePrivKey
+                })
+            })
+
+            console.log(res)
+        }
+
+        document.getElementById("sendBtn").addEventListener("click", sendKeys)
+    </script>
+</head>
+
+<body>
+    <div style="width: 50%; margin-bottom: 1rem; font-size: 1.5rem; text-align: justify;" id="words"></div>
+    <button type="button" id="sendBtn">I saved the security code and want to continue</button>
+</body>
+
+</html>
