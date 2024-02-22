@@ -110,6 +110,15 @@ var db_schema = []string{
         ) THEN
             ALTER TABLE chats ADD COLUMN last_message TIMESTAMP NOT NULL DEFAULT now();
         END IF;
+
+        -- changing active to active_count
+        IF NOT EXISTS (
+            SELECT 1 FROM information_schema.columns
+            WHERE table_name = 'users' AND column_name = 'active_count'
+        ) THEN
+            ALTER TABLE users ADD COLUMN active_count INTEGER NOT NULL DEFAULT 0;
+            ALTER TABLE users DROP COLUMN active;
+        END IF;
     END $$
     `,
 }

@@ -19,6 +19,12 @@ func GetUsers() ([]User, error) {
 		return nil, err
 	}
 
+	for i, _ := range users {
+		if users[i].ActiveCount > 0 {
+			users[i].Active = true
+		}
+	}
+
 	return users, nil
 }
 

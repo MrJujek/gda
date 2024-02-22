@@ -17,7 +17,8 @@ type User struct {
 	CommonName        string           `db:"common_name"`
 	DisplayName       sql.Null[string] `db:"display_name"`
 	Image             sql.Null[[]byte] `db:"img" json:"-"`
-	Active            bool             `db:"active"`
+	ActiveCount       int              `db:"active_count" json:"-"`
+	Active            bool
 	Deleted           bool             `db:"deleted" json:"-"`
 	Salt              []byte           `db:"salt" json:"-"`
 	PublicKey         sql.Null[[]byte] `db:"public_key"`
