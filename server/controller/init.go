@@ -4,33 +4,69 @@ import (
 	"log"
 	"net/http"
 	u "server/util"
-
-	"github.com/gorilla/mux"
-	// "github.com/gorilla/websocket"
 )
 
 var (
-	key string
+// key string
+)
+
+const (
+	RedirectAfterFirstLogin = "/first_login.html"
+	RedirectAfterLogin      = "/chat.html"
+	RedirectAfterPassChange = "/reencrypt.html"
 )
 
 func InitRouter() {
 	port := u.EnvOr("GDA_PORT", "80")
-	key = u.EnvExit("SESSION_KEY")
-	r := mux.NewRouter()
+	enableSecureServer := u.EnvOrInt("GDA_SECURE_SERVER", 0)
+	securePort := u.EnvOr("GDA_SECURE_PORT", "443")
+	certPath := u.EnvOr("GDA_CERT_PATH", "./config/server.crt")
+	keyPath := u.EnvOr("GDA_KEY_PATH", "./config/server.key")
+	// key = u.EnvExit("SESSION_KEY")
+	dMux := http.NewServeMux()
 
-	r.HandleFunc("/api/session", login).Methods("POST")
-	r.HandleFunc("/api/session", logout).Methods("DELETE")
-	r.HandleFunc("/api/session", checkSession).Methods("GET")
+	dMux.Handle("GET /", http.FileServer(http.Dir("./public")))
 
-	r.HandleFunc("/api/users", userList).Methods("GET")
+	dMux.HandleFunc("POST /api/session", login)
+	dMux.HandleFunc("DELETE /api/session", logout)
+	dMux.HandleFunc("GET /api/session", checkSession)
 
-	r.HandleFunc("/api/chat", func(w http.ResponseWriter, r *http.Request) {
-		// TODO
-		w.Write([]byte("chat"))
-	})
+	dMux.HandleFunc("GET /api/users", userList)
 
-	http.Handle("/", r)
+	dMux.HandleFunc("GET /api/my/salt", getSalt)
+	dMux.HandleFunc("GET /api/my/keys", getKeys)
+	dMux.HandleFunc("POST /api/my/keys", addKeys)
+	dMux.HandleFunc("GET /api/my/chats", chatList)
 
-	log.Print("Server listening on port " + port)
-	http.ListenAndServe(":"+port, nil)
+	dMux.HandleFunc("POST /api/chat", newChat)
+
+	if enableSecureServer != 0 {
+		sServer := &http.Server{
+			Addr:    ":" + securePort,
+			Handler: dMux,
+		}
+
+		log.Print("Secure server listening on port " + securePort)
+		go sServer.ListenAndServeTLS(certPath, keyPath)
+
+		server := &http.Server{
+			Addr: ":" + port,
+			Handler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				// can be done better for sure but good enough for now
+				http.Redirect(w, r, "https://"+r.Host+r.URL.String(), http.StatusMovedPermanently)
+			}),
+		}
+
+		log.Print("Server listening on port " + port)
+		server.ListenAndServe()
+	} else {
+		server := &http.Server{
+			Addr:    ":" + port,
+			Handler: dMux,
+		}
+
+		log.Print("Server listening on port " + port)
+		server.ListenAndServe()
+	}
+
 }

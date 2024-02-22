@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title></title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script type="module" defer>
+        const outEl = document.getElementById("out")
+        const json = await(await fetch("/api/my/keys")).json()
+
+        console.log(json)
+
+        function base64ToBuf(strin) {
+            const binaryString = atob(string)
+            const length = binaryString.length;
+            const bytes = new Uint8Array(length);
+
+            for (let i = 0; i < length; i++) {
+                bytes[i] = binaryString.charCodeAt(i);
+            }
+
+            return bytes.buffer;
+        }
+
+        async function importPubKey(buf) {
+        }
+
+        async function importPrivKey(buf, salt, pass) {
+        }
+
+    </script>
+</head>
+
+<body>
+    <output id="out"></output>
+
+</body>
+
+</html>
