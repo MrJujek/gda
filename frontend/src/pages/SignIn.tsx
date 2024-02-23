@@ -12,7 +12,13 @@ function SignIn() {
         // Handle sign-in logic here
         console.log(`Email: ${name}, Password ${pass}`);
 
-        const res = await fetch("/api/session", {
+        const res1 = await fetch('/api/session', {
+            method: 'DELETE',
+        })
+        console.log(res1);
+
+
+        const res2 = await fetch("/api/session", {
             method: "POST",
             body: JSON.stringify({
                 user: name,
@@ -20,14 +26,14 @@ function SignIn() {
             })
         })
 
-        if (!res.redirected) {
+        if (!res2.redirected) {
             // statusEl.style.color = "red";
             // statusEl.innerText = res.statusText;
-            console.error(res.statusText);
+            console.error(res2.statusText);
         } else {
             sessionStorage.setItem("pass", pass)
-            
-            if (res.url.includes("chat")) {
+
+            if (res2.url.includes("chat")) {
                 navigate("/chat");
             } else {
                 navigate("/keys");
