@@ -2,7 +2,7 @@ function Chat() {
     return (
         <div className="flex flex-col h-screen bg-gray-200">
             <div className="p-4 bg-white shadow-md flex justify-end">
-                <button onClick={() => console.log()} className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">Logout</button>
+                <button onClick={() => console.log("logout")} className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">Logout</button>
             </div>
 
             <div className="flex h-screen bg-gray-200">

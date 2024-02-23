@@ -25,9 +25,13 @@ function SignIn() {
             // statusEl.innerText = res.statusText;
             console.error(res.statusText);
         } else {
-            sessionStorage.setItem("password", pass)
-            // window.location.href = res.url;
-            navigate("/chat");
+            sessionStorage.setItem("pass", pass)
+            
+            if (res.url.includes("chat")) {
+                navigate("/chat");
+            } else {
+                navigate("/keys");
+            }
         }
 
         // console.log(res)
