@@ -1,23 +1,18 @@
 import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext.tsx";
 import Logout from "../components/Logout";
 
 function Chat() {
-    // useEffect(() => {
-    //     const fetchData = async () => {
-    //         try {
-    //             const response = await fetch('https://api.example.com/data');
-    //             if (!response.ok) {
-    //                 throw new Error('Network response was not ok');
-    //             }
-    //             const result = await response.json();
-    //             console.log('Data:', result);
-    //         } catch (error) {
-    //             console.error('Error fetching data:', error);
-    //         }
-    //     };
+    const navigate = useNavigate();
 
-    //     fetchData();
-    // }, []);
+    const { user } = useAuth();
+
+    // useEffect(() => {
+    //     if (!user) {
+    //         navigate("/");
+    //     }
+    // }, [user, navigate]);
 
     return (
         <div className="flex flex-col h-screen bg-gray-200">

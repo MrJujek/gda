@@ -1,60 +1,52 @@
-import { useState, FormEvent } from 'react';
+import { useState, FormEvent, useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
 
 function SignIn() {
     const [name, setName] = useState<string>('');
     const [pass, setPass] = useState<string>('');
 
+    const { user, signIn } = useAuth();
+
     const navigate = useNavigate();
+
+    useEffect(() => {
+        if (user) {
+            navigate("/");
+        }
+    }, [user, navigate]);
 
     const handleSubmit = async (event: FormEvent) => {
         event.preventDefault();
-        // Handle sign-in logic here
-        console.log(`Email: ${name}, Password ${pass}`);
 
-        const res1 = await fetch('/api/session', {
-            method: 'DELETE',
-        })
-        console.log(res1);
+        const info = await signIn(name, pass);
 
-
-        const res2 = await fetch("/api/session", {
-            method: "POST",
-            body: JSON.stringify({
-                user: name,
-                pass: pass
-            })
-        })
-
-        if (!res2.redirected) {
-            // statusEl.style.color = "red";
-            // statusEl.innerText = res.statusText;
-            console.error(res2.statusText);
+        if (info.logged === false) {
+            console.error("Authentication failed");
+            return;
         } else {
             sessionStorage.setItem("pass", pass)
 
-            if (res2.url.includes("chat")) {
+            if (info.url.includes("chat")) {
                 navigate("/chat");
             } else {
                 navigate("/keys");
             }
         }
-
-        // console.log(res)
     };
 
     return (
         <div className="flex items-center justify-center h-screen bg-gray-200">
             <div className="p-6 bg-white rounded shadow-md w-80">
-                <h2 className="text-2xl font-bold mb-5 text-gray-800">Sign In</h2>
+                <h2 className="text-2xl font-bold mb-5 text-gray-800">Logowanie</h2>
                 <form onSubmit={handleSubmit}>
                     <label className="block mb-2">
-                        Email:
+                        Nazwa użytkownika:
                         <input type="text" value={name} onChange={(e) => setName(e.currentTarget.value)} required
                             className="mt-1 p-2 w-full border border-gray-300 rounded" />
                     </label>
                     <label className="block mb-4">
-                        Password:
+                        Hasło:
                         <input type="password" value={pass} onChange={(e) => setPass(e.currentTarget.value)} required
                             className="mt-1 p-2 w-full border border-gray-300 rounded" />
                     </label>
