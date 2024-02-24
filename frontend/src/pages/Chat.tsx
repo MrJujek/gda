@@ -8,11 +8,11 @@ function Chat() {
 
     const { user } = useAuth();
 
-    // useEffect(() => {
-    //     if (!user) {
-    //         navigate("/");
-    //     }
-    // }, [user, navigate]);
+    useEffect(() => {
+        if (!user) {
+            navigate("/");
+        }
+    }, [user, navigate]);
 
     return (
         <div className="flex flex-col h-screen bg-gray-200">

@@ -1,7 +1,7 @@
 import React, { ReactNode, useContext, useEffect, useState } from "react";
 
 interface User {
-    name: string;
+    status: string;
 }
 
 interface SignInData {
@@ -57,16 +57,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             method: "GET",
         });
 
-        if (response.ok) {
-            const data = await response.json();
+        console.log("response", response);
 
-            if (data.name) {
-                return data.name;
-            }
+
+        if (response.ok) {
+            return { status: "Logged in" } as User;
         }
 
         logout();
-        return "Authentication failed";
+        return { status: "Authentication failed" } as User;
     }
 
     async function signIn(name: string, pass: string) {
@@ -77,17 +76,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 pass: pass
             })
         });
+        console.log("response", response);
+
         if (response.ok) {
-            const data = await response.json() as SignInData;
+            console.log("response.ok", response.ok);
 
             setUser(await authenticate());
 
-            return data;
+            return { logged: true, url: "/chat" } as SignInData;
         }
         return { logged: false, message: "Authentication failed" } as SignInData;
     }
 
     function logout() {
+        console.log("logout");
+
         setUser(null);
 
         return { loggedOut: true };

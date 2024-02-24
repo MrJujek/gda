@@ -12,7 +12,7 @@ function SignIn() {
 
     useEffect(() => {
         if (user) {
-            navigate("/");
+            navigate("/chat");
         }
     }, [user, navigate]);
 
@@ -20,6 +20,9 @@ function SignIn() {
         event.preventDefault();
 
         const info = await signIn(name, pass);
+
+        console.log("info", info);
+
 
         if (info.logged === false) {
             console.error("Authentication failed");
