@@ -25,25 +25,6 @@ export function useAuth() {
 
 export function AuthProvider({ children }: { children: ReactNode }) {
     const [user, setUser] = useState<User | null>(null);
-    const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-        async function loadUserFromLocalStorage() {
-            const token = localStorage.getItem("token");
-
-            if (!token) {
-                setLoading(false);
-                return;
-            }
-            try {
-                setUser(await authenticate());
-            } catch (error) {
-                console.log(error);
-            }
-            setLoading(false);
-        }
-        loadUserFromLocalStorage();
-    }, []);
 
     const value = {
         user,
@@ -56,9 +37,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         const response = await fetch("/api/session", {
             method: "GET",
         });
-
-        console.log("response", response);
-
 
         if (response.ok) {
             return { status: "Logged in" } as User;
@@ -76,11 +54,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 pass: pass
             })
         });
-        console.log("response", response);
 
         if (response.ok) {
-            console.log("response.ok", response.ok);
-
             setUser(await authenticate());
 
             return { logged: true, url: "/chat" } as SignInData;
@@ -89,8 +64,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
 
     function logout() {
-        console.log("logout");
-
         setUser(null);
 
         return { loggedOut: true };
@@ -98,7 +71,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     return (
         <AuthContext.Provider value={value}>
-            {!loading && children}
+            {children}
         </AuthContext.Provider>
     );
 }
