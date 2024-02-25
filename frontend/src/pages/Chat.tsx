@@ -100,7 +100,7 @@ function Chat() {
     return (
         <div className="flex flex-col h-screen bg-gray-200">
             <div className="p-4 bg-white shadow-md flex justify-start">
-                <Autocomplete placeholder="Search users" options={users} setSelected={setSelectedUser} currentUserId ={userId!}/>
+                <Autocomplete placeholder="Search users" options={users} setSelected={setSelectedUser} currentUserId={userId!} />
                 <Autocomplete placeholder="Search groups" options={chats} setSelected={setSelectedGroup} />
                 <button></button>
                 <Logout></Logout>
