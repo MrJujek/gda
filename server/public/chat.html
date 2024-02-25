@@ -28,7 +28,31 @@
 
         async function importPrivKey(buf, salt, pass) {
         }
+    </script>
+    <script type="module">
+        const url = new URL(window.location.href)
+        url.pathname = "/api/chat"
+        url.protocol = "ws"
 
+        const socket = new WebSocket(url.href)
+
+        socket.addEventListener("open", (event) => {
+            socket.send(JSON.stringify({
+                Type: "config",
+                Data: {
+                    Config: "test config"
+                }
+            }));
+            socket.send(JSON.stringify({
+                Type: "message",
+                Data: {
+                    ChatUUID: "2c43007e-cec2-4cc7-bc45-3860264e7480", // change me
+                    Text: "test",
+                    MsgType: "text",
+                    Encrypted: false
+                }
+            }));
+        });
     </script>
 </head>
 

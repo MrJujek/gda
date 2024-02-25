@@ -59,6 +59,12 @@ jak poniżej, o ile jesteśmy zalogowani.
 Ten endpoint służy do tworzenia i korzystania z czatów. Jeżeli użytkownik nie
 jest zalogowany zostanie zwrócony odpowiedni błąd.
 
+### GET /api/chat
+
+Wysyłając takie zapytanie, serwer wyśle odpowiedź z próbą zmiany połączenia
+na takie, które wykorzystuje protokół websockets. Więcej na ten temat znajduje
+się w sekcji o websocketach.
+
 ### POST /api/chat
 
 Wysyłając rządanie pod ten url możemy stworzyć czat 1-na-1 lub konwersację
@@ -100,6 +106,39 @@ z parametrami `chat` ustawionym jako uuid czatu, którego wiadomości chcemy
 wyświetlić, oraz opcjonalnie `last-message` ustawionym jako id ostatniej
 wiadomości.
 
+Przykładowa odpowiedź:
+
+```json
+[
+  {
+    "Id": 1,
+    "AuthorId": 1,
+    "Timestamp": "2024-02-25T18:12:39.703703Z",
+    "MsgType": "text",
+    "Encrypted": false,
+    "Text": "Cześć",
+    "FileUUID": null
+  },
+  {
+    "Id": 2,
+    "AuthorId": 1,
+    "Timestamp": "2024-02-25T18:13:49.271953Z",
+    "MsgType": "text",
+    "Encrypted": false,
+    "Text": "Czy widzisz tą wiadomość?",
+    "FileUUID": null
+  },
+  {
+    "Id": 3,
+    "AuthorId": 3,
+    "Timestamp": "2024-02-25T18:14:32.045781Z",
+    "MsgType": "text",
+    "Encrypted": false,
+    "Text": "Tak widzę",
+    "FileUUID": null
+  }
+]
+```
 
 ## /api/my
 
@@ -166,3 +205,45 @@ formacie.
     }
 ]
 ```
+
+## WebSockety
+
+Ta sekcja pokazuje jak można wykorzystać api serwera wykorzystując websockety. 
+Aby uzyskać połączenie w przeglądarce możemy użyć kodu poniżej.
+
+```js
+    const socket = new WebSocket(`ws://${host}:${port}/api/chat`)
+```
+
+### wysyłanie wiadomości 
+
+Aby wysłać wiadomość do jakiegoś czatu możemy wysłać poniższy tekst do serwera.
+
+```json
+{
+    "Type": "message",
+    "Data": {
+        "ChatUUID": "2c43007e-cec2-4cc7-bc45-3860264e7480",
+        "Text": "test",
+        "MsgType": "text",
+        "Encrypted": false
+    }
+}
+```
+```json
+{
+    "Type": "message",
+    "Data": {
+        "ChatUUID": "2c43007e-cec2-4cc7-bc45-3860264e7480",
+        "FileUUID": "1a423074-cec2-4cc7-bc45-3860264e7480",
+        "MsgType": "text",
+        "Encrypted": false
+    }
+}
+```
+
+Wiadomości mogą być różnego typu, np.:
+- text - wiadomości, które wykorzystują jedynie pole tekstu.
+- image - wiadomości, które wykorzystują pole FileUUID zamiast pola Text i służą do wysyłania zdjęć i obrazków,
+- file - wiadomości, które wykorzystują pole FileUUID zamiast pola Text i służa do wysyłania innych plików niż zdjęcia.
+

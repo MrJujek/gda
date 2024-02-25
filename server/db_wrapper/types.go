@@ -106,7 +106,7 @@ const (
 type Message struct {
 	Id        uint32        `db:"message_id" json:",omitempty"`
 	AuthorId  uint32        `db:"author_id"`
-	ChatUUID  *uuid.UUID    `db:"-"`
+    ChatUUID  *uuid.UUID    `db:"-" json:",omitempty"`
 	Timestamp *time.Time    `db:"timestamp" json:",omitempty"`
 	MsgType   MessageType   `db:"msg_type"`
 	Encrypted bool          `db:"encrypted"`
