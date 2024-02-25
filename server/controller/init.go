@@ -39,6 +39,7 @@ func InitRouter() {
 	dMux.HandleFunc("GET /api/my/chats", chatList)
 
 	dMux.HandleFunc("POST /api/chat", newChat)
+	dMux.HandleFunc("GET /api/chat/messages", GetMessages)
 
 	if enableSecureServer != 0 {
 		sServer := &http.Server{

@@ -172,3 +172,21 @@ func UserChats(user_id uint32) ([]Chat, error) {
 
 	return chats, nil
 }
+
+func UserHasAccessToChat(userId uint32, chatUUID uuid.UUID) bool {
+	db, err := getDbConn()
+	if err != nil {
+		return false
+	}
+
+	var okInt int
+	err = db.QueryRowx(
+		"SELECT 1 FROM users_chats WHERE user_id = $1 AND chat_uuid = $2",
+		userId, chatUUID,
+	).Scan(&okInt)
+	if err != nil {
+		return false
+	}
+
+	return true
+}

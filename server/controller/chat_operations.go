@@ -5,7 +5,9 @@ import (
 	"log"
 	"net/http"
 	db "server/db_wrapper"
+	"server/util"
 	"slices"
+	"strconv"
 
 	"github.com/google/uuid"
 )
@@ -94,6 +96,64 @@ func chatList(w http.ResponseWriter, r *http.Request) {
 	}
 
 	body, err := json.Marshal(chats)
+	if err != nil {
+		http.Error(w, "We couldn't get list of your chats. Please try again later.", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Add("Content-Type", "application/json")
+	w.Write(body)
+}
+
+func GetMessages(w http.ResponseWriter, r *http.Request) {
+	var lastMessage int64 = 0
+	var err error
+
+	ok, userId := isLoggedIn(r)
+	if !ok {
+		unauthorizedMessage(w)
+		return
+	}
+
+	chatUuidStr := r.URL.Query().Get("chat")
+	if chatUuidStr == "" {
+		if err != nil {
+			http.Error(w, "Chat uuid not provided", http.StatusBadRequest)
+			return
+		}
+	}
+
+	chatUUID, err := uuid.Parse(chatUuidStr)
+	if err != nil {
+		http.Error(w, "We were unable to parse uuid you provided", http.StatusBadRequest)
+		return
+	}
+
+	ok = db.UserHasAccessToChat(userId, chatUUID)
+	if !ok {
+		unauthorizedMessage(w)
+		return
+	}
+
+	messageTable := util.UUIDToMessageTable(chatUUID)
+
+	lastMessageStr := r.URL.Query().Get("last-message")
+	if lastMessageStr != "" {
+		lastMessage, err = strconv.ParseInt(lastMessageStr, 10, 64)
+		if err != nil {
+			http.Error(w, "Last message parameter you provided is wrong", http.StatusBadRequest)
+			return
+		}
+	}
+
+	messages, err := db.GetMessages(messageTable, uint32(lastMessage))
+	if err != nil {
+		log.Print(err)
+		http.Error(w, "We were unable to get requested messages", http.StatusBadRequest)
+		return
+	}
+
+	body, err := json.Marshal(messages)
 	if err != nil {
 		http.Error(w, "We couldn't get list of your chats. Please try again later.", http.StatusInternalServerError)
 		return

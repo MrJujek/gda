@@ -80,9 +80,26 @@ i aby utworzyć konwersację 1-na-1:
 }
 ```
 
+lub
+
+```json
+{
+    "UserIds": [2]
+}
+```
+
 Dla grup lista użytkowników musi być większa niż 2, a nazwa nie może być
 długości 0. Natomiast dla konwersacji bezpośrednich liczba użytkowników musi
-być równa 2. W innym przypadku otrzymamy błąd.
+być równa 2. W innym przypadku otrzymamy błąd. Nie trzeba podawać użytkownika,
+który tworzy czat. Jest on dodawany automatycznie.
+
+### GET /api/chat/messages?chat=<uuid>&last-message=<integer>
+
+Aby otrzymać listę 100 wiadomości dla konkretnych czatów, wysyłamy zapytanie
+z parametrami `chat` ustawionym jako uuid czatu, którego wiadomości chcemy
+wyświetlić, oraz opcjonalnie `last-message` ustawionym jako id ostatniej
+wiadomości.
+
 
 ## /api/my
 
