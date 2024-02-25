@@ -24,16 +24,20 @@ interface AutocompleteProps {
     placeholder: string;
     options: User[];
     setSelected: React.Dispatch<React.SetStateAction<any | null>>;
+    currentUserId?: number;
 }
 
-function Autocomplete({ placeholder, options, setSelected }: AutocompleteProps) {
+function Autocomplete({ placeholder, options, setSelected, currentUserId }: AutocompleteProps) {
     const [inputValue, setInputValue] = useState<string>('');
     const [filteredOptions, setFilteredOptions] = useState<string[]>(["default"]);
     const inputRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
-        setFilteredOptions(options.map(option => option.CommonName || option.DisplayName.String));
-
+        if (currentUserId) {
+            setFilteredOptions(options.filter(option => option.id != currentUserId).map(option => option.CommonName || option.DisplayName.String));
+        } else {
+            setFilteredOptions(options.map(option => option.CommonName || option.DisplayName.String));
+        }
         const handleClickOutside = (event: MouseEvent) => {
             if (inputRef.current && !inputRef.current.contains(event.target as Node)) {
                 setFilteredOptions([]);
@@ -50,10 +54,10 @@ function Autocomplete({ placeholder, options, setSelected }: AutocompleteProps) 
         const value = e.target.value;
         setInputValue(value);
 
-        const filtered = options.filter(option =>
+        const filtered = options.filter(option => option.id != currentUserId).filter(option =>
             option.CommonName.toLowerCase().includes(value.toLowerCase())
         );
-        setFilteredOptions(filtered.map(option => option.CommonName));
+        setFilteredOptions(filtered.map(option => option.CommonName || option.DisplayName.String));
     };
 
     const handleOptionClick = (option: string) => {
