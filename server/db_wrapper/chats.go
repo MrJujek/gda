@@ -1,39 +1,41 @@
 package db_wrapper
 
 import (
-	"database/sql"
 	"fmt"
 	"log"
+	"regexp"
 	"strings"
-	"time"
 
 	"github.com/google/uuid"
+	"github.com/jmoiron/sqlx"
 )
 
-type Chat struct {
-	ChatUUID    uuid.UUID      `db:"chat_uuid"`
-	Encrypted   bool           `db:"encrypted"`
-	Group       bool           `db:"is_group"`
-	GroupName   sql.NullString `db:"group_name"`
-	LastMessage time.Time      `db:"last_message"`
-}
+func createMessageTable(tx *sqlx.Tx, chat *Chat) error {
+	tableName := "messages_" + strings.ReplaceAll(chat.ChatUUID.String(), "-", "")
+	re := regexp.MustCompile(`<<t>>`)
+	query := `
+        CREATE TABLE IF NOT EXISTS <<t>> (LIKE messages INCLUDING ALL);
+		CREATE SEQUENCE <<t>>_message_id_seq START 1;
+		ALTER TABLE <<t>>
+            ALTER COLUMN message_id SET DEFAULT nextval('<<t>>_message_id_seq'::regclass),
+            ADD CONSTRAINT <<t>>_author_id_fkey FOREIGN KEY (author_id) REFERENCES users (id);
+		ALTER SEQUENCE <<t>>_message_id_seq OWNED BY <<t>>.message_id;
+        `
 
-type MessageType string
+	query = string(re.ReplaceAll([]byte(query), []byte(tableName)))
 
-const (
-	MessageText  SessionType = "text"
-	MessageFile  SessionType = "file"
-	MessageImage SessionType = "image"
-)
+	_, err := tx.Query(query)
+	if err != nil {
+		fmt.Print(err)
+		nErr := tx.Rollback()
+		if nErr != nil {
+			return nErr
+		}
 
-type Message struct {
-	Id        uint32         `db:"message_id"`
-	AuthorId  uint32         `db:"author_id"`
-	Timestamp time.Time      `db:"timestamp"`
-	MsgType   MessageType    `db:"msg_type"`
-	Encrypted bool           `db:"encrypted"`
-	Text      sql.NullString `db:"text"`
-	FileUUID  uuid.NullUUID  `db:"file_uuid"`
+		return err
+	}
+
+	return nil
 }
 
 func CreateDirectChat() (uuid.UUID, error) {
@@ -63,15 +65,8 @@ func CreateDirectChat() (uuid.UUID, error) {
 		return uuid, err
 	}
 
-	query := fmt.Sprintf("CREATE TABLE messages_%v (like messages)", strings.ReplaceAll(chat.ChatUUID.String(), "-", ""))
-
-	_, err = tx.Exec(query)
+	err = createMessageTable(tx, &chat)
 	if err != nil {
-		nErr := tx.Rollback()
-		if nErr != nil {
-			return uuid, nErr
-		}
-
 		return uuid, err
 	}
 
@@ -112,15 +107,8 @@ func CreateGroupChat(name string) (uuid.UUID, error) {
 		return uuid, err
 	}
 
-	query := fmt.Sprintf("CREATE TABLE messages_%v (like messages)", strings.ReplaceAll(chat.ChatUUID.String(), "-", ""))
-
-	_, err = tx.Exec(query)
+	err = createMessageTable(tx, &chat)
 	if err != nil {
-		nErr := tx.Rollback()
-		if nErr != nil {
-			return uuid, nErr
-		}
-
 		return uuid, err
 	}
 

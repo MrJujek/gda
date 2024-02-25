@@ -6,6 +6,7 @@ import (
 	"database/sql"
 	"encoding/base64"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/google/uuid"
@@ -84,4 +85,39 @@ type Session struct {
 	Type      SessionType `db:"type"`
 	CreatedAt time.Time   `db:"created_at"`
 	ExpiresAt time.Time   `db:"expires_at"`
+}
+
+type Chat struct {
+	ChatUUID    uuid.UUID      `db:"chat_uuid"`
+	Encrypted   bool           `db:"encrypted"`
+	Group       bool           `db:"is_group"`
+	GroupName   sql.NullString `db:"group_name"`
+	LastMessage time.Time      `db:"last_message"`
+}
+
+type MessageType string
+
+const (
+	MessageText  SessionType = "text"
+	MessageFile  SessionType = "file"
+	MessageImage SessionType = "image"
+)
+
+type Message struct {
+	Id        uint32        `db:"message_id" json:",omitempty"`
+	AuthorId  uint32        `db:"author_id"`
+	ChatUUID  *uuid.UUID    `db:"-"`
+	Timestamp *time.Time    `db:"timestamp" json:",omitempty"`
+	MsgType   MessageType   `db:"msg_type"`
+	Encrypted bool          `db:"encrypted"`
+	Text      *string       `db:"text"`
+	FileUUID  uuid.NullUUID `db:"file_uuid"`
+}
+
+func (msg *Message) TableName() (string, error) {
+	if msg.ChatUUID == nil {
+		return "", fmt.Errorf("no chat uuid field")
+	}
+
+	return "messages_" + strings.ReplaceAll(msg.ChatUUID.String(), "-", ""), nil
 }
