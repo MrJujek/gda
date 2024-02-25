@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 
 type User = {
-    id: string;
+    id: number;
     CommonName: string;
     DisplayName: {
         String: string;
@@ -24,18 +24,20 @@ interface AutocompleteProps {
     placeholder: string;
     options: User[];
     setSelected: React.Dispatch<React.SetStateAction<any | null>>;
+    currentUserId?: number;
 }
 
-function Autocomplete({ placeholder, options, setSelected }: AutocompleteProps) {
+function Autocomplete({ placeholder, options, setSelected, currentUserId }: AutocompleteProps) {
     const [inputValue, setInputValue] = useState<string>('');
     const [filteredOptions, setFilteredOptions] = useState<string[]>(["default"]);
     const inputRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
-        console.log("options", options);
-
-        setFilteredOptions(options.map(option => option.CommonName || option.DisplayName.String));
-
+        if (currentUserId) {
+            setFilteredOptions(options.filter(option => option.id != currentUserId).map(option => option.CommonName || option.DisplayName.String));
+        } else {
+            setFilteredOptions(options.map(option => option.CommonName || option.DisplayName.String));
+        }
         const handleClickOutside = (event: MouseEvent) => {
             if (inputRef.current && !inputRef.current.contains(event.target as Node)) {
                 setFilteredOptions([]);
@@ -49,26 +51,21 @@ function Autocomplete({ placeholder, options, setSelected }: AutocompleteProps) 
     }, []);
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        console.log("handleInputChange");
-
-
         const value = e.target.value;
         setInputValue(value);
-        // Filter options based on input value
-        const filtered = options.filter(option =>
+
+        const filtered = options.filter(option => option.id != currentUserId).filter(option =>
             option.CommonName.toLowerCase().includes(value.toLowerCase())
         );
-        setFilteredOptions(filtered.map(option => option.CommonName));
+        setFilteredOptions(filtered.map(option => option.CommonName || option.DisplayName.String));
     };
 
     const handleOptionClick = (option: string) => {
-        console.log("handleOptionClick");
-
-        setInputValue(option);
         setFilteredOptions([]);
+        console.log("option", option);
+
         setSelected(options.find(user => user.CommonName === option) || null);
     };
-    console.log(options);
 
     return (
         <div ref={inputRef} className="relative">

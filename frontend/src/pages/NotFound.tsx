@@ -8,11 +8,11 @@ function NotFound() {
 
   const navigate = useNavigate();
 
-  // useEffect(() => {
-  //     if (!user) {
-  //         navigate("/");
-  //     }
-  // }, [user, navigate]);
+  useEffect(() => {
+    if (!user) {
+      navigate("/");
+    }
+  }, [user, navigate]);
 
   return (
     <div className="flex min-h-full flex-col bg-white lg:relative">

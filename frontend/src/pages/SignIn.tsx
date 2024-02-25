@@ -35,11 +35,12 @@ function SignIn() {
 
     console.log("info", info);
 
-    if (info.logged === false) {
-      setError("Błędne dane");
-      return;
-    } else {
-      sessionStorage.setItem("pass", pass);
+        if (info.logged === false) {
+            setError("Błędne dane");
+            return;
+        } else {
+            sessionStorage.setItem("pass", pass)
+            sessionStorage.setItem("name", name)
 
       if (info.url.includes("chat")) {
         navigate("/chat");

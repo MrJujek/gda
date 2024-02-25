@@ -6,14 +6,14 @@ import Autocomplete from "../components/Autocomplete.tsx";
 import ThemeToggle from "../components/ThemeToggle.tsx";
 
 type User = {
-  id: string;
-  CommonName: string;
-  DisplayName: {
-    String: string;
-    Valid: boolean;
-  };
-  Active: boolean;
-};
+    id: number;
+    CommonName: string;
+    DisplayName: {
+        String: string;
+        Valid: boolean;
+    }
+    Active: boolean;
+}
 
 type Chat = {
   ChatUUI: string;
@@ -30,8 +30,9 @@ function Chat() {
 
   const { user } = useAuth();
 
-  const [users, setUsers] = useState<User[]>([]);
-  const [chats, setChats] = useState([]);
+    const [users, setUsers] = useState<User[]>([]);
+    const [chats, setChats] = useState([]);
+    const [userId, setUserId] = useState<number>();
 
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [selectedGroup, setSelectedGroup] = useState<Chat | null>(null);
@@ -44,23 +45,49 @@ function Chat() {
     }
   }, [user, navigate]);
 
-  useEffect(() => {
-    console.log("selected", selectedUser);
-  }, [selectedUser]);
+    useEffect(() => {
+        (async () => {
+            if (selectedUser) {
+                const response = await fetch("/api/chat/", {
+                    method: "POST",
+                    body: JSON.stringify({
+                        UserIds: [userId, selectedUser.id]
+                    })
+                });
 
-  useEffect(() => {
-    // Fetch users
-    // Fetch groups
-    // Fetch chats
-    (async () => {
-      const response = await fetch("/api/users", {
-        method: "GET",
-      });
+                console.log("response", response);
 
-      const data = await response.json();
 
-      setUsers(data);
-    })();
+                if (response.ok) {
+                    (async () => {
+                        const response = await fetch("/api/my/chats", {
+                            method: "GET",
+                        });
+
+                        const data = await response.json();
+
+                        setChats(data);
+                    })();
+                }
+            }
+        })();
+    }, [selectedUser]);
+
+    useEffect(() => {
+        (async () => {
+            const response = await fetch("/api/users", {
+                method: "GET",
+            });
+
+            const data = await response.json() as User[];
+
+            setUserId(data.find(user => user.CommonName === sessionStorage.getItem("name"))!.id);
+
+            setUsers(data);
+
+            console.log("users", users);
+
+        })();
 
     (async () => {
       const response = await fetch("/api/my/chats", {
@@ -73,90 +100,46 @@ function Chat() {
     })();
   }, []);
 
-  return (
-    <>
-      <div
-        className={`flex flex-col h-screen ${
-          darkMode ? "bg-gray-800 text-white" : "bg-gray-200 text-black"
-        }`}
-      >
-        <div
-          className={`p-4 ${
-            darkMode ? "bg-gray-800" : "bg-white"
-          } shadow-md flex justify-start`}
-        >
-          <Autocomplete
-            placeholder="Search users"
-            options={users}
-            setSelected={setSelectedUser}
-          />
-          <Autocomplete
-            placeholder="Search groups"
-            options={chats}
-            setSelected={setSelectedGroup}
-          />
-          <button onClick={() => setDarkMode(!darkMode)}>
-            {darkMode ? "Light Mode" : "Dark Mode"}
-          </button>
-          <Logout></Logout>
-          <ThemeToggle></ThemeToggle>
-        </div>
-
-        <div
-          className={`flex h-screen ${
-            darkMode ? "bg-gray-800" : "bg-gray-200"
-          }`}
-        >
-          <div className="w-64 bg-white dark:bg-gray-700 p-4 shadow-lg">
-            <h2 className="text-2xl font-bold mb-4">Chats</h2>
-            <div className="mb-8">User 2</div>
-          </div>
-
-          <div className="flex-1 p-6">
-            <h2 className="text-2xl font-bold mb-4">Chat</h2>
-            {/* Replace with your actual chat */}
-            <div className="border border-gray-300 p-4 rounded mb-4">
-              Hello, world!
+    return (
+        <div className="flex flex-col h-screen bg-gray-200">
+            <div className="p-4 bg-white shadow-md flex justify-start">
+                <Autocomplete placeholder="Search users" options={users} setSelected={setSelectedUser} currentUserId ={userId!}/>
+                <Autocomplete placeholder="Search groups" options={chats} setSelected={setSelectedGroup} />
+                <button></button>
+                <Logout></Logout>
             </div>
-            <div className="border border-gray-300 p-4 rounded mb-4">
-              How are you?
-            </div>
-          </div>
-        </div>
-      </div>
-      <div className="flex flex-col h-screen bg-gray-200">
-        <div className="p-4 bg-white shadow-md flex justify-start">
-          <Autocomplete
-            placeholder="Search users"
-            options={users}
-            setSelected={setSelectedUser}
-          />
-          <Autocomplete
-            placeholder="Search groups"
-            options={chats}
-            setSelected={setSelectedGroup}
-          />
-          <button></button>
-          <Logout></Logout>
-        </div>
 
-        <div className="flex h-screen bg-gray-200">
-          <div className="w-64 bg-white p-4 shadow-lg">
-            <h2 className="text-2xl font-bold mb-4">Chats</h2>
+            <div className="flex h-screen bg-gray-200">
+                <div className="w-64 bg-white p-4 shadow-lg">
+                    <h2 className="text-2xl font-bold mb-4">Chats</h2>
 
-            <div className="mb-8">User 2</div>
-          </div>
+                    {users.map((user: User) => {
+                        if (user.CommonName === sessionStorage.getItem("name")) {
+                            return;
+                        }
 
-          <div className="flex-1 p-6">
-            <h2 className="text-2xl font-bold mb-4">Chat</h2>
-            {/* Replace with your actual chat */}
-            <div className="border border-gray-300 p-4 rounded mb-4">
-              Hello, world!
+                        return (
+                            <div key={user.id} className="flex items-center justify-between p-2 hover:bg-gray-100 cursor-pointer">
+                                <div>
+                                    <h3 className="font-semibold">{user.CommonName}</h3>
+                                    <p className="text-sm text-gray-500">Private chat</p>
+                                </div>
+                            </div>
+                        );
+                    })}
+
+                    {chats && chats.map((chat: Chat) => {
+                        return (
+                            <div key={chat.ChatUUI} className="flex items-center justify-between p-2 hover:bg-gray-100 cursor-pointer">
+                                <div>
+                                    <h3 className="font-semibold">{chat.GroupName.String}</h3>
+                                    <p className="text-sm text-gray-500">Group chat</p>
+                                </div>
+                            </div>
+                        );
+                    })}
+                </div>
             </div>
-            <div className="border border-gray-300 p-4 rounded mb-4">
-              How are you?
-            </div>
-          </div>
         </div>
       </div>
     </>
