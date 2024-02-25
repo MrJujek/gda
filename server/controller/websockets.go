@@ -3,6 +3,7 @@ package controller
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	db "server/db_wrapper"
@@ -27,6 +28,10 @@ func websocketChat(w http.ResponseWriter, r *http.Request) {
 
 	log.Printf("WebSocket connection established by user #%v", userId)
 
+	if err = db.IncrementUserStatus(userId); err != nil {
+		fmt.Print(err)
+	}
+
 	ctx, cancel := context.WithTimeout(r.Context(), time.Minute*5)
 	defer cancel()
 
@@ -35,6 +40,7 @@ func websocketChat(w http.ResponseWriter, r *http.Request) {
 
 		_, data, err := conn.Read(ctx)
 		if websocket.CloseStatus(err) != -1 {
+			db.DecrementUserStatus(userId)
 			log.Printf("Connection with %v closed", r.RemoteAddr)
 			return
 		}
@@ -65,7 +71,6 @@ func websocketChat(w http.ResponseWriter, r *http.Request) {
 		case t.WsTypeMessage:
 			var msg db.Message
 			req := t.WsRequest{Data: &msg}
-			//fix marshaling of null string
 			err = json.Unmarshal(data, &req)
 			if err != nil {
 				log.Print(err)
@@ -73,7 +78,7 @@ func websocketChat(w http.ResponseWriter, r *http.Request) {
 				break
 			}
 
-            ok := db.UserHasAccessToChat(userId, *msg.ChatUUID)
+			ok := db.UserHasAccessToChat(userId, *msg.ChatUUID)
 			if !ok {
 				unauthorizedWs(conn, ctx)
 				break
@@ -124,4 +129,3 @@ func unauthorizedWs(conn *websocket.Conn, ctx context.Context) error {
 	err = conn.Write(ctx, websocket.MessageText, data)
 	return err
 }
-
