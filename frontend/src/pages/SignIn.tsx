@@ -40,6 +40,7 @@ function SignIn() {
             return;
         } else {
             sessionStorage.setItem("pass", pass)
+            sessionStorage.setItem("name", name)
 
             if (info.url.includes("chat")) {
                 navigate("/chat");

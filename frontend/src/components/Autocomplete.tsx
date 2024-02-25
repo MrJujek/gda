@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 
 type User = {
-    id: string;
+    id: number;
     CommonName: string;
     DisplayName: {
         String: string;
@@ -32,8 +32,6 @@ function Autocomplete({ placeholder, options, setSelected }: AutocompleteProps) 
     const inputRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
-        console.log("options", options);
-
         setFilteredOptions(options.map(option => option.CommonName || option.DisplayName.String));
 
         const handleClickOutside = (event: MouseEvent) => {
@@ -49,12 +47,9 @@ function Autocomplete({ placeholder, options, setSelected }: AutocompleteProps) 
     }, []);
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        console.log("handleInputChange");
-
-
         const value = e.target.value;
         setInputValue(value);
-        // Filter options based on input value
+
         const filtered = options.filter(option =>
             option.CommonName.toLowerCase().includes(value.toLowerCase())
         );
@@ -62,13 +57,11 @@ function Autocomplete({ placeholder, options, setSelected }: AutocompleteProps) 
     };
 
     const handleOptionClick = (option: string) => {
-        console.log("handleOptionClick");
-
-        setInputValue(option);
         setFilteredOptions([]);
+        console.log("option", option);
+
         setSelected(options.find(user => user.CommonName === option) || null);
     };
-    console.log(options);
 
     return (
         <div ref={inputRef} className="relative">

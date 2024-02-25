@@ -5,7 +5,7 @@ import Logout from "../components/Logout";
 import Autocomplete from "../components/Autocomplete.tsx";
 
 type User = {
-    id: string;
+    id: number;
     CommonName: string;
     DisplayName: {
         String: string;
@@ -31,6 +31,7 @@ function Chat() {
 
     const [users, setUsers] = useState<User[]>([]);
     const [chats, setChats] = useState([]);
+    const [userId, setUserId] = useState<number>();
 
     const [selectedUser, setSelectedUser] = useState<User | null>(null);
     const [selectedGroup, setSelectedGroup] = useState<Chat | null>(null);
@@ -42,21 +43,47 @@ function Chat() {
     }, [user, navigate]);
 
     useEffect(() => {
-        console.log("selected", selectedUser);
+        (async () => {
+            if (selectedUser) {
+                const response = await fetch("/api/chat/", {
+                    method: "POST",
+                    body: JSON.stringify({
+                        UserIds: [userId, selectedUser.id]
+                    })
+                });
+
+                console.log("response", response);
+
+
+                if (response.ok) {
+                    (async () => {
+                        const response = await fetch("/api/my/chats", {
+                            method: "GET",
+                        });
+
+                        const data = await response.json();
+
+                        setChats(data);
+                    })();
+                }
+            }
+        })();
     }, [selectedUser]);
 
     useEffect(() => {
-        // Fetch users
-        // Fetch groups
-        // Fetch chats
         (async () => {
             const response = await fetch("/api/users", {
                 method: "GET",
             });
 
-            const data = await response.json();
+            const data = await response.json() as User[];
+
+            setUserId(data.find(user => user.CommonName === sessionStorage.getItem("name"))!.id);
 
             setUsers(data);
+
+            console.log("users", users);
+
         })();
 
         (async () => {
