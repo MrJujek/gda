@@ -19,7 +19,7 @@ function AccessToggle({ setBetterAccess }: { setBetterAccess: (betterAccess: boo
         />
         <div
           className="shadow-card flex h-[46px] w-[46px] items-center justify-center rounded-full"
-          style={{ backgroundColor: isChecked ? '#0000FF' : '#d0c886' }}
+          style={{ backgroundColor: isChecked ? '#7a7a7a' : '#ECBD18' }}
         >
           <span
             className={`flex h-9 w-9 items-center justify-center rounded-full`}
@@ -31,9 +31,9 @@ function AccessToggle({ setBetterAccess }: { setBetterAccess: (betterAccess: boo
             }}
           >
             {isChecked ? (
-              <span className="text-black text-xl">A</span>
+              <span className="text-white text-xl">A</span>
             ) : (
-              <span className="text-black text-sm">a</span> 
+              <span className="text-white text-sm">a</span> 
             )}
           </span>
         </div>

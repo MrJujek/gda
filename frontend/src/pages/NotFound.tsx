@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
-import logo from "../assets/GDA-logos.jpeg";
+import logo from "../assets/GDA-logos.webp";
 
 function NotFound() {
   const { user } = useAuth();

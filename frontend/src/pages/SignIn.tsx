@@ -1,7 +1,7 @@
 import { useState, FormEvent, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
-import logo from "../assets/GDA-logos.jpeg";
+import logo from "../assets/GDA-logos.svg";
 
 function SignIn() {
   const [name, setName] = useState<string>("");
@@ -73,7 +73,7 @@ function SignIn() {
                 <input
                   id="name"
                   name="name"
-					placeholder="Nazwa użytkownika"
+					placeholder="Jan Kowalski"
                   required
                   value={name}
                   onChange={handleNameChange}
@@ -96,7 +96,7 @@ function SignIn() {
                   id="password"
                   name="password"
                   type="password"
-				  placeholder="Hasło"
+				placeholder="***************"
                   required
                   value={pass}
                   onChange={handlePassChange}
@@ -110,12 +110,12 @@ function SignIn() {
             {error && <p className="text-red-500 mb-4">{error}</p>}
 
             <div>
-              <button
-                type="submit"
-                className="flex w-full justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-              >
-                Zaloguj się
-              </button>
+			<button
+  type="submit"
+  className="flex w-full justify-center rounded-md border border-transparent bg-[#0d67b5] py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+>
+  Zaloguj się
+</button>
             </div>
           </form>
         </div>

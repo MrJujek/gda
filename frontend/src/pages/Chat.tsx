@@ -5,7 +5,7 @@ import Logout from "../components/Logout";
 import UserAutocomplete from "../components/UserAutocomplete.tsx";
 import GroupAutocomplete from "../components/GroupAutocomplete.tsx";
 import ThemeToggle from "../components/ThemeToggle.tsx";
-import logo from "../assets/GDA-icon.webp";
+import logo from "../assets/logo.svg";
 import AccessToggle from "../components/AccessToggle.tsx";
 import ChatComponent from "../components/ChatComponent.tsx";
 import StatusIcon from "../components/StatusIcon";
