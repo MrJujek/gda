@@ -44,6 +44,10 @@ function Chat() {
   }, [user, navigate]);
 
   useEffect(() => {
+    console.log("darkMode", darkMode);
+  }, [darkMode]);
+
+  useEffect(() => {
     (async () => {
       if (selectedUser) {
         const response = await fetch("/api/chat/", {
@@ -92,7 +96,7 @@ function Chat() {
         <Autocomplete placeholder="Search users" options={users} setSelected={setSelectedUser} currentUserId={userId!} />
         <Autocomplete placeholder="Search groups" options={chats} setSelected={setSelectedGroup} />
         <Logout></Logout>
-        <ThemeToggle></ThemeToggle>
+        <ThemeToggle setDarkMode={setDarkMode}></ThemeToggle>
       </div>
       <div className="flex h-screen bg-gray-200">
         <div className="w-64 bg-white p-4 shadow-lg">
