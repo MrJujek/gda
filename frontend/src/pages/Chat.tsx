@@ -7,6 +7,8 @@ import GroupAutocomplete from "../components/GroupAutocomplete.tsx";
 import ThemeToggle from "../components/ThemeToggle.tsx";
 import logo from "../assets/GDA-icon.webp";
 import AccessToggle from "../components/AccessToggle.tsx";
+import ChatComponent from "../components/ChatComponent.tsx";
+import StatusIcon from "../components/StatusIcon";
 
 type User = {
   id: number;
@@ -126,7 +128,7 @@ function Chat() {
             <div className="flex space-x-4">
               <Logout />
               <ThemeToggle setDarkMode={setDarkMode}></ThemeToggle>
-  			    <AccessToggle setBetterAccess={setBetterAccess}></AccessToggle>
+  			      <AccessToggle setBetterAccess={setBetterAccess}></AccessToggle>
         </div>
         </div>
       </div>
@@ -153,8 +155,9 @@ function Chat() {
               {isUsersDropdownOpen && (
                 <div className="mt-2" key={"users"}>
                   {users && users.map((user) => (
-                    <div key={user.id} className="p-2 hover:bg-gray-100 cursor-pointer" onClick={()=>{setSelectedUser(user)}}>
-                      {user.CommonName}
+                    <div key={user.id} className="flex items-center px-4 py-2 hover:bg-gray-100 cursor-pointer" onClick={()=>{setSelectedUser(user)}}>
+                      <StatusIcon active={users.find(user1=>user1.CommonName == user.CommonName)?.Active || false} />
+                      <span className="ml-2">{user.CommonName}</span>
                     </div>
                   ))}
                 </div>
@@ -188,6 +191,9 @@ function Chat() {
               )}
             </div>}
           </div>
+          
+          <ChatComponent />
+
         </div>
       </div>
     </div>

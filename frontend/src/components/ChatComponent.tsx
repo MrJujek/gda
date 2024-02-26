@@ -17,7 +17,8 @@ function ChatComponent() {
   }, []);
 
   return (
-    <div>
+    <div className="m-1 rounded bg-white w-full">
+        Wiadomości
       <ul>
         {messages.map((message, index) => (
           <li key={index}>{message.text}</li>

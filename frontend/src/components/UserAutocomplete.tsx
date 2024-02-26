@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import StatusIcon from './StatusIcon';
 
 type User = {
     id: number;
@@ -77,10 +78,11 @@ function UserAutocomplete({ placeholder, options, setSelected, currentUserId }: 
                     {filteredOptions && filteredOptions.map((option, index) => (
                         <li
                             key={index}
-                            className="px-4 py-2 cursor-pointer hover:bg-gray-100"
+                            className="flex items-center px-4 py-2 cursor-pointer hover:bg-gray-100"
                             onClick={() => handleOptionClick(option)}
                         >
-                            {option}
+                            <StatusIcon active={options.find(user=>user.CommonName==option)?.Active || false} />
+                            <span className="ml-2">{option}</span>
                         </li>
                     ))}
                 </ul>
