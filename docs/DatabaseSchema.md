@@ -43,8 +43,16 @@ erDiagram
         text        message
         uuid        file_uuid
     }
+    files {
+        uuid    file_uuid
+        uuid    chat_uuid
+        integer uploader_id
+        text    file_name
+    }
     sessions 1+--1 users : ""
-    users_chats 1+--1+ users : ""
-    users_chats 1+--1+ chats : ""
+    users_chats 1+--1 users : ""
+    users_chats 1+--1 chats : ""
     chats 1--1 "messages_[chats.uuid]": ""
+    files 1+--1 chats: ""
+    files 1+--1 users: ""
 ```
