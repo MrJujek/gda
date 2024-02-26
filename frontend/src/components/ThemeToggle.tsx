@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 function ThemeToggle({setDarkMode}: {setDarkMode: (darkMode: boolean) => void}){
   const [isChecked, setIsChecked] = useState(false);

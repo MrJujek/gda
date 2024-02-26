@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import words from '../assets/lista_slow.json';
+import Logout from '../components/Logout';
 
 function Keys() {
     const [keys, setKeys] = useState<string>("");
@@ -121,7 +122,7 @@ function Keys() {
     }, []);
 
     async function sendKeys() {
-        fetch("/api/my/keys", {
+        await fetch("/api/my/keys", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -133,18 +134,20 @@ function Keys() {
             })
         })
 
-        navigate("/");
+        sessionStorage.removeItem("pass");
+
+        Logout();
     }
 
     return (
         <div className="flex items-center justify-center h-screen">
             <div className="text-center">
-                <h1 className="text-6xl font-semibold">Klucze bezpieczeństwa</h1>
+                <h1 className="text-6xl font-semibold">Klucz bezpieczeństwa</h1>
                 <p className="text-xl mt-4">{keys}</p>
                 <br />
 
                 <button onClick={() => sendKeys()} className="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
-                    Zapisałem klucz bezpieczeństwa i chcę kontynuować
+                    Zapisałem klucz bezpieczeństwa
                 </button>
             </div>
         </div>
