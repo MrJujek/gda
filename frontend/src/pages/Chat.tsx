@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext.tsx";
 import Logout from "../components/Logout";
-import Autocomplete from "../components/Autocomplete.tsx";
+import UserAutocomplete from "../components/UserAutocomplete.tsx";
+import GroupAutocomplete from "../components/GroupAutocomplete.tsx";
 import ThemeToggle from "../components/ThemeToggle.tsx";
 import logo from "../assets/GDA-logos.webp";
 
@@ -35,7 +36,7 @@ function Chat() {
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [selectedGroup, setSelectedGroup] = useState<Chat | null>(null);
   const [darkMode, setDarkMode] = useState(false); // State for dark mode toggle
-  const [isUsersDropdownOpen, setIsUsersDropdownOpen] = useState(false);
+  const [isUsersDropdownOpen, setIsUsersDropdownOpen] = useState(true);
   const [isGroupsDropdownOpen, setIsGroupsDropdownOpen] = useState(false);
 
   useEffect(() => {
@@ -55,7 +56,9 @@ function Chat() {
           method: "POST",
           body: JSON.stringify({ UserIds: [userId, selectedUser.id] }),
         });
+
         console.log("response", response);
+
         if (response.ok) {
           (async () => {
             const response = await fetch("/api/my/chats", {
@@ -75,12 +78,13 @@ function Chat() {
         method: "GET",
       });
       const data = (await response.json()) as User[];
+
       setUserId(
         data.find((user) => user.CommonName === sessionStorage.getItem("name"))!
           .id
       );
+
       setUsers(data);
-      console.log("users", users);
     })();
     (async () => {
       const response = await fetch("/api/my/chats", {
@@ -88,6 +92,8 @@ function Chat() {
       });
       const data = await response.json();
       setChats(data);
+      console.log("chats", data);
+      
     })();
   }, []);
 
@@ -100,8 +106,8 @@ function Chat() {
         {/* Search Components and Actions */}
         <div className="flex-grow flex justify-between items-center">
           <div className="flex space-x-4">
-            <Autocomplete placeholder="Search users" options={users} setSelected={setSelectedUser} currentUserId={userId!} />
-            <Autocomplete placeholder="Search groups" options={chats} setSelected={setSelectedGroup} />
+            <UserAutocomplete placeholder="Search users" options={users} setSelected={setSelectedUser} currentUserId={userId!} />
+            <GroupAutocomplete placeholder="Search groups" options={chats} setSelected={setSelectedGroup} />
           </div>
           
           <div className="flex space-x-4">
@@ -131,7 +137,7 @@ function Chat() {
             </button>
             {isUsersDropdownOpen && (
               <div className="mt-2">
-                {users.map((user) => (
+                {users && users.map((user) => (
                   <div key={user.id} className="p-2 hover:bg-gray-100">
                     {user.CommonName}
                   </div>
@@ -140,7 +146,8 @@ function Chat() {
             )}
           </div>
           {/* Groups Dropdown */}
-          <div className="mb-2">
+          {chats &&
+            <div className="mb-2">
             <button
               className="w-full text-left flex justify-between items-center"
               onClick={() => setIsGroupsDropdownOpen(!isGroupsDropdownOpen)}
@@ -157,16 +164,15 @@ function Chat() {
             </button>
             {isGroupsDropdownOpen && (
               <div className="mt-2">
-                {chats.map((chat) => (
+                {chats && chats.map((chat) => (
                   <div key={chat.ChatUUI} className="p-2 hover:bg-gray-100">
                     {chat.GroupName.String}
                   </div>
                 ))}
               </div>
             )}
-          </div>
-          {/* Existing chats display */}
-          {users.map((user: User) => {
+          </div>}
+          {/* {users && users.map((user: User) => {
             if (user.CommonName === sessionStorage.getItem("name")) {
               return null;
             }
@@ -179,7 +185,7 @@ function Chat() {
               </div>
             );
           })}
-          {chats.map((chat: Chat) => {
+          {chats && chats.map((chat: Chat) => {
             return (
               <div key={chat.ChatUUI} className="flex items-center justify-between p-2 hover:bg-gray-100 cursor-pointer">
                 <div>
@@ -188,7 +194,7 @@ function Chat() {
                 </div>
               </div>
             );
-          })}
+          })} */}
         </div>
       </div>
     </div>

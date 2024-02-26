@@ -1,43 +1,29 @@
 import React, { useState, useRef, useEffect } from 'react';
 
-type User = {
-    id: number;
-    CommonName: string;
-    DisplayName: {
-        String: string;
-        Valid: boolean;
-    }
-    Active: boolean;
-}
-
 type Chat = {
-    ChatUUI: string;
-    Encrypted: boolean;
-    Group: boolean;
-    GroupName: {
-        String: string;
-        Valid: boolean;
-    }
-}
+  ChatUUI: string;
+  Encrypted: boolean;
+  Group: boolean;
+  GroupName: {
+    String: string;
+    Valid: boolean;
+  };
+};
 
 interface AutocompleteProps {
     placeholder: string;
-    options: User[];
+    options: Chat[];
     setSelected: React.Dispatch<React.SetStateAction<any | null>>;
-    currentUserId?: number;
 }
 
-function Autocomplete({ placeholder, options, setSelected, currentUserId }: AutocompleteProps) {
+function GroupAutocomplete({ placeholder, options, setSelected }: AutocompleteProps) {
     const [inputValue, setInputValue] = useState<string>('');
     const [filteredOptions, setFilteredOptions] = useState<string[]>(["default"]);
     const inputRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
-        if (currentUserId) {
-            setFilteredOptions(options.filter(option => option.id != currentUserId).map(option => option.CommonName || option.DisplayName.String));
-        } else {
-            setFilteredOptions(options.map(option => option.CommonName || option.DisplayName.String));
-        }
+        setFilteredOptions(options.map(option => option.GroupName.String));
+
         const handleClickOutside = (event: MouseEvent) => {
             if (inputRef.current && !inputRef.current.contains(event.target as Node)) {
                 setFilteredOptions([]);
@@ -54,17 +40,17 @@ function Autocomplete({ placeholder, options, setSelected, currentUserId }: Auto
         const value = e.target.value;
         setInputValue(value);
 
-        const filtered = options.filter(option => option.id != currentUserId).filter(option =>
-            option.CommonName.toLowerCase().includes(value.toLowerCase())
+        const filtered = options.filter(option =>
+            option.GroupName.String.toLowerCase().includes(value.toLowerCase())
         );
-        setFilteredOptions(filtered.map(option => option.CommonName || option.DisplayName.String));
+        setFilteredOptions(filtered.map(option => option.GroupName.String));
     };
 
     const handleOptionClick = (option: string) => {
         setFilteredOptions([]);
         console.log("option", option);
 
-        setSelected(options.find(user => user.CommonName === option) || null);
+        setSelected(options.find(user => user.GroupName.String === option) || null);
     };
 
     return (
@@ -74,7 +60,7 @@ function Autocomplete({ placeholder, options, setSelected, currentUserId }: Auto
                 value={inputValue}
                 onClick={() => {
                     if (inputValue.length == 0) {
-                        setFilteredOptions(options.map(option => option.CommonName));
+                        setFilteredOptions(options.map(option => option.GroupName.String));
                     }
                 }}
                 onChange={handleInputChange}
@@ -99,4 +85,4 @@ function Autocomplete({ placeholder, options, setSelected, currentUserId }: Auto
     );
 };
 
-export default Autocomplete;
+export default GroupAutocomplete;
