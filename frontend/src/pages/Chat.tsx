@@ -46,6 +46,10 @@ function Chat() {
   }, [user, navigate]);
 
   useEffect(() => {
+    console.log("darkMode", darkMode);
+  }, [darkMode]);
+
+  useEffect(() => {
     (async () => {
       if (selectedUser) {
         const response = await fetch("/api/chat/", {
@@ -117,7 +121,7 @@ function Chat() {
         />
         <button></button>
         <Logout></Logout>
-        <ThemeToggle></ThemeToggle>
+        <ThemeToggle setDarkMode={setDarkMode}></ThemeToggle>
       </div>
 
       <div className="flex h-screen bg-gray-200">
