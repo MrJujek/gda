@@ -5,7 +5,8 @@ import Logout from "../components/Logout";
 import UserAutocomplete from "../components/UserAutocomplete.tsx";
 import GroupAutocomplete from "../components/GroupAutocomplete.tsx";
 import ThemeToggle from "../components/ThemeToggle.tsx";
-import logo from "../assets/GDA-logos.webp";
+import logo from "../assets/GDA-icon.webp";
+import AccessToggle from "../components/AccessToggle.tsx";
 
 type User = {
   id: number;
@@ -123,6 +124,7 @@ function Chat() {
           <div className="flex space-x-4">
             <Logout />
             <ThemeToggle setDarkMode={setDarkMode}></ThemeToggle>
+			<AccessToggle></AccessToggle>
         </div>
       </div>
 	</div>

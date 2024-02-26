@@ -73,6 +73,7 @@ function SignIn() {
                 <input
                   id="name"
                   name="name"
+					placeholder="Nazwa użytkownika"
                   required
                   value={name}
                   onChange={handleNameChange}
@@ -95,6 +96,7 @@ function SignIn() {
                   id="password"
                   name="password"
                   type="password"
+				  placeholder="Hasło"
                   required
                   value={pass}
                   onChange={handlePassChange}
