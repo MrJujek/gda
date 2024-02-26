@@ -12,7 +12,7 @@ func SaveMessage(ctx context.Context, msg Message, userId uint32) (Message, erro
 	if err != nil {
 		return newMsg, err
 	}
-    defer db.Close()
+	defer db.Close()
 
 	tableName, err := msg.TableName()
 	if err != nil {
@@ -43,7 +43,7 @@ func GetMessages(tableName string, pagination uint32) ([]Message, error) {
 	if err != nil {
 		return msgs, err
 	}
-    defer db.Close()
+	defer db.Close()
 
 	query := fmt.Sprintf(
 		"SELECT * FROM %v WHERE message_id > $1 ORDER BY message_id ASC LIMIT %v",

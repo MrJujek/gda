@@ -24,6 +24,7 @@ func (msg *WsMessage) TableName() string {
 	return "messages_" + strings.ReplaceAll(msg.ChatUUID.String(), "-", "")
 }
 
-type WsConfig struct {
-	Config string
+type WsAtivity struct {
+	UserId uint32
+	Active bool
 }

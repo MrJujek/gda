@@ -16,7 +16,7 @@ func AddFileMetadata(userId uint32, chatUUID uuid.UUID, name string) (uuid.UUID,
 	if err != nil {
 		return f.UUID, err
 	}
-    defer db.Close()
+	defer db.Close()
 
 	row := db.QueryRowx(
 		"INSERT INTO files (uploader_id, chat_uuid, file_name) VALUES ($1, $2, $3) RETURNING *",
@@ -37,7 +37,7 @@ func GetFileMetadata(fileUUID uuid.UUID) (DbFile, error) {
 	if err != nil {
 		return f, err
 	}
-    defer db.Close()
+	defer db.Close()
 
 	row := db.QueryRowx("SELECT * FROM files WHERE file_uuid = $1", fileUUID)
 	err = row.StructScan(&f)

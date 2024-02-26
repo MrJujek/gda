@@ -1,7 +1,7 @@
 package types
 
 const (
-	WsTypeMessage = "message"
-	WsTypeError   = "error"
-	WsTypeConfig  = "config"
+	WsTypeMessage  = "message"
+	WsTypeError    = "error"
+	WsTypeActivity = "activity"
 )

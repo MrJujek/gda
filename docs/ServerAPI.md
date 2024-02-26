@@ -255,14 +255,14 @@ Przykładowa odpowiedź:
 
 ## WebSockety
 
-Ta sekcja pokazuje jak można wykorzystać api serwera wykorzystując websockety. 
+Ta sekcja pokazuje jak można wykorzystać api serwera wykorzystując websockety.
 Aby uzyskać połączenie w przeglądarce możemy użyć kodu poniżej.
 
 ```js
     const socket = new WebSocket(`ws://${host}:${port}/api/chat`)
 ```
 
-### wysyłanie wiadomości 
+### Wysyłanie wiadomości
 
 Aby wysłać wiadomość do jakiegoś czatu możemy wysłać poniższy tekst do serwera.
 
@@ -294,3 +294,53 @@ Wiadomości mogą być różnego typu, np.:
 - image - wiadomości, które wykorzystują pole FileUUID zamiast pola Text i służą do wysyłania zdjęć i obrazków,
 - file - wiadomości, które wykorzystują pole FileUUID zamiast pola Text i służa do wysyłania innych plików niż zdjęcia.
 
+### Otrzymywanie wiadomości
+
+Wszystkie aktywne urządzenia z połączeniem WebSocket otrzymują wiadomości
+wysłane do czatów, których częścią jest zalogowany użytkownik. Wiadmości
+są w poniższym formacie
+
+```json
+{
+    "Type": "message",
+    "Data": {
+        "Id": 38,
+        "AuthorId": 2,
+        "Timestamp": "2024-02-26T15:48:20.499695Z",
+        "MsgType": "text",
+        "Encrypted": false,
+        "Text": "test",
+        "FileUUID": null
+    }
+}
+```
+
+### Aktualizacja statusu aktywności
+
+Jeżeli użytkownik łączy się z czatem z nowego urządzenia serwer sprawdza, czy
+nie jest już aktywny na innych urządzeniach. Jeżli jest to jedyne aktywne
+urządzenie zostaje wysłana wiadomość w takim formacie do wszystkich innych
+aktywnych urządzeń.
+
+```json
+{
+    "Type": "activity",
+    "Data": {
+        "UserId": 2,
+        "Active": true
+    }
+}
+```
+
+Podobnie kiedy użytkownik się rozłącza. Jeżeli było to jedyne aktywne urządzenie
+zostaje wysłany taki komunikat do wszystkich innych aktywnych urządzeń.
+
+```json
+{
+    "Type": "activity",
+    "Data": {
+        "UserId": 3,
+        "Active": false
+    }
+}
+```
