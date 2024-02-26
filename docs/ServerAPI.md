@@ -99,7 +99,7 @@ długości 0. Natomiast dla konwersacji bezpośrednich liczba użytkowników mus
 być równa 2. W innym przypadku otrzymamy błąd. Nie trzeba podawać użytkownika,
 który tworzy czat. Jest on dodawany automatycznie.
 
-### GET /api/chat/messages?chat=<uuid>&last-message=<integer>
+### GET /api/chat/messages?chat=\<uuid>&last-message=\<integer>
 
 Aby otrzymać listę 100 wiadomości dla konkretnych czatów, wysyłamy zapytanie
 z parametrami `chat` ustawionym jako uuid czatu, którego wiadomości chcemy
@@ -204,6 +204,45 @@ formacie.
         }
     }
 ]
+```
+
+## /api/file
+
+Endpoint służący do zapisywania i pobierania plików.
+
+### GET /api/file?uuid=\<uuid>
+
+Wysyłając takie zapytanie z uuid pliku, który chcemy pobrać lub wyświetlić,
+serwer sprawdza czy jesteśmy w czacie, na który został wysłany ten plik i czy
+w ogóle istnieje. Jeśli istnieje i mamy do niego dostęp to zwraca nam plik,
+jeśli nie otrzymujemy odpowiedni status i komunikat.
+
+### POST /api/file
+
+Wysyłając zapytanie w formacie (Content-Type) `multipart/form-data` na ten
+endpoint możemy dodać plik do czatu. Zwraca on uuid pliku, za pomocą którego
+możemy później pobrać lub wyświetlić taki plik.
+
+FormData ma tutaj dwa pola: `file` i `chat-uuid`. Musimy wypełnić je oba.
+Przykładowe zapytanie powinno wyglądać jak poniżej.
+
+```multipart/form-data
+--boundary
+Content-Disposition: form-data; name="file"; filename="obrazek.jpg"
+Content-Type: image/jpeg
+
+dane pliku...
+--boundary
+Content-Disposition: form-data; name="chat-uuid"
+
+888341a2-2a48-4a65-a135-75db615ec4ba
+--boundary--
+```
+
+Przykładowa odpowiedź:
+
+```text/plain
+75f47e34-4cc8-4e2e-8d6e-2b69d28dc8a9
 ```
 
 ## WebSockety

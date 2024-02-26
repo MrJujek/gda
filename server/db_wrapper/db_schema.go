@@ -58,6 +58,14 @@ var db_schema = []string{
                 file_uuid   UUID
             );
         END IF;
+        IF NOT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'files') THEN
+            CREATE TABLE files(
+                file_uuid   UUID NOT NULL DEFAULT gen_random_uuid() UNIQUE PRIMARY KEY,
+                chat_uuid   UUID NOT NULL REFERENCES chats (chat_uuid),
+                uploader_id INTEGER NOT NULL REFERENCES users (id),
+                file_name   TEXT NOT NULL
+            );
+        END IF;
     END $_$
     `,
 	`

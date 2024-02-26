@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>File</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <script>
+            function getFile() {
+                let fileUUID = document.getElementById("file-uuid").value
+                window.location.href = `/api/file?uuid=${fileUUID}`
+            }
+        </script>
+    </head>
+    <body>
+        <form method="post" action="/api/file" enctype="multipart/form-data">
+            <label>file: <input type="file" name="file"/></label>
+            <label>chat-uuid: <input type="text" name="chat-uuid"/></label>
+            <button>Save file</button>
+        </form>
+        <hr/>
+        <label>file-uuid: <input type="text" id="file-uuid"/></label>
+        <button onclick="getFile()">Get file</button>
+    </body>
+</html>

@@ -3,6 +3,7 @@ package controller
 import (
 	"log"
 	"net/http"
+	"os"
 	u "server/util"
 )
 
@@ -23,6 +24,19 @@ func InitRouter() {
 	certPath := u.EnvOr("GDA_CERT_PATH", "./config/server.crt")
 	keyPath := u.EnvOr("GDA_KEY_PATH", "./config/server.key")
 	// key = u.EnvExit("SESSION_KEY")
+
+	_, err := os.Stat(UploadDir)
+	if err != nil {
+		if os.IsNotExist(err) {
+			err := os.MkdirAll(UploadDir, 0700)
+			if err != nil {
+				panic("Unable create data directory")
+			}
+		} else {
+			panic("Unable check if data directory exists")
+		}
+	}
+
 	dMux := http.NewServeMux()
 
 	dMux.Handle("GET /", http.FileServer(http.Dir("./public")))
@@ -41,6 +55,9 @@ func InitRouter() {
 	dMux.HandleFunc("POST /api/chat", newChat)
 	dMux.HandleFunc("GET /api/chat/messages", GetMessages)
 	dMux.HandleFunc("GET /api/chat", websocketChat)
+
+	dMux.HandleFunc("POST /api/file", uploadFile)
+	dMux.HandleFunc("GET /api/file", getFile)
 
 	if enableSecureServer != 0 {
 		sServer := &http.Server{
