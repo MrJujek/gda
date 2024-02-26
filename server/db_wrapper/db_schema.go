@@ -58,6 +58,14 @@ var db_schema = []string{
                 file_uuid   UUID
             );
         END IF;
+        IF NOT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'files') THEN
+            CREATE TABLE files(
+                file_uuid   UUID NOT NULL DEFAULT gen_random_uuid() UNIQUE PRIMARY KEY,
+                chat_uuid   UUID NOT NULL REFERENCES chats (chat_uuid),
+                uploader_id INTEGER NOT NULL REFERENCES users (id),
+                file_name   TEXT NOT NULL
+            );
+        END IF;
     END $_$
     `,
 	`
@@ -109,6 +117,15 @@ var db_schema = []string{
             WHERE table_name = 'chats' AND column_name = 'last_message'
         ) THEN
             ALTER TABLE chats ADD COLUMN last_message TIMESTAMP NOT NULL DEFAULT now();
+        END IF;
+
+        -- changing active to active_count
+        IF NOT EXISTS (
+            SELECT 1 FROM information_schema.columns
+            WHERE table_name = 'users' AND column_name = 'active_count'
+        ) THEN
+            ALTER TABLE users ADD COLUMN active_count INTEGER NOT NULL DEFAULT 0;
+            ALTER TABLE users DROP COLUMN active;
         END IF;
     END $$
     `,

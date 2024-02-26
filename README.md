@@ -34,6 +34,7 @@ odpowiednie zmienne środowiskowe, które są podane poniżej w tabeli.
 | LDAP_PASS            | (WYMAGANE) Hasło wyżej wspomnianego użytkownika                                                                                                                            |
 | LDAP_BASE_DN         | (WYMAGANE) BASE DN serwera LDAP                                                                                                                                            |
 | LDAP_USER_FILTER     | Filtr, który służy do wyszukiwania użytkowników w LDAP/AD. Przykładowy filtr: `(&(objectClass=organizationalPerson)(uid=%username%))`. Więcej o filtrach w opisie poniżej. |
+| LDAP_IMAGE_ATTR      | Atrybut, którego wartością jest zdjęcie użytkownika. Domyślnie: `jpegPhoto`.                                                                                               |
 | UPDATE_INTERVAL      | Liczba minut po której następuje aktualizacja danych o użytkownika z LDAP/AD. Domyślnie 5 minut.                                                                           |
 | GDA_PORT             | Port na którym zostanie uruchomiony serwer http aplikacji. Domyślnie 80.                                                                                                   |
 | GDA_SECURE_SERVER    | Opcja od której zależy czy zostanie włączony serwer https, a zapytania http zostaną przekierowane na https. Domyślnie 0, aby włączyć należy ustawić jako 1.                |

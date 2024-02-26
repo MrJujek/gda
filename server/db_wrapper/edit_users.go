@@ -18,3 +18,41 @@ func AddKeys(id uint32, pubKey, passEncPrivKey, codeEncPrivKey string) error {
 
 	return err
 }
+
+func IncrementUserStatus(id uint32) (int, error) {
+	var ac = 0
+	db, err := getDbConn()
+	if err != nil {
+		return ac, err
+	}
+	defer db.Close()
+
+	row := db.QueryRowx(`
+        UPDATE users
+        SET active_count = active_count + 1
+        WHERE id = $1
+        RETURNING active_count
+    `, id)
+	err = row.Scan(&ac)
+
+	return ac, err
+}
+
+func DecrementUserStatus(id uint32) (int, error) {
+	var ac = 0
+	db, err := getDbConn()
+	if err != nil {
+		return ac, err
+	}
+	defer db.Close()
+
+	row := db.QueryRowx(`
+        UPDATE users
+        SET active_count = active_count - 1
+        WHERE id = $1
+        RETURNING active_count
+    `, id)
+	err = row.Scan(&ac)
+
+	return ac, err
+}

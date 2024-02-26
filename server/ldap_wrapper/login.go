@@ -13,6 +13,7 @@ func LDAPLogin(user, pass string) (bool, string, error) {
 		log.Print(err)
 		return false, "", err
 	}
+	defer l.Close()
 
 	re := regexp.MustCompile("%username%")
 	searchRequest := ldap.NewSearchRequest(

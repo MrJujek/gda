@@ -4,7 +4,9 @@ import (
 	"log"
 	"os"
 	"strconv"
+	"strings"
 
+	"github.com/google/uuid"
 	_ "github.com/joho/godotenv/autoload"
 )
 
@@ -40,4 +42,8 @@ func EnvExit(env string) string {
 	}
 
 	return value
+}
+
+func UUIDToMessageTable(ChatUUID uuid.UUID) string {
+	return "messages_" + strings.ReplaceAll(ChatUUID.String(), "-", "")
 }
