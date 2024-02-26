@@ -75,7 +75,7 @@ func InitDB() {
 	updateMinutes = u.EnvOrInt("UPDATE_INTERVAL", 5)
 
 	connStr = fmt.Sprintf(
-		"dbname=%v user=%v password=%v host=%v port=%v sslmode=disable",
+		"dbname=%v user=%v password=%v host=%v port=%v sslmode=disable application_name='gda_server'",
 		dbname, user, pass, host, port,
 	)
 

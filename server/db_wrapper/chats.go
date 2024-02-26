@@ -48,6 +48,7 @@ func CreateDirectChat() (uuid.UUID, error) {
 	if err != nil {
 		return uuid, err
 	}
+    defer db.Close()
 
 	tx, err := db.Beginx()
 	if err != nil {
@@ -90,6 +91,7 @@ func CreateGroupChat(name string) (uuid.UUID, error) {
 	if err != nil {
 		return uuid, err
 	}
+    defer db.Close()
 
 	tx, err := db.Beginx()
 	if err != nil {
@@ -127,6 +129,7 @@ func JoinChat(chat_uuid uuid.UUID, user_ids ...uint32) error {
 	if err != nil {
 		return err
 	}
+    defer db.Close()
 
 	tx, err := db.Beginx()
 	if err != nil {
@@ -159,6 +162,7 @@ func UserChats(user_id uint32) ([]Chat, error) {
 	if err != nil {
 		return chats, err
 	}
+    defer db.Close()
 
 	err = db.Select(&chats, `
         SELECT c.* 
@@ -178,6 +182,7 @@ func UserHasAccessToChat(userId uint32, chatUUID uuid.UUID) bool {
 	if err != nil {
 		return false
 	}
+    defer db.Close()
 
 	var okInt int
 	err = db.QueryRowx(
