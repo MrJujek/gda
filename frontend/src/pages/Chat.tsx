@@ -50,26 +50,38 @@ function Chat() {
   }, [darkMode]);
 
   useEffect(() => {
+    console.log("chats", chats);
+  }, [chats]);
+
+  useEffect(() => {
+    console.log("creating chat - selectedUser", selectedUser);
+    
     (async () => {
       if (selectedUser) {
         const response = await fetch("/api/chat/", {
           method: "POST",
-          body: JSON.stringify({ UserIds: [userId, selectedUser.id] }),
+          body: JSON.stringify({ UserIds: [selectedUser.id] }),
         });
 
-        console.log("response", response);
-
-        if (response.ok) {
-          (async () => {
-            const response = await fetch("/api/my/chats", {
-              method: "GET",
-            });
-            const data = await response.json();
-            setChats(data);
-          })();
-        }
+        console.log("response1", response);
       }
     })();
+
+    (async () => {
+        const response = await fetch("/api/my/chats", {
+            method: "GET",
+        });
+
+        console.log("response2", response);
+        
+
+        const data = await response.json();
+
+        console.log("data", data);
+        
+        setChats(data);
+    })();
+
   }, [selectedUser]);
 
   useEffect(() => {
@@ -99,11 +111,9 @@ function Chat() {
 
   return (
     <div className="flex flex-col h-screen bg-gray-200">
-      {/* Navigation Menu */}
       <div className="flex justify-between items-center p-4 bg-white shadow-md border-b-2 border-gray-300">
-        {/* Logo */}
-		<img src={logo} alt="Logo" className="h-8 mr-4" />        
-        {/* Search Components and Actions */}
+		<img src={logo} alt="Logo" className="h-8 mr-4" />   
+             
         <div className="flex-grow flex justify-between items-center">
           <div className="flex space-x-4">
             <UserAutocomplete placeholder="Search users" options={users} setSelected={setSelectedUser} currentUserId={userId!} />
@@ -111,16 +121,17 @@ function Chat() {
           </div>
           
           <div className="flex space-x-4">
-          <Logout />
-          <ThemeToggle setDarkMode={setDarkMode}></ThemeToggle>
+            <Logout />
+            <ThemeToggle setDarkMode={setDarkMode}></ThemeToggle>
         </div>
       </div>
 	</div>
       <div className="flex h-screen bg-gray-200">
         <div className="w-64 bg-white p-4 shadow-lg">
           <h2 className="text-2xl font-bold mb-4">Czaty</h2>
-          {/* Users Dropdown */}
-          <div className="mb-2">
+
+          {users &&
+            <div className="mb-2">
             <button
               className="w-full text-left flex justify-between items-center"
               onClick={() => setIsUsersDropdownOpen(!isUsersDropdownOpen)}
@@ -136,16 +147,16 @@ function Chat() {
               </svg>
             </button>
             {isUsersDropdownOpen && (
-              <div className="mt-2">
+              <div className="mt-2" key={"users"}>
                 {users && users.map((user) => (
-                  <div key={user.id} className="p-2 hover:bg-gray-100">
+                  <div key={user.id} className="p-2 hover:bg-gray-100 cursor-pointer" onClick={()=>{setSelectedUser(user)}}>
                     {user.CommonName}
                   </div>
                 ))}
               </div>
             )}
-          </div>
-          {/* Groups Dropdown */}
+          </div>}
+
           {chats &&
             <div className="mb-2">
             <button
@@ -163,38 +174,15 @@ function Chat() {
               </svg>
             </button>
             {isGroupsDropdownOpen && (
-              <div className="mt-2">
+              <div className="mt-2" key={"groups"}>
                 {chats && chats.map((chat) => (
-                  <div key={chat.ChatUUI} className="p-2 hover:bg-gray-100">
+                  <div key={chat.ChatUUI} className="p-2 hover:bg-gray-100 cursor-pointer" onClick={()=>{setSelectedGroup(chat)}}>
                     {chat.GroupName.String}
                   </div>
                 ))}
               </div>
             )}
           </div>}
-          {/* {users && users.map((user: User) => {
-            if (user.CommonName === sessionStorage.getItem("name")) {
-              return null;
-            }
-            return (
-              <div key={user.id} className="flex items-center justify-between p-2 hover:bg-gray-100 cursor-pointer">
-                <div>
-                  <h3 className="font-semibold">{user.CommonName}</h3>
-                  <p className="text-sm text-gray-500">Private chat</p>
-                </div>
-              </div>
-            );
-          })}
-          {chats && chats.map((chat: Chat) => {
-            return (
-              <div key={chat.ChatUUI} className="flex items-center justify-between p-2 hover:bg-gray-100 cursor-pointer">
-                <div>
-                  <h3 className="font-semibold">{chat.GroupName.String}</h3>
-                  <p className="text-sm text-gray-500">Group chat</p>
-                </div>
-              </div>
-            );
-          })} */}
         </div>
       </div>
     </div>
