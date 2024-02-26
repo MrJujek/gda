@@ -5,7 +5,7 @@ import Logout from "../components/Logout";
 import UserAutocomplete from "../components/UserAutocomplete.tsx";
 import GroupAutocomplete from "../components/GroupAutocomplete.tsx";
 import ThemeToggle from "../components/ThemeToggle.tsx";
-import logo from "../assets/GDA-icon.webp";
+import logo from "../assets/logo.svg";
 import AccessToggle from "../components/AccessToggle.tsx";
 
 type User = {
@@ -113,7 +113,7 @@ function Chat() {
   return (
     <div className="flex flex-col h-screen bg-gray-200">
       <div className="flex justify-between items-center p-4 bg-white shadow-md border-b-2 border-gray-300">
-		<img src={logo} alt="Logo" className="h-8 mr-4" />   
+		<img src={logo} alt="Logo" className="h-9 mr-4" />   
              
         <div className="flex-grow flex justify-between items-center">
           <div className="flex space-x-4">
