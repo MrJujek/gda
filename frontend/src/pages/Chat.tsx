@@ -4,6 +4,7 @@ import { useAuth } from "../contexts/AuthContext.tsx";
 import Logout from "../components/Logout";
 import Autocomplete from "../components/Autocomplete.tsx";
 import ThemeToggle from "../components/ThemeToggle.tsx";
+import logo from "../assets/GDA-logos.webp";
 
 type User = {
   id: number;
@@ -92,12 +93,23 @@ function Chat() {
 
   return (
     <div className="flex flex-col h-screen bg-gray-200">
-      <div className="p-4 bg-white shadow-md flex justify-start">
-        <Autocomplete placeholder="Search users" options={users} setSelected={setSelectedUser} currentUserId={userId!} />
-        <Autocomplete placeholder="Search groups" options={chats} setSelected={setSelectedGroup} />
-        <Logout></Logout>
-        <ThemeToggle setDarkMode={setDarkMode}></ThemeToggle>
+      {/* Navigation Menu */}
+      <div className="flex justify-between items-center p-4 bg-white shadow-md border-b-2 border-gray-300">
+        {/* Logo */}
+		<img src={logo} alt="Logo" className="h-8 mr-4" />        
+        {/* Search Components and Actions */}
+        <div className="flex-grow flex justify-between items-center">
+          <div className="flex space-x-4">
+            <Autocomplete placeholder="Search users" options={users} setSelected={setSelectedUser} currentUserId={userId!} />
+            <Autocomplete placeholder="Search groups" options={chats} setSelected={setSelectedGroup} />
+          </div>
+          
+          <div className="flex space-x-4">
+          <Logout />
+          <ThemeToggle setDarkMode={setDarkMode}></ThemeToggle>
+        </div>
       </div>
+	</div>
       <div className="flex h-screen bg-gray-200">
         <div className="w-64 bg-white p-4 shadow-lg">
           <h2 className="text-2xl font-bold mb-4">Czaty</h2>
