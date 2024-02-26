@@ -177,6 +177,34 @@ func UserChats(user_id uint32) ([]Chat, error) {
 	return chats, nil
 }
 
+func GetChat(userId uint32, chatUUID uuid.UUID) (Chat, error) {
+    var chat Chat
+	db, err := getDbConn()
+	if err != nil {
+		return chat, err 
+	}
+	defer db.Close()
+
+	var okInt int
+	err = db.QueryRowx(
+		"SELECT 1 FROM users_chats WHERE user_id = $1 AND chat_uuid = $2",
+		userId, chatUUID,
+	).Scan(&okInt)
+	if err != nil {
+		return chat, fmt.Errorf("Unauthorized") 
+	}
+
+	err = db.QueryRowx(
+		"SELECT * FROM chats WHERE chat_uuid = $1",
+		chatUUID,
+	).Scan(&chat)
+	if err != nil {
+		return chat, err 
+	}
+
+    return chat, nil
+}
+
 func UserHasAccessToChat(userId uint32, chatUUID uuid.UUID) bool {
 	db, err := getDbConn()
 	if err != nil {

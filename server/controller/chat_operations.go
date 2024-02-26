@@ -79,6 +79,7 @@ func newChat(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(http.StatusOK)
+	w.Write([]byte(chat_uuid.String()))
 }
 
 func chatList(w http.ResponseWriter, r *http.Request) {
@@ -105,7 +106,41 @@ func chatList(w http.ResponseWriter, r *http.Request) {
 	w.Write(body)
 }
 
-func GetMessages(w http.ResponseWriter, r *http.Request) {
+func getChat(w http.ResponseWriter, r *http.Request) {
+	ok, userId := isLoggedIn(r)
+	if !ok {
+		unauthorizedMessage(w)
+		return
+	}
+
+	chatUUIDStr := r.URL.Query().Get("chat-uuid")
+	if chatUUIDStr == "" {
+		http.Error(w, "Provide valid chat-uuid", http.StatusBadRequest)
+		return
+	}
+	chatUUID, err := uuid.Parse(chatUUIDStr)
+	if err != nil {
+		http.Error(w, "UUID you provided couldn't be parsed", http.StatusBadRequest)
+		return
+	}
+
+	chat, err := db.GetChat(userId, chatUUID)
+	if err != nil {
+		unauthorizedMessage(w)
+		return
+	}
+
+	data, err := json.Marshal(chat)
+	if err != nil {
+		http.Error(w, "We were unable to get your chat", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Add("Content-Type", "application/json")
+	w.Write(data)
+}
+
+func getMessages(w http.ResponseWriter, r *http.Request) {
 	var lastMessage int64 = 0
 	var err error
 
