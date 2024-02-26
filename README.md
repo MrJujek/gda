@@ -1,5 +1,9 @@
 # _i512
-Zapraszamy do zapoznania się z rozwiązaniem zadania problemowego przez zespół _i512 z Technikum Łączności nr. 14 w Krakowie. Wykonali: Paweł Pasternak, Julian Dworzycki i Jakub Owoc.
+
+Zapraszamy do zapoznania się z rozwiązaniem zadania problemowego przez zespół
+_i512 z Technikum Łączności nr. 14 w Krakowie.
+
+Wykonali: Paweł Pasternak, Julian Dworzycki i Jakub Owoc.
 
 # GDA
 
@@ -56,6 +60,38 @@ openssl req -x509 -newkey ec:<(openssl ecparam -name prime256v1) -keyout server.
 
 Jeżeli chcemy by jego długość była inna, należy zmienić 365 na oczekiwaną liczbe
 dni.
+
+
+## Kopia zapasowa, migracje, itp. 
+
+Wszystkie dane, na których operuje ta aplikacja znajdują się w folderach
+`config` (o ile korzystamy z https), `data`, `db_data` oraz w plikach 
+`docker-compose.yaml` i `.env` (o ile w ogóle go używamy). Kopiując to wszystko
+możemy przenieść naszą aplikację na dowolny inny system z dockerem lub stworzyć
+kopię zapasową. Aby uruchomić nasz serwer z tą konfiguracją, plikami, kwerendami 
+z bazy danych, wystarczy użyć poniższego polecenia, tak jak przy zwykłym starcie
+aplikacji.
+
+```sh
+docker compose up
+# lub aby uruchomiło się w tle: docker compose up -d
+```
+
+Jest też cyklicznie wykonywana kopia zapasowa do folderu `backup`. Są tam
+zapisywane stany bazy danych z każdego dnia oraz pliki i certyfikaty.
+W przypadku utraty danych w folderach `config`, `data` i `db_data` możemy się
+posłużyć poniższym poleceniem żeby przywrócić kopię z danego dnia.
+
+```sh
+docker exec gda-backup-1 /restore.sh <YYYY-MM-DD>
+```
+
+gdzie `YYYY-MM-DD` to następująco rok, miesiąc i dzień backup-u. Możemy też
+wykonać kopię na żądanie:
+
+```sh
+docker exec gda-backup-1 /backup.sh
+```
 
 ## Środowisko deweloperskie
 
