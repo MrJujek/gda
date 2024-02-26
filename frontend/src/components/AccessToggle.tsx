@@ -1,11 +1,11 @@
 import { useState } from 'react';
 
-function AccessToggle({ setDarkMode }: { setDarkMode: (darkMode: boolean) => void }) {
+function AccessToggle({ setBetterAccess }: { setBetterAccess: (betterAccess: boolean) => void }) {
   const [isChecked, setIsChecked] = useState(false);
 
   const handleCheckboxChange = () => {
     setIsChecked(!isChecked);
-    setDarkMode(!isChecked);
+    setBetterAccess(!isChecked);
   };
 
   return (

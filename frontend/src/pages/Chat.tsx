@@ -37,6 +37,7 @@ function Chat() {
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [selectedGroup, setSelectedGroup] = useState<Chat | null>(null);
   const [darkMode, setDarkMode] = useState(false); // State for dark mode toggle
+  const [betterAccess, setBetterAccess] = useState(false); // State for access toggle
   const [isUsersDropdownOpen, setIsUsersDropdownOpen] = useState(true);
   const [isGroupsDropdownOpen, setIsGroupsDropdownOpen] = useState(false);
 
@@ -125,7 +126,7 @@ function Chat() {
             <div className="flex space-x-4">
               <Logout />
               <ThemeToggle setDarkMode={setDarkMode}></ThemeToggle>
-  			<AccessToggle></AccessToggle>
+  			    <AccessToggle setBetterAccess={setBetterAccess}></AccessToggle>
         </div>
         </div>
       </div>
