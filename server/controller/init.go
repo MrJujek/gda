@@ -46,6 +46,7 @@ func InitRouter() {
 	dMux.HandleFunc("GET /api/session", checkSession)
 
 	dMux.HandleFunc("GET /api/users", userList)
+	dMux.HandleFunc("GET /api/users/photo", userPhoto)
 
 	dMux.HandleFunc("GET /api/my/salt", getSalt)
 	dMux.HandleFunc("GET /api/my/keys", getKeys)

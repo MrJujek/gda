@@ -8,11 +8,12 @@ import (
 )
 
 var (
-	url      string
-	bindUser string
-	bindPass string
-	basedn   string
-	filter   string
+	url       string
+	bindUser  string
+	bindPass  string
+	basedn    string
+	filter    string
+	imageAttr string
 )
 
 func getLdapConn() (*ldap.Conn, error) {
@@ -35,6 +36,7 @@ func InitLDAP() {
 	bindPass = u.EnvExit("LDAP_PASS")
 	basedn = u.EnvExit("LDAP_BASE_DN")
 	filter = u.EnvOr("LDAP_USER_FILTER", "(&(objectClass=inetOrgPerson)(uid=%username%))")
+	imageAttr = u.EnvOr("LDAP_IMAGE_ATTR", "jpegPhoto")
 
 	l, err := getLdapConn()
 	if err != nil {

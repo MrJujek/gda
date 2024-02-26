@@ -54,6 +54,14 @@ jak poniżej, o ile jesteśmy zalogowani.
 ]
 ```
 
+### GET /api/users/photo?user-id=\<integer>
+
+Takie zapytanie po podaniu właściwego `user-id` zwróci nam zdjęcie użytkownika
+znajdujące się na serwerze LDAP, lub poinformuje nas, że dany użytkownik nie
+posiada zdjęcia (status 404) lub nie istnieje (również status 404). Kiedy
+nie podamy lub podamy nie właściwy identyfikator użytkownika zostanie nam
+zwrócony status błędu i wiadomość opisująca co poszło nie tak.
+
 ## /api/chat
 
 Ten endpoint służy do tworzenia i korzystania z czatów. Jeżeli użytkownik nie
