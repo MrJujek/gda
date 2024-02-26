@@ -12,6 +12,7 @@ func GetUserListLDAP() ([]LdapUser, error) {
 	if err != nil {
 		return nil, err
 	}
+    defer l.Close()
 
 	re := regexp.MustCompile("%username%")
 	searchRequest := ldap.NewSearchRequest(
