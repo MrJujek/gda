@@ -1,4 +1,4 @@
-import React, { ReactNode, useContext, useEffect, useState } from "react";
+import React, { ReactNode, useContext, useState } from "react";
 
 interface User {
     status: string;
@@ -58,7 +58,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         if (response.ok) {
             setUser(await authenticate());
 
-            return { logged: true, url: "/chat" } as SignInData;
+            return { logged: true, url: response.url || "/chat" } as SignInData;
         }
         return { logged: false, message: "Authentication failed" } as SignInData;
     }

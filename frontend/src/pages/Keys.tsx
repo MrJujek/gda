@@ -14,8 +14,6 @@ function Keys() {
     const pass = sessionStorage.getItem("pass");
 
     if (pass == null) {
-        console.error("no password in session storage -> handle it");
-
         navigate("/signin");
 
         return;
@@ -123,8 +121,7 @@ function Keys() {
     }, []);
 
     async function sendKeys() {
-        sessionStorage.removeItem("pass");
-        const res = fetch("/api/my/keys", {
+        fetch("/api/my/keys", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -136,9 +133,7 @@ function Keys() {
             })
         })
 
-        console.log(res);
-
-        navigate("/chat");
+        navigate("/");
     }
 
     return (
