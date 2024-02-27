@@ -104,124 +104,124 @@ function Chat() {
 	}, []);
 
 	return (
-			<div className="flex flex-col h-screen bg-gray-200 dark:bg-gray-800">
-				<div className="flex justify-between items-center p-4 bg-white shadow-md border-b-2 border-gray-300 dark:bg-gray-800">
-					<img src={logo} alt="Logo" className="h-8 mr-4" />
+		<div className="flex flex-col h-screen bg-gray-200 dark:bg-gray-800">
+			<div className="flex justify-between items-center p-4 bg-white shadow-md border-b-2 border-gray-300 dark:bg-gray-800">
+				<img src={logo} alt="Logo" className="h-8 mr-4" />
 
-					<div className="flex-grow flex justify-between items-center">
-						<div className="flex space-x-4">
-							<UserAutocomplete
-								placeholder="Search users"
-								options={users}
-								setSelected={setSelectedUser}
-								currentUserId={userId!}
-							/>
-							<GroupAutocomplete
-								placeholder="Search groups"
-								options={chats}
-								setSelected={setSelectedGroup}
-							/>
-						</div>
-
-						<div className="flex space-x-4">
-							<Logout />
-							<ThemeToggle></ThemeToggle>
-							<AccessToggle setBetterAccess={setBetterAccess}></AccessToggle>
-						</div>
-					</div>
-				</div>
-				<div className="flex h-screen bg-gray-200 dark:bg-gray-800">
-					<div className="w-64 bg-white p-4 shadow-lg dark:bg-gray-800">
-						<h2 className="text-2xl font-bold mb-4">Czaty</h2>
-
-						{users && (
-							<div className="mb-2">
-								<button
-									className="w-full text-left flex justify-between items-center"
-									onClick={() => setIsUsersDropdownOpen(!isUsersDropdownOpen)}
-								>
-									Użytkownicy
-									<svg
-										className={`w-4 h-4 transition-transform ${isUsersDropdownOpen ? "rotate-180" : ""}`}
-										xmlns="http://www.w3.org/2000/svg"
-										viewBox="0 0 20 20"
-										fill="currentColor"
-									>
-										<path
-											fillRule="evenodd"
-											d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-											clipRule="evenodd"
-										/>
-									</svg>
-								</button>
-								{isUsersDropdownOpen && (
-									<div className="mt-2" key={"users"}>
-										{users &&
-											users.map((user) => (
-												<div
-													key={user.id}
-													className="flex items-center px-4 py-2 hover:bg-gray-100 cursor-pointer"
-													onClick={() => {
-														setSelectedUser(user);
-													}}
-												>
-													<StatusIcon
-														active={
-															users.find((user1) => user1.CommonName == user.CommonName)
-																?.Active || false
-														}
-													/>
-													<span className="ml-2">{user.CommonName}</span>
-												</div>
-											))}
-									</div>
-								)}
-							</div>
-						)}
-
-						{chats && (
-							<div className="mb-2">
-								<button
-									className="w-full text-left flex justify-between items-center"
-									onClick={() => setIsGroupsDropdownOpen(!isGroupsDropdownOpen)}
-								>
-									Grupy
-									<svg
-										className={`w-4 h-4 transition-transform ${isGroupsDropdownOpen ? "rotate-180" : ""}`}
-										xmlns="http://www.w3.org/2000/svg"
-										viewBox="0 0 20 20"
-										fill="currentColor"
-									>
-										<path
-											fillRule="evenodd"
-											d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-											clipRule="evenodd"
-										/>
-									</svg>
-								</button>
-								{isGroupsDropdownOpen && (
-									<div className="mt-2" key={"groups"}>
-										{chats &&
-											chats.map((chat) => (
-												<div
-													key={chat.ChatUUI}
-													className="p-2 hover:bg-gray-100 cursor-pointer"
-													onClick={() => {
-														setSelectedGroup(chat);
-													}}
-												>
-													{chat.GroupName.String}
-												</div>
-											))}
-									</div>
-								)}
-							</div>
-						)}
+				<div className="flex-grow flex justify-between items-center">
+					<div className="flex space-x-4">
+						<UserAutocomplete
+							placeholder="Search users"
+							options={users}
+							setSelected={setSelectedUser}
+							currentUserId={userId!}
+						/>
+						<GroupAutocomplete placeholder="Search groups" options={chats} setSelected={setSelectedGroup} />
 					</div>
 
-					<ChatComponent />
+					<div className="flex space-x-4">
+						<Logout />
+						<ThemeToggle></ThemeToggle>
+						<AccessToggle setBetterAccess={setBetterAccess}></AccessToggle>
+					</div>
 				</div>
 			</div>
+			<div className="flex h-screen bg-gray-200 dark:bg-gray-800 ">
+				<div className="w-64 bg-white p-4 shadow-lg border-r border-b-2 border-gray-300 dark:bg-gray-800 ">
+					<h2 className="text-2xl font-bold mb-4">Czaty</h2>
+
+					{users && (
+						<div className="mb-2">
+							<button
+								className="w-full text-left flex justify-between items-center"
+								onClick={() => setIsUsersDropdownOpen(!isUsersDropdownOpen)}
+							>
+								Użytkownicy
+								<svg
+									className={`w-4 h-4 transition-transform ${
+										isUsersDropdownOpen ? "rotate-180" : ""
+									}`}
+									xmlns="http://www.w3.org/2000/svg"
+									viewBox="0 0 20 20"
+									fill="currentColor"
+								>
+									<path
+										fillRule="evenodd"
+										d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+										clipRule="evenodd"
+									/>
+								</svg>
+							</button>
+							{isUsersDropdownOpen && (
+								<div className="mt-2" key={"users"}>
+									{users &&
+										users.map((user) => (
+											<div
+												key={user.id}
+												className="flex items-center px-4 py-2 hover:bg-gray-100 cursor-pointer"
+												onClick={() => {
+													setSelectedUser(user);
+												}}
+											>
+												<StatusIcon
+													active={
+														users.find((user1) => user1.CommonName == user.CommonName)
+															?.Active || false
+													}
+												/>
+												<span className="ml-2">{user.CommonName}</span>
+											</div>
+										))}
+								</div>
+							)}
+						</div>
+					)}
+
+					{chats && (
+						<div className="mb-2">
+							<button
+								className="w-full text-left flex justify-between items-center"
+								onClick={() => setIsGroupsDropdownOpen(!isGroupsDropdownOpen)}
+							>
+								Grupy
+								<svg
+									className={`w-4 h-4 transition-transform ${
+										isGroupsDropdownOpen ? "rotate-180" : ""
+									}`}
+									xmlns="http://www.w3.org/2000/svg"
+									viewBox="0 0 20 20"
+									fill="currentColor"
+								>
+									<path
+										fillRule="evenodd"
+										d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+										clipRule="evenodd"
+									/>
+								</svg>
+							</button>
+							{isGroupsDropdownOpen && (
+								<div className="mt-2" key={"groups"}>
+									{chats &&
+										chats.map((chat) => (
+											<div
+												key={chat.ChatUUI}
+												className="p-2 hover:bg-gray-100 cursor-pointer"
+												onClick={() => {
+													setSelectedGroup(chat);
+												}}
+											>
+												{chat.GroupName.String}
+											</div>
+										))}
+								</div>
+							)}
+						</div>
+					)}
+				</div>
+
+				<ChatComponent />
+			</div>
+		</div>
 	);
 }
 

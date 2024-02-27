@@ -7,8 +7,9 @@ interface Message {
 
 function ChatComponent() {
 	const [messages, setMessages] = useState<Message[]>([]);
-	const [inputValue, setInputValue] = useState("");
-	const [emojiPickerOpen, setEmojiPickerOpen] = useState(false);
+	const [inputValue, setInputValue] = useState<string>("");
+	const [emojiPickerOpen, setEmojiPickerOpen] = useState<boolean>(false);
+
 	const fileInputRef = useRef<HTMLInputElement>(null);
 
 	useEffect(() => {
@@ -25,17 +26,17 @@ function ChatComponent() {
 
 	const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
-		// Here you would handle sending the message through the WebSocket
+		// Handle form submission
 		console.log(inputValue);
 		setInputValue(""); // Clear the input after sending the message
 	};
 
-	const onEmojiClick = (event, emojiObject) => {
+	const onEmojiClick = (emojiObject: { emoji: string }) => {
 		setInputValue((prevInputValue) => prevInputValue + emojiObject.emoji);
 	};
 
 	const handleFileButtonClick = () => {
-		fileInputRef.current.click();
+		fileInputRef.current!.click();
 	};
 
 	const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -72,16 +73,17 @@ function ChatComponent() {
 					😊{" "}
 				</button>
 				<textarea
-					value={inputValue}
-					onChange={handleInputChange}
-					className="flex-grow mx-2 resize-none rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+					className="flex-grow mx-2 resize-none rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 w-full"
 					rows={1}
-					placeholder="Type your message here..."
+					placeholder="Aa"
 					style={{ minWidth: "0" }}
 				></textarea>
-				<button type="submit" className="px-4 py-2 bg-blue-500 text-white rounded-md">
-					{" "}
-					Send{" "}
+				<button
+					type="submit"
+					className="text-white bg-cornflower-blue border border-red-500 px-6 py-2 rounded-lg hover:bg-dark-cornflower-blue hover:border-red-600 focus:outline-none focus:ring-2 focus:ring-red-200 focus:ring-opacity-50 transition duration-300 ease-in-out"
+					style={{ backgroundColor: "#6495ed", borderColor: "#ffffff" }}
+				>
+					Wyślij
 				</button>
 			</form>
 			{emojiPickerOpen && (
