@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from "react";
-import Picker from "emoji-picker-react";
 import { type Chat, type User } from "../pages/Chat";
+import { EmojiPicker } from "./EmojiPicker";
 
 interface Message {
 	text: string;
