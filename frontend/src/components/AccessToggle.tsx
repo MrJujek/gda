@@ -1,11 +1,14 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
+import { AccessContext } from "../providers/AccessProvider";
 
-function AccessToggle({ setBetterAccess }: { setBetterAccess: (betterAccess: boolean) => void }) {
+function AccessToggle() {
 	const [isChecked, setIsChecked] = useState(false);
+
+	const { toggleAccess } = useContext(AccessContext);
 
 	const handleCheckboxChange = () => {
 		setIsChecked(!isChecked);
-		setBetterAccess(!isChecked);
+		toggleAccess();
 	};
 
 	return (

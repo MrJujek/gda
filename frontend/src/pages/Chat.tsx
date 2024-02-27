@@ -118,7 +118,7 @@ function Chat() {
 					<div className="flex space-x-4">
 						<Logout />
 						<ThemeToggle></ThemeToggle>
-						<AccessToggle setBetterAccess={setBetterAccess}></AccessToggle>
+						<AccessToggle></AccessToggle>
 					</div>
 				</div>
 			</div>
