@@ -2,12 +2,12 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext.tsx";
 import Logout from "../components/Logout";
+import Autocomplete from "../components/Autocomplete";
 import ThemeToggle from "../components/ThemeToggle.tsx";
 import logo from "../assets/logo.svg";
 import AccessToggle from "../components/AccessToggle.tsx";
 import ChatComponent from "../components/ChatComponent.tsx";
 import StatusIcon from "../components/StatusIcon";
-import Autocomplete from "../components/Autocomplete.tsx";
 
 export type User = {
 	ID: number;
@@ -35,7 +35,7 @@ function Chat() {
 	const [users, setUsers] = useState<User[]>([]);
 	const [chats, setChats] = useState<Chat[]>([]);
 	const [userId, setUserId] = useState<number>();
-	const [selectedOption, setSelectedOption] = useState<User | Chat | null>(null);
+	const [selectedOption, setSelectedOption] = useState<User |Chat | null>(null);
 	const [betterAccess, setBetterAccess] = useState(false);
 	const [isUsersDropdownOpen, setIsUsersDropdownOpen] = useState(true);
 	const [isGroupsDropdownOpen, setIsGroupsDropdownOpen] = useState(false);
@@ -49,36 +49,35 @@ function Chat() {
 		})();
 	}, [getUser, navigate]);
 
-	useEffect(() => {
-		console.log("chats", chats);
-	}, [chats]);
+
 
 	useEffect(() => {
 		console.log("creating chat - selectedOption", selectedOption);
 
-		(async () => {
-			if (selectedUser) {
-				const response = await fetch("/api/chat", {
-					method: "POST",
-					body: JSON.stringify({ UserIds: [selectedUser.ID] }),
-				});
-				const chatId = await response.text();
-
-				console.log("response1", response);
-			}
-		})();
-
 		// (async () => {
-		// 	const response = await fetch("/api/my/chats", {
-		// 		method: "GET",
-		// 	});
+		// 	if (selectedUser) {
+		// 		const response = await fetch("/api/chat", {
+		// 			method: "POST",
+		// 			body: JSON.stringify({ UserIds: [selectedUser.ID] }),
+		// 		});
+		// 		const chatId = await response.text();
 
-		// 	const data = await response.json();
-
-		// 	console.log("data", data);
-
-		// 	setChats(data);
+		// 		const messages = await fetch(`/api/chat/messages?chat=${chatId}`);
+		// 		console.log(await messages.json());
+		// 	}
 		// })();
+
+		(async () => {
+			const response = await fetch("/api/my/chats", {
+				method: "GET",
+			});
+
+			const data = await response.json();
+
+			console.log("data", data);
+
+			setChats(data);
+		})();
 	}, [selectedOption]);
 
 	useEffect(() => {
@@ -108,10 +107,10 @@ function Chat() {
 				<img src={logo} alt="Logo" className="h-8 mr-4" />
 
 				<div className="flex-grow flex justify-between items-center">
-					<div className="flex space-x-4">		
-						<Autocomplete
+					<div className="flex space-x-4">
+						<Autocomplete 
 							currentUserId={userId!}
-							options={(chats ? [...users, ...chats] : [...users]) as (User|Chat)[]}
+							options={(chats ? [...users, ...chats] : [...users]) as (User | Chat)[]}
 							setSelectedOption={setSelectedOption}
 						/>
 					</div>

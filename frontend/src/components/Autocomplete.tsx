@@ -1,24 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import StatusIcon from "./StatusIcon";
-
-type User = {
-	id: number;
-	CommonName: string;
-	DisplayName: {
-		String: string;
-		Valid: boolean;
-	};
-	Active: boolean;
-};
-type Chat = {
-	ChatUUI: string;
-	Encrypted: boolean;
-	Group: boolean;
-	GroupName: {
-		String: string;
-		Valid: boolean;
-	};
-};
+import { User, Chat } from "../pages/Chat";
 
 interface AutocompleteProps {
 	options: (User|Chat)[];
