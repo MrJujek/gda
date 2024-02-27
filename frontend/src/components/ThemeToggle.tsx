@@ -20,13 +20,7 @@ function ThemeToggle() {
 					style={{ backgroundColor: isChecked ? "#7a7a7a" : "#ECBD18" }}
 				>
 					<span
-						className={`flex h-9 w-9 items-center justify-center rounded-full`}
-						style={{
-							transition: "all 0.3s ease",
-							boxShadow: "0 0 0 2px white",
-							opacity: "1",
-							backgroundColor: isChecked ? "transparent" : "transparent",
-						}}
+						className={`flex h-9 w-9 items-center justify-center rounded-full duration-100 transition shadow-2px shadow-white dark:shadow-gray-800`}
 					>
 						{isChecked ? (
 							// SVG for moon icon with white fill
@@ -34,7 +28,7 @@ function ThemeToggle() {
 								width="16"
 								height="16"
 								viewBox="0 0 16 16"
-								fill="white"
+								className="duration-100 transition fill-white dark:fill-gray-800"
 								xmlns="http://www.w3.org/2000/svg"
 							>
 								<path
@@ -49,16 +43,16 @@ function ThemeToggle() {
 								width="16"
 								height="16"
 								viewBox="0 0 16 16"
-								fill="none"
+								className="duration-100 transition fill-white dark:fill-gray-800"
 								xmlns="http://www.w3.org/2000/svg"
 							>
-								<circle cx="8" cy="8" r="4" fill="white" />
+								<circle cx="8" cy="8" r="4" />
 								<line
 									x1="8"
 									y1="0"
 									x2="8"
 									y2="2"
-									stroke="white"
+									className="stroke-white dark:stroke-gray-800"
 									strokeWidth="2"
 									strokeLinecap="round"
 								/>
@@ -67,7 +61,7 @@ function ThemeToggle() {
 									y1="14"
 									x2="8"
 									y2="16"
-									stroke="white"
+									className="stroke-white dark:stroke-gray-800"
 									strokeWidth="2"
 									strokeLinecap="round"
 								/>
@@ -76,7 +70,7 @@ function ThemeToggle() {
 									y1="8"
 									x2="2"
 									y2="8"
-									stroke="white"
+									className="stroke-white dark:stroke-gray-800"
 									strokeWidth="2"
 									strokeLinecap="round"
 								/>
@@ -85,7 +79,7 @@ function ThemeToggle() {
 									y1="8"
 									x2="16"
 									y2="8"
-									stroke="white"
+									className="stroke-white dark:stroke-gray-800"
 									strokeWidth="2"
 									strokeLinecap="round"
 								/>
@@ -94,7 +88,7 @@ function ThemeToggle() {
 									y1="11.6569"
 									x2="13.4142"
 									y2="13.4142"
-									stroke="white"
+									className="stroke-white dark:stroke-gray-800"
 									strokeWidth="2"
 									strokeLinecap="round"
 								/>
@@ -103,7 +97,7 @@ function ThemeToggle() {
 									y1="2.58579"
 									x2="4.34315"
 									y2="4.34315"
-									stroke="white"
+									className="stroke-white dark:stroke-gray-800"
 									strokeWidth="2"
 									strokeLinecap="round"
 								/>
@@ -112,7 +106,7 @@ function ThemeToggle() {
 									y1="4.34315"
 									x2="13.4142"
 									y2="2.58579"
-									stroke="white"
+									className="stroke-white dark:stroke-gray-800"
 									strokeWidth="2"
 									strokeLinecap="round"
 								/>
@@ -121,7 +115,7 @@ function ThemeToggle() {
 									y1="13.4142"
 									x2="4.34315"
 									y2="11.6569"
-									stroke="white"
+									className="stroke-white dark:stroke-gray-800"
 									strokeWidth="2"
 									strokeLinecap="round"
 								/>

@@ -17,18 +17,12 @@ function AccessToggle({ setBetterAccess }: { setBetterAccess: (betterAccess: boo
 					style={{ backgroundColor: isChecked ? "#7a7a7a" : "#ECBD18" }}
 				>
 					<span
-						className={`flex h-9 w-9 items-center justify-center rounded-full`}
-						style={{
-							transition: "all 0.3s ease",
-							boxShadow: "0 0 0 2px white",
-							opacity: "1",
-							backgroundColor: isChecked ? "transparent" : "transparent",
-						}}
+						className={`flex h-9 w-9 items-center justify-center rounded-full duration-100 transition shadow-2px shadow-white dark:shadow-gray-800`}
 					>
 						{isChecked ? (
-							<span className="text-white text-xl">A</span>
+							<span className="text-white text-xl dark:text-gray-800 select-none">A</span>
 						) : (
-							<span className="text-white text-sm">a</span>
+							<span className="text-white text-xl dark:text-gray-800 select-none">a</span>
 						)}
 					</span>
 				</div>
