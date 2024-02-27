@@ -1,15 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import StatusIcon from "./StatusIcon";
-
-type User = {
-	id: number;
-	CommonName: string;
-	DisplayName: {
-		String: string;
-		Valid: boolean;
-	};
-	Active: boolean;
-};
+import { User } from "../pages/Chat";
 
 interface AutocompleteProps {
 	placeholder: string;
@@ -27,7 +18,7 @@ function UserAutocomplete({ placeholder, options, setSelected, currentUserId }: 
 		if (currentUserId) {
 			setFilteredOptions(
 				options
-					.filter((option) => option.id != currentUserId)
+					.filter((option) => option.ID != currentUserId)
 					.map((option) => option.CommonName || option.DisplayName.String),
 			);
 		} else {
@@ -50,7 +41,7 @@ function UserAutocomplete({ placeholder, options, setSelected, currentUserId }: 
 		setInputValue(value);
 
 		const filtered = options
-			.filter((option) => option.id != currentUserId)
+			.filter((option) => option.ID != currentUserId)
 			.filter((option) => option.CommonName.toLowerCase().includes(value.toLowerCase()));
 		setFilteredOptions(filtered.map((option) => option.CommonName || option.DisplayName.String));
 	};

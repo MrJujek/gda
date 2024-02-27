@@ -8,15 +8,18 @@ function SignIn() {
 	const [pass, setPass] = useState<string>("");
 	const [error, setError] = useState<string>("");
 
-	const { user, signIn } = useAuth();
+	const { getUser, signIn } = useAuth();
 
 	const navigate = useNavigate();
 
 	useEffect(() => {
-		if (user) {
-			navigate("/chat");
-		}
-	}, [user, navigate]);
+		(async () => {
+			const user = await getUser();
+			if (user) {
+				navigate("/chat");
+			}
+		})();
+	}, [navigate, getUser]);
 
 	const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
 		setName(e.currentTarget.value);
