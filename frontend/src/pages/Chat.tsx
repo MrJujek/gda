@@ -42,9 +42,52 @@ function Chat() {
 	const [selectedChat, setSelectedChat] = useState<Chat | null>(null);
 	const [selectedChatId, setSelectedChatId] = useState<string | null>(null);
 	const [isUsersDropdownOpen, setIsUsersDropdownOpen] = useState(true);
-	const [isGroupsDropdownOpen, setIsGroupsDropdownOpen] = useState(false);
+	const [isGroupsDropdownOpen, setIsGroupsDropdownOpen] = useState(true);
 	const [isChatVisible, setIsChatVisible] = useState(false);
 	const [isLogoutVisible, setIsLogoutVisible] = useState(false);
+	const [showCreateDropdown, setShowCreateDropdown] = useState(false);
+	const [selectedCreateUsers, setSelectedCreateUsers] = useState<User[]>([]);
+	const [groupName, setGroupName] = useState<string>('');
+
+	const toggleCreateDropdown = () => {
+		setShowCreateDropdown(!showCreateDropdown);
+	};
+
+	const handleUserSelection = (user: User) => {
+		if (selectedCreateUsers.some(u => u.ID === user.ID)) {
+			setSelectedCreateUsers(selectedCreateUsers.filter(u => u.ID !== user.ID));
+		} else {
+			setSelectedCreateUsers([...selectedCreateUsers, user]);
+		}
+	};
+
+	useEffect(() => {
+		console.log("chats",chats);
+	}, [chats]);
+		
+
+	const handleCreateChat = () => {
+		(async () => {
+			console.log("selected ids:",selectedCreateUsers.map(u => u.ID));
+			
+			const response = await fetch("/api/chat", {
+				method: "POST",
+				body: JSON.stringify({ UserIds: selectedCreateUsers.map(u => u.ID), Group: true, GroupName: groupName}),
+			});
+
+			console.log(response);
+			
+
+			const chatId = await response.text();
+
+			console.log(chatId);
+			
+
+			setSelectedChatId(chatId);
+			setSelectedChat(chats.find(chat => chat.ChatUUI === chatId)!);
+		})();
+
+	};
 
 	const toggleChat = () => {
 		setIsChatVisible(!isChatVisible);
@@ -125,22 +168,54 @@ function Chat() {
 								}
 							}}
 						/>
-						<button
-							className="p-2 dark:text-black  text-left flex justify-between items-center hover:bg-gray-100 cursor-pointer dark:text-white"
-							onClick={() => {
-								/* Handle click event for new action */
-							}}
-						>
-							<svg
-								className="w-6 h-6"
-								xmlns="http://www.w3.org/2000/svg"
-								fill="none"
-								viewBox="0 0 24 24"
-								stroke="currentColor"
+						<div>
+							<button
+								className="p-2 dark:text-black  text-left flex justify-between items-center hover:bg-gray-100 cursor-pointer dark:text-white rounded"
+								onClick={() => {
+									toggleCreateDropdown();
+								}}
 							>
-								<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v12m6-6H6" />
-							</svg>
-						</button>
+								<svg
+									className="w-6 h-6"
+									xmlns="http://www.w3.org/2000/svg"
+									fill="none"
+									viewBox="0 0 24 24"
+									stroke="currentColor"
+								>
+									<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v12m6-6H6" />
+								</svg>
+							</button>
+							{showCreateDropdown && (
+								<div className="absolute mt-2 bg-white rounded border border-gray-300 shadow-lg z-10">
+								{users.map(user => (
+									<label key={user.ID} className="block p-2 hover:bg-gray-100 cursor-pointer">
+									<input
+										type="checkbox"
+										className="mr-2"
+										checked={user.ID === userId || selectedCreateUsers.some(u => u.ID === user.ID)}
+										onChange={() => handleUserSelection(user)}
+										disabled={user.ID === userId}
+									/>
+									{user.CommonName}
+									</label>
+								))}
+								<input
+									type="text"
+									className="w-full p-2 mt-2 border border-gray-300 rounded"
+									placeholder="Nazwa grupy"
+									value={groupName}
+									onChange={e => setGroupName(e.target.value)}
+								/>
+								<button
+									className="w-full p-2 mt-2 bg-blue-500 text-white hover:bg-blue-600 rounded p-1"
+									onClick={handleCreateChat}
+								>
+									Create Chat
+								</button>
+								</div>
+							)}
+						</div>
+						
 					</div>
 
 					<div className="flex space-x-4">

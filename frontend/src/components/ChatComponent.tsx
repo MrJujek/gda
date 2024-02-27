@@ -209,9 +209,17 @@ function ChatComponent(props: Props) {
 				<button
 					type="button"
 					onClick={handleFileButtonClick}
-					className="px-4 py-2 bg-gray-300 border-r border-gray-200 dark:bg-gray-300"
+					className="px-4 py-2 bg-gray-300 border-r border-gray-200 dark:bg-gray-300 rounded"
 				>
-					{" + "}
+					<svg
+								className="w-6 h-6"
+								xmlns="http://www.w3.org/2000/svg"
+								fill="none"
+								viewBox="0 0 24 24"
+								stroke="#000"
+							>
+								<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v12m6-6H6" />
+							</svg>
 				</button>
 
 				<button
@@ -220,7 +228,7 @@ function ChatComponent(props: Props) {
 						setEmojiPickerOpen((prevOpen) => !prevOpen);
 						console.log("emojiPickerOpen", emojiPickerOpen);
 					}}
-					className="px-4 py-2 bg-gray-300 border-l border-gray-200 m-1 dark:bg-gray-300"
+					className="px-4 py-2 bg-gray-300 border-l border-gray-200 m-1 dark:bg-gray-300 rounded"
 				>
 					{" 😊 "}
 				</button>
