@@ -205,59 +205,61 @@ function ChatComponent(props: Props) {
 				</ul>
 			</div>
 
-			<form
-				onSubmit={handleSubmit}
-				className="sticky bottom-0 flex items-center p-2 bg-white border-t w-full dark:bg-gray-500"
-			>
-				<button
-					type="button"
-					onClick={handleFileButtonClick}
-					className="px-4 py-2 bg-gray-300 border-r border-gray-200 dark:bg-gray-300"
+			{props.chatId && (
+				<form
+					onSubmit={handleSubmit}
+					className="sticky bottom-0 flex items-center p-2 bg-white border-t w-full dark:bg-gray-500"
 				>
-					{" + "}
-				</button>
+					<button
+						type="button"
+						onClick={handleFileButtonClick}
+						className="px-4 py-2 bg-gray-300 border-r border-gray-200 dark:bg-gray-300"
+					>
+						{" + "}
+					</button>
 
-				<button
-					type="button"
-					onClick={() => {
-						setEmojiPickerOpen((prevOpen) => !prevOpen);
-						console.log("emojiPickerOpen", emojiPickerOpen);
-					}}
-					className="px-4 py-2 bg-gray-300 border-l border-gray-200 m-1 dark:bg-gray-300"
-				>
-					{" 😊 "}
-				</button>
+					<button
+						type="button"
+						onClick={() => {
+							setEmojiPickerOpen((prevOpen) => !prevOpen);
+							console.log("emojiPickerOpen", emojiPickerOpen);
+						}}
+						className="px-4 py-2 bg-gray-300 border-l border-gray-200 m-1 dark:bg-gray-300"
+					>
+						{" 😊 "}
+					</button>
 
-				{emojiPickerOpen && <EmojiPicker onEmojiClick={onEmojiClick} />}
+					{emojiPickerOpen && <EmojiPicker onEmojiClick={onEmojiClick} />}
 
-				{selectedFile?.type.startsWith("image") && (
-					<img src={URL.createObjectURL(selectedFile)} alt="preview" className="w-10 h-10 rounded" />
-				)}
+					{selectedFile?.type.startsWith("image") && (
+						<img src={URL.createObjectURL(selectedFile)} alt="preview" className="w-10 h-10 rounded" />
+					)}
 
-				<TextareaAutosize
-					className="flex-grow mx-2 resize-none rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 w-full dark:bg-gray-500"
-					rows={1}
-					placeholder="Aa"
-					style={{ minWidth: "0" }}
-					onChange={(e) => setInputValue(e.target.value)}
-					maxRows={5}
-					value={inputValue}
-					onKeyDown={(e) => {
-						if (e.key === "Enter" && !e.shiftKey) {
-							e.preventDefault();
-							handleSubmit();
-						}
-					}}
-				/>
+					<TextareaAutosize
+						className="flex-grow mx-2 resize-none rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 w-full dark:bg-gray-500"
+						rows={1}
+						placeholder="Aa"
+						style={{ minWidth: "0" }}
+						onChange={(e) => setInputValue(e.target.value)}
+						maxRows={5}
+						value={inputValue}
+						onKeyDown={(e) => {
+							if (e.key === "Enter" && !e.shiftKey) {
+								e.preventDefault();
+								handleSubmit();
+							}
+						}}
+					/>
 
-				<button
-					type="submit"
-					className="text-white bg-cornflower-blue border border-red-500 px-6 py-2 rounded-lg hover:bg-dark-cornflower-blue hover:border-red-600 focus:outline-none focus:ring-2 focus:ring-red-200 focus:ring-opacity-50 transition duration-300 ease-in-out"
-					style={{ backgroundColor: "#6495ed", borderColor: "#ffffff" }}
-				>
-					Wyślij
-				</button>
-			</form>
+					<button
+						type="submit"
+						className="text-white bg-cornflower-blue border border-red-500 px-6 py-2 rounded-lg hover:bg-dark-cornflower-blue hover:border-red-600 focus:outline-none focus:ring-2 focus:ring-red-200 focus:ring-opacity-50 transition duration-300 ease-in-out"
+						style={{ backgroundColor: "#6495ed", borderColor: "#ffffff" }}
+					>
+						Wyślij
+					</button>
+				</form>
+			)}
 
 			<input type="file" ref={fileInputRef} className="hidden" onChange={handleFileChange} />
 		</div>
