@@ -1,11 +1,11 @@
 package controller
 
 import (
+	"github.com/rs/cors"
 	"log"
 	"net/http"
 	"os"
 	u "server/util"
-    "github.com/rs/cors"
 )
 
 var (
@@ -38,7 +38,7 @@ func InitRouter() {
 		}
 	}
 
-    c := cors.AllowAll()
+	c := cors.AllowAll()
 	dMux := http.NewServeMux()
 
 	dMux.Handle("GET /", http.FileServer(http.Dir("./public")))
@@ -76,12 +76,16 @@ func InitRouter() {
 			Addr: ":" + port,
 			Handler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				// can be done better for sure but good enough for now
-				http.Redirect(w, r, "https://"+r.Host+r.URL.String(), http.StatusMovedPermanently)
+				if r.URL.String() == "/api/chat" {
+					websocketChat(w, r)
+				} else {
+					http.Redirect(w, r, "https://"+r.Host+r.URL.String(), http.StatusMovedPermanently)
+				}
 			}),
 		}
 
 		log.Print("Server listening on port " + port)
-        log.Fatal(server.ListenAndServe())
+		log.Fatal(server.ListenAndServe())
 	} else {
 		server := &http.Server{
 			Addr:    ":" + port,

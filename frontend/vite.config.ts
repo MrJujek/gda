@@ -5,17 +5,28 @@ import dotenv from 'dotenv'
 
 dotenv.config()
 
-let httpsConfig: {key: File, cert: File};
-let apiHost = "http://localhost"
+const apiHost = "localhost"
 const keyPath = process.env.GDA_KEY_PATH || './config/server.key'
 const certPath = process.env.GDA_CERT_PATH || './config/server.crt'
+
+let httpsConfig: { key: File, cert: File };
+let proxyConfig = {
+	"/api": {
+		target: "http://" + apiHost,
+		secure: false
+	},
+	"/api/chat": {
+		ws: true,
+		target: "ws://" + apiHost,
+	}
+}
 
 if (process.env.GDA_SECURE_SERVER == 1) {
 	httpsConfig = {
 		key: readFileSync(keyPath),
 		cert: readFileSync(certPath)
 	}
-	apiHost = "https://localhost"
+	proxyConfig["/api"].target = "https://" + apiHost
 }
 
 // https://vitejs.dev/config/
@@ -24,12 +35,7 @@ export default defineConfig({
 	server: {
 		port: 3000,
 		cors: false,
-		proxy: {
-			"/api": {
-				target: apiHost,
-				secure: false // becouse of self signed certs
-			}
-		},
+		proxy: proxyConfig,
 		https: httpsConfig
 	},
 });
