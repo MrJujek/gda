@@ -1,5 +1,4 @@
 import React, { useState, useRef, useEffect } from "react";
-import StatusIcon from "./StatusIcon";
 import { User, Chat } from "../pages/Chat";
 
 interface AutocompleteProps {
@@ -92,18 +91,27 @@ function Autocomplete({ options, setSelectedOption, currentUserId }: Autocomplet
 						}).filter((item): item is string => item !== undefined));
 					}
 				}}
+				onKeyDown={(e) => {
+					if (e.key != "Enter") return
+					setInputValue("")
+
+					if (filteredOptions.length == 0) return 
+
+					// TODO open chat for user
+					console.log(filteredOptions[0])
+				}}
 				onChange={handleInputChange}
-				className="border border-gray-300 rounded-md px-4 py-2 w-full"
+				className="text-lg dark:bg-gray-800 dark:text-white border border-gray-500 placeholder:text-gray-500 rounded-md px-4 py-2 w-full duration-100 transition"
 				placeholder="Wyszukaj..."
 				disabled={options == null}
 			/>
 			{filteredOptions.length > 0 && (
-				<ul className="absolute z-10 left-0 mt-1 w-full bg-white border border-gray-300 rounded-md shadow-md">
+				<ul className="absolute z-10 left-0 mt-1 w-full bg-white dark:bg-gray-800 border border-gray-500 rounded-md shadow-md">
 					{filteredOptions &&
 						filteredOptions.map((option, index) => (
 							<li
 								key={index}
-								className="flex items-center px-4 py-2 cursor-pointer hover:bg-gray-100"
+								className="flex dark:text-white items-center px-4 py-2 cursor-pointer hover:bg-gray-100 hover:dark:bg-gray-700"
 								onClick={() => handleOptionClick(option)}
 							>
 								<span>{option}</span>
