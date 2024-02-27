@@ -55,6 +55,8 @@ function ChatComponent(props: Props) {
 	const fileInputRef = useRef<HTMLInputElement>(null);
 	const socketRef = useRef<WebSocket | null>(null);
 	const messagesContainerRef = useRef<HTMLDivElement>(null);
+	const [selectedFile, setSelectedFile] = useState<File | null>(null);
+	const [fileUUID, setFileUUID] = useState<string | null>(null);
 
 	function onReceiveMessage(e: MessageEvent) {
 		const res = JSON.parse(e.data) as ChatResponse;
@@ -102,6 +104,22 @@ function ChatComponent(props: Props) {
 	}, [props.chat, props.user]);
 
 	const handleSubmit = (event?: React.FormEvent<HTMLFormElement>) => {
+		(async () => {
+			if (selectedFile && props.chatId) {
+				const formData = new FormData();
+				formData.append("file", selectedFile);
+				formData.append("chat-uuid", props.chatId!);
+
+				const response = await fetch("/api/file", {
+					method: "POST",
+					body: formData,
+				})
+				const json = await response.json();
+
+				setFileUUID(json.UUID);
+			}
+		})();
+
 		event?.preventDefault();
 		setInputValue(""); // Clear the input after sending the message
 		socketRef.current?.send(
@@ -115,6 +133,20 @@ function ChatComponent(props: Props) {
 				},
 			} satisfies PostChatRequest)
 		);
+		
+		// if (fileUUID) {
+		// 	socketRef.current?.send(
+		// 		JSON.stringify({
+		// 			Type: "message",
+		// 			Data: {
+		// 				ChatUUID: props.chatId!,
+		// 				FileUUID: fileUUID,
+		// 				MsgType: "photo",
+		// 				Encrypted: false,
+		// 			},
+		// 		} satisfies PostChatRequest),
+		// 	);
+		// }
 	};
 
 	const onEmojiClick = (emojiObject: { emoji: string }) => {
@@ -122,12 +154,31 @@ function ChatComponent(props: Props) {
 	};
 
 	const handleFileButtonClick = () => {
-		fileInputRef.current!.click();
+		fileInputRef.current!.click();		
 	};
 
+	useEffect(() => {
+		console.log("selectedFile", selectedFile);
+
+		if (selectedFile?.type.startsWith("image")){
+			console.log("image");
+
+			const reader = new FileReader();
+			reader.onloadend = () => {
+				const base64 = reader.result;
+				console.log(base64);
+			};
+			reader.readAsDataURL(selectedFile);
+		} else if (selectedFile) {
+			console.log("not image");
+			
+		}
+	}, [selectedFile]);		
+
 	const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-		// Handle file selection
-		console.log(event.target.files);
+		if (event.target.files) {
+			setSelectedFile(event.target.files[0]);
+		}
 	};
 
 	return (
@@ -140,7 +191,7 @@ function ChatComponent(props: Props) {
 					))}
 				</ul>
 			</div>
-			{/* Form with a textarea and buttons at the bottom */}
+
 			<form
 				onSubmit={handleSubmit}
 				className="sticky bottom-0 flex items-center p-2 bg-white border-t w-full dark:bg-gray-500"
@@ -159,12 +210,16 @@ function ChatComponent(props: Props) {
 						setEmojiPickerOpen((prevOpen) => !prevOpen);
 						console.log("emojiPickerOpen", emojiPickerOpen);
 					}}
-					className="px-4 py-2 bg-gray-300 border-l border-gray-200 dark:bg-gray-300"
+					className="px-4 py-2 bg-gray-300 border-l border-gray-200 m-1 dark:bg-gray-300"
 				>
 					{" 😊 "}
 				</button>
 
 				{emojiPickerOpen && <EmojiPicker onEmojiClick={onEmojiClick} />}
+
+				{selectedFile?.type.startsWith("image") && (
+					<img src={URL.createObjectURL(selectedFile)} alt="preview" className="w-10 h-10 rounded" />
+				)}
 
 				<TextareaAutosize
 					className="flex-grow mx-2 resize-none rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 w-full dark:bg-gray-500"
