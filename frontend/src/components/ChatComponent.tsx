@@ -3,9 +3,9 @@ import { type Chat, type User } from "../pages/Chat";
 import { EmojiPicker } from "./EmojiPicker";
 import TextareaAutosize from "react-textarea-autosize";
 
-type MsgType = "text";
+type MsgType = "text" | "activity";
 
-interface Message {
+type Message = {
 	Id: number;
 	AuthorId: number;
 	Timestamp: string;
@@ -13,7 +13,7 @@ interface Message {
 	Encrypted: boolean;
 	Text: string;
 	FileUUID: string | null;
-}
+};
 
 type PostChatRequest =
 	| {
@@ -37,6 +37,11 @@ type PostChatRequest =
 			// eslint-disable-next-line no-mixed-spaces-and-tabs
 	  };
 
+type ChatResponse = {
+	Type: "message";
+	Data: Message;
+};
+
 interface Props {
 	user: User | null;
 	chat: Chat | null;
@@ -49,9 +54,33 @@ function ChatComponent(props: Props) {
 
 	const fileInputRef = useRef<HTMLInputElement>(null);
 	const socketRef = useRef<WebSocket | null>(null);
+	const messagesContainerRef = useRef<HTMLDivElement>(null);
+
+	function onReceiveMessage(e: MessageEvent) {
+		const res = JSON.parse(e.data) as ChatResponse;
+		setMessages((prev) => [...prev, res.Data]);
+		// Wait until the message is rendered and then scroll to the bottom
+		setTimeout(() => messagesContainerRef.current?.scrollTo(0, messagesContainerRef.current?.scrollHeight));
+	}
+	useEffect(() => {
+		const url = new URL(window.location.href);
+		url.pathname = "/api/chat";
+		url.protocol = "ws";
+
+		socketRef.current = new WebSocket(url.href);
+		socketRef.current.addEventListener("message", onReceiveMessage);
+
+		// Scroll to the bottom of the messages container
+		messagesContainerRef.current?.scrollTo(0, messagesContainerRef.current?.scrollHeight);
+
+		return () => {
+			socketRef.current?.close();
+		};
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
 
 	async function fetchMessages() {
-		if ((props.user || props.chat) && props.chatId) {
+		if (props.chatId) {
 			const res = await fetch(`/api/chat/messages?chat=${props.chatId}`);
 			const text = await res.text();
 
@@ -63,25 +92,6 @@ function ChatComponent(props: Props) {
 			}
 		}
 	}
-
-	function onReceiveMessage() {
-		fetchMessages();
-	}
-
-	useEffect(() => {
-		const url = new URL(window.location.href);
-		url.pathname = "/api/chat";
-		url.protocol = "ws";
-
-		socketRef.current = new WebSocket(url.href);
-		socketRef.current.addEventListener("message", onReceiveMessage);
-
-		return () => {
-			socketRef.current?.close();
-		};
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
-
 	useEffect(() => {
 		fetchMessages();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -101,8 +111,6 @@ function ChatComponent(props: Props) {
 				},
 			} satisfies PostChatRequest),
 		);
-
-		fetchMessages();
 	};
 
 	const onEmojiClick = (emojiObject: { emoji: string }) => {
@@ -120,7 +128,7 @@ function ChatComponent(props: Props) {
 
 	return (
 		<div className="flex flex-col justify-between w-full">
-			<div className="overflow-auto">
+			<div ref={messagesContainerRef} className="overflow-auto">
 				Wiadomości
 				<ul>
 					{messages.map((message, index) => (
