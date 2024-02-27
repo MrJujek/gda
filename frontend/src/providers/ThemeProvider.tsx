@@ -20,7 +20,6 @@ const ThemeProvider = (props: { children: any }) => {
 		})();
 	}, []);
 
-
 	useEffect(() => {
 		(async () => {
 			await localStorage.removeItem("isDarkTheme");
@@ -28,17 +27,14 @@ const ThemeProvider = (props: { children: any }) => {
 		})();
 	}, [isDarkTheme]);
 
-
 	const toggleTheme = () => {
 		setIsDarkTheme(!isDarkTheme);
 	};
 
 	return (
 		<ThemeContext.Provider value={{ isDarkTheme, toggleTheme }}>
-			<div className={`${isDarkTheme ? "dark" : ""}`}>
-				{props.children}
-			</div>
+			<div className={`${isDarkTheme ? "dark" : ""} h-full`}>{props.children}</div>
 		</ThemeContext.Provider>
-  );
+	);
 };
 export default ThemeProvider;

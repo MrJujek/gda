@@ -44,6 +44,16 @@ function Chat() {
 	const [betterAccess, setBetterAccess] = useState(false);
 	const [isUsersDropdownOpen, setIsUsersDropdownOpen] = useState(true);
 	const [isGroupsDropdownOpen, setIsGroupsDropdownOpen] = useState(false);
+	const [isChatVisible, setIsChatVisible] = useState(false);
+	const [isLogoutVisible, setIsLogoutVisible] = useState(false);
+
+	const toggleChat = () => {
+		setIsChatVisible(!isChatVisible);
+	};
+
+	const toggleLogout = () => {
+		setIsLogoutVisible(!isLogoutVisible);
+	};
 
 	useEffect(() => {
 		(async () => {
@@ -53,6 +63,11 @@ function Chat() {
 			}
 		})();
 	}, [loggedIn, logout, navigate]);
+
+	useEffect(() => {
+		toggleChat();
+		toggleLogout();
+	}, [selectedUser, selectedChat]);
 
 	useEffect(() => {
 		(async () => {
@@ -92,7 +107,15 @@ function Chat() {
 	return (
 		<div className="flex flex-col h-screen bg-gray-200 dark:bg-gray-800">
 			<div className="flex justify-between items-center p-4 bg-white shadow-md border-b-2 border-gray-300 dark:bg-gray-800">
-				<img src={logo} alt="Logo" className="h-8 mr-4" />
+				<img
+					src={logo}
+					alt="Logo"
+					className="h-8 mr-4"
+					onClick={() => {
+						toggleLogout();
+						toggleChat();
+					}}
+				/>
 
 				<div className="flex-grow flex justify-between items-center">
 					<div className="flex space-x-4">
@@ -104,10 +127,10 @@ function Chat() {
 									return;
 								}
 
-								// @ts-expect-error jebać ten state
+								// @ts-expect-error asdasd
 								if (userOrChat(option) === "user") {
 									setSelectedUser(option as User);
-									// @ts-expect-error jebać ten state
+									// @ts-expect-error asdasd
 								} else if (userOrChat(option) === "chat") {
 									setSelectedChat(option as Chat);
 								}
@@ -116,27 +139,33 @@ function Chat() {
 					</div>
 
 					<div className="flex space-x-4">
-						<Logout />
+						<div className={`${isLogoutVisible ? "" : "hidden"} sm:hidden`}>
+							<Logout />
+						</div>
 						<ThemeToggle></ThemeToggle>
 						<AccessToggle></AccessToggle>
 					</div>
 				</div>
 			</div>
 			<div className="flex h-screen bg-gray-200 dark:bg-gray-800 ">
-				<div className="w-64 bg-white p-4 shadow-lg border-r border-b-2 border-gray-300 dark:bg-gray-800 ">
-					<h2 className="text-2xl font-bold mb-4">Czaty</h2>
+				<div
+					className={`${
+						isChatVisible ? "" : "hidden"
+					} w-64 bg-white p-4 shadow-lg border-r border-b-2 border-gray-300 dark:bg-gray-800 sm:hidden`}
+				>
+					<h2 className="text-2xl font-bold mb-4 dark:text-white">Czaty</h2>
 
 					{users && (
 						<div className="mb-2">
 							<button
-								className="w-full text-left flex justify-between items-center"
+								className="w-full text-left flex justify-between items-center dark:text-white"
 								onClick={() => setIsUsersDropdownOpen(!isUsersDropdownOpen)}
 							>
 								Użytkownicy
 								<svg
-									className={`w-4 h-4 transition-transform ${
+									className={`w-4 h-4 transition-transform  ${
 										isUsersDropdownOpen ? "rotate-180" : ""
-									}`}
+									} `}
 									xmlns="http://www.w3.org/2000/svg"
 									viewBox="0 0 20 20"
 									fill="currentColor"
@@ -154,7 +183,7 @@ function Chat() {
 										users.map((user) => (
 											<div
 												key={user.ID}
-												className="rounded flex items-center px-4 py-2 hover:bg-gray-100 cursor-pointer"
+												className="rounded flex items-center px-4 py-2 hover:bg-gray-500 cursor-pointer dark:text-white"
 												onClick={async () => {
 													const response = await fetch("/api/chat", {
 														method: "POST",
@@ -183,7 +212,7 @@ function Chat() {
 					{chats && (
 						<div className="mb-2">
 							<button
-								className="w-full text-left flex justify-between items-center"
+								className="w-full text-left flex justify-between items-center dark:text-white"
 								onClick={() => setIsGroupsDropdownOpen(!isGroupsDropdownOpen)}
 							>
 								Grupy

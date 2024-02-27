@@ -1,5 +1,5 @@
 import { useState, useContext } from "react";
-import { ThemeContext } from '../providers/ThemeProvider';
+import { ThemeContext } from "../providers/ThemeProvider";
 
 function ThemeToggle() {
 	const [isChecked, setIsChecked] = useState(false);
