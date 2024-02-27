@@ -2,6 +2,8 @@ import { useState, FormEvent, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import logo from "../assets/GDA-logos.svg";
+import ThemeToggle from "../components/ThemeToggle";
+import AccessToggle from "../components/AccessToggle";
 
 function SignIn() {
 	const [name, setName] = useState<string>("");
@@ -54,22 +56,22 @@ function SignIn() {
 	};
 
 	return (
-		<div className="flex min-h-full flex-col justify-center py-12 sm:px-6 lg:px-8">
-			<div className="sm:mx-auto sm:w-full sm:max-w-md flex flex-col items-center">
+		<div className="flex min-h-full flex-col justify-center py-12 sm:px-6 lg:px-8 dark:bg-gray-800">
+			<div className="sm:mx-auto sm:w-full sm:max-w-md flex flex-col items-center dark:bg-gray-800">
 				<img className=" w-1/2 rounded-full" src={logo} alt="GDA" />
-				<h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900">
+				<h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900 dark:text-white">
 					Zaloguj się do swojego konta
 				</h2>
 			</div>
 
-			<div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-				<div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+			<div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md dark:bg-gray-800">
+				<div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10 dark:bg-gray-800">
 					<form className="space-y-6" onSubmit={handleSubmit}>
 						<div>
-							<label htmlFor="email" className="block text-sm font-medium text-gray-700">
+							<label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-white">
 								Nazwa użytkownika
 							</label>
-							<div className="mt-1">
+							<div className="mt-1 dark:bg-gray-800">
 								<input
 									id="name"
 									name="name"
@@ -85,10 +87,13 @@ function SignIn() {
 						</div>
 
 						<div>
-							<label htmlFor="password" className="block text-sm font-medium text-gray-700">
+							<label
+								htmlFor="password"
+								className="block text-sm font-medium text-gray-700 dark:text-white"
+							>
 								Hasło
 							</label>
-							<div className="mt-1">
+							<div className="mt-1 dark:bg-gray-800">
 								<input
 									id="password"
 									name="password"
