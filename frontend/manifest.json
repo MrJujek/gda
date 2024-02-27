@@ -5,12 +5,18 @@
 	"display": "standalone",
 	"background_color": "#fff",
 	"description": "App to communicate between LDAP users in local network",
+	"theme_color": "#317EFB",
 	"icons": [
 		{
-			"src": "/vite.svg",
+			"src": "/logo.svg",
 			"sizes": "any",
 			"type": "image/svg+xml",
 			"purpose": "any maskable"
+		},
+		{
+			"src": "/src/assets/GDA-logos_black.png",
+			"type": "image/png",
+			"sizes": "512x512"
 		}
 	]
 }
