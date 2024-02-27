@@ -1,4 +1,4 @@
-version: '3'
+version: "3"
 
 services:
   db:
@@ -11,7 +11,7 @@ services:
       - POSTGRES_DB=${DB_NAME}
       - TZ="Europe/Warsaw"
     ports:
-      - '5432:5432'
+      - "5432:5432"
     volumes:
       - db:/var/lib/postgresql/data
 
@@ -24,8 +24,8 @@ services:
       - .env
     environment:
       DB_HOST: db
-  ### DEV ONLY!!!
-  #     LDAP_URL: ldap://openldap:389
+      ### DEV ONLY!!!
+      LDAP_URL: ldap://openldap:389
     volumes:
       - server-files:/app/data
       - ./config:/app/config
@@ -51,45 +51,44 @@ services:
       - db
 
   ### DEV ONLY!!!
-  # ldap:
-  #   image: tiredofit/openldap:2.6
-  #   hostname: openldap
-  #   restart: unless-stopped
-  #   environment:
-  #     DOMAIN: demo.org
-  #     ENABLE_TLS: false
-  #     ENABLE_READONLY_USER: true
-  #     READONLY_USER_USER: ${LDAP_USER}
-  #     READONLY_USER_PASS: ${LDAP_PASS}
-  #   ports:
-  #     - '389:389'
-  #     - '636:636'
-  #   volumes:
-  #     - ldap-data:/var/lib/openldap
-  #     - ldap-cfg:/etc/openldap/slapd.d
+  ldap:
+    image: tiredofit/openldap:2.6
+    hostname: openldap
+    restart: unless-stopped
+    environment:
+      DOMAIN: demo.org
+      ENABLE_TLS: false
+      ENABLE_READONLY_USER: true
+      READONLY_USER_USER: ${LDAP_USER}
+      READONLY_USER_PASS: ${LDAP_PASS}
+    ports:
+      - "3891:389"
+      - "6361:636"
+    volumes:
+      - ldap-data:/var/lib/openldap
+      - ldap-cfg:/etc/openldap/slapd.d
 
   ### DEV ONLY!!!
-  # ldap-ui:
-  #   image: osixia/phpldapadmin:0.9.0
-  #   restart: unless-stopped
-  #   environment:
-  #     - PHPLDAPADMIN_LDAP_HOSTS=openldap
-  #     - PHPLDAPADMIN_HTTPS=false
-  #   ports:
-  #     - '8001:80'
+  ldap-ui:
+    image: osixia/phpldapadmin:0.9.0
+    restart: unless-stopped
+    environment:
+      - PHPLDAPADMIN_LDAP_HOSTS=openldap
+      - PHPLDAPADMIN_HTTPS=false
+    ports:
+      - "8001:80"
 
   ### DEV ONLY!!!
-  # db-ui:
-  #   image: dpage/pgadmin4:8.2
-  #   restart: unless-stopped
-  #   environment:
-  #     - PGADMIN_DISABLE_POSTFIX=true
-  #     - PGADMIN_DEFAULT_EMAIL=tmp@tmp.tmp
-  #     - PGADMIN_DEFAULT_PASSWORD=tmp
-  #     - PGADMIN_CONFIG_SERVER_MODE=False
-  #   ports:
-  #     - '8000:80'
-  #
+  db-ui:
+    image: dpage/pgadmin4:8.2
+    restart: unless-stopped
+    environment:
+      - PGADMIN_DISABLE_POSTFIX=true
+      - PGADMIN_DEFAULT_EMAIL=tmp@tmp.tmp
+      - PGADMIN_DEFAULT_PASSWORD=tmp
+      - PGADMIN_CONFIG_SERVER_MODE=False
+    ports:
+      - "8000:80"
 
 volumes:
   server-files:
@@ -97,7 +96,7 @@ volumes:
   db:
     driver: local
   ### DEV ONLY!!!
-  # ldap-data:
-  #   driver: local
-  # ldap-cfg:
-  #   driver: local
+  ldap-data:
+    driver: local
+  ldap-cfg:
+    driver: local

@@ -83,9 +83,6 @@ function ChatComponent(props: Props) {
 			socketRef.current = new WebSocket(url.href);
 			socketRef.current.addEventListener("message", onReceiveMessage);
 
-			// Scroll to the bottom of the messages container
-			messagesContainerRef.current?.scrollTo(0, messagesContainerRef.current?.scrollHeight);
-
 			return () => {
 				socketRef.current?.close();
 			};
@@ -103,6 +100,12 @@ function ChatComponent(props: Props) {
 				const json = JSON.parse(text) as Message[];
 				setMessages(json);
 			}
+
+			// Scroll to the bottom of the messages container
+			setTimeout(() => {
+				messagesContainerRef.current?.scrollTo(0, messagesContainerRef.current?.scrollHeight);
+				document.documentElement.scrollTo(0, document.documentElement.scrollHeight);
+			});
 		}
 	}
 	useEffect(() => {
@@ -138,7 +141,7 @@ function ChatComponent(props: Props) {
 					MsgType: "text",
 					Encrypted: false,
 				},
-			} satisfies PostChatRequest)
+			} satisfies PostChatRequest),
 		);
 
 		if (fileUUID) {
@@ -202,67 +205,61 @@ function ChatComponent(props: Props) {
 				</ul>
 			</div>
 
-			<form
-				onSubmit={handleSubmit}
-				className="sticky bottom-0 flex items-center p-2 bg-white border-t w-full dark:bg-gray-500"
-			>
-				<button
-					type="button"
-					onClick={handleFileButtonClick}
-					className="px-4 py-2 bg-gray-300 border-r border-gray-200 dark:bg-gray-300 rounded"
+			{props.chatId && (
+				<form
+					onSubmit={handleSubmit}
+					className="sticky bottom-0 flex items-center p-2 bg-white border-t w-full dark:bg-gray-500"
 				>
-					<svg
-								className="w-6 h-6"
-								xmlns="http://www.w3.org/2000/svg"
-								fill="none"
-								viewBox="0 0 24 24"
-								stroke="#000"
-							>
-								<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v12m6-6H6" />
-							</svg>
-				</button>
+					<button
+						type="button"
+						onClick={handleFileButtonClick}
+						className="px-4 py-2 bg-gray-300 border-r border-gray-200 dark:bg-gray-300"
+					>
+						{" + "}
+					</button>
 
-				<button
-					type="button"
-					onClick={() => {
-						setEmojiPickerOpen((prevOpen) => !prevOpen);
-						console.log("emojiPickerOpen", emojiPickerOpen);
-					}}
-					className="px-4 py-2 bg-gray-300 border-l border-gray-200 m-1 dark:bg-gray-300 rounded"
-				>
-					{" 😊 "}
-				</button>
+					<button
+						type="button"
+						onClick={() => {
+							setEmojiPickerOpen((prevOpen) => !prevOpen);
+							console.log("emojiPickerOpen", emojiPickerOpen);
+						}}
+						className="px-4 py-2 bg-gray-300 border-l border-gray-200 m-1 dark:bg-gray-300"
+					>
+						{" 😊 "}
+					</button>
 
-				{emojiPickerOpen && <EmojiPicker onEmojiClick={onEmojiClick} />}
+					{emojiPickerOpen && <EmojiPicker onEmojiClick={onEmojiClick} />}
 
-				{selectedFile?.type.startsWith("image") && (
-					<img src={URL.createObjectURL(selectedFile)} alt="preview" className="w-10 h-10 rounded" />
-				)}
+					{selectedFile?.type.startsWith("image") && (
+						<img src={URL.createObjectURL(selectedFile)} alt="preview" className="w-10 h-10 rounded" />
+					)}
 
-				<TextareaAutosize
-					className="flex-grow mx-2 resize-none rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 w-full dark:bg-gray-500"
-					rows={1}
-					placeholder="Aa"
-					style={{ minWidth: "0" }}
-					onChange={(e) => setInputValue(e.target.value)}
-					maxRows={5}
-					value={inputValue}
-					onKeyDown={(e) => {
-						if (e.key === "Enter" && !e.shiftKey) {
-							e.preventDefault();
-							handleSubmit();
-						}
-					}}
-				/>
+					<TextareaAutosize
+						className="flex-grow mx-2 resize-none rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 w-full dark:bg-gray-500"
+						rows={1}
+						placeholder="Aa"
+						style={{ minWidth: "0" }}
+						onChange={(e) => setInputValue(e.target.value)}
+						maxRows={5}
+						value={inputValue}
+						onKeyDown={(e) => {
+							if (e.key === "Enter" && !e.shiftKey) {
+								e.preventDefault();
+								handleSubmit();
+							}
+						}}
+					/>
 
-				<button
-					type="submit"
-					className="text-white bg-cornflower-blue border border-red-500 px-6 py-2 rounded-lg hover:bg-dark-cornflower-blue hover:border-red-600 focus:outline-none focus:ring-2 focus:ring-red-200 focus:ring-opacity-50 transition duration-300 ease-in-out"
-					style={{ backgroundColor: "#6495ed", borderColor: "#ffffff" }}
-				>
-					Wyślij
-				</button>
-			</form>
+					<button
+						type="submit"
+						className="text-white bg-cornflower-blue border border-red-500 px-6 py-2 rounded-lg hover:bg-dark-cornflower-blue hover:border-red-600 focus:outline-none focus:ring-2 focus:ring-red-200 focus:ring-opacity-50 transition duration-300 ease-in-out"
+						style={{ backgroundColor: "#6495ed", borderColor: "#ffffff" }}
+					>
+						Wyślij
+					</button>
+				</form>
+			)}
 
 			<input type="file" ref={fileInputRef} className="hidden" onChange={handleFileChange} />
 		</div>
