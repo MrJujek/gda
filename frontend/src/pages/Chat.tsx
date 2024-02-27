@@ -8,6 +8,7 @@ import logo from "../assets/logo.svg";
 import AccessToggle from "../components/AccessToggle.tsx";
 import ChatComponent from "../components/ChatComponent.tsx";
 import StatusIcon from "../components/StatusIcon";
+import UserPhoto from "../components/UserPhoto.tsx";
 
 export type User = {
 	ID: number;
@@ -153,11 +154,12 @@ function Chat() {
 										users.map((user) => (
 											<div
 												key={user.ID}
-												className="flex items-center px-4 py-2 hover:bg-gray-100 cursor-pointer"
+												className="rounded flex items-center px-4 py-2 hover:bg-gray-100 cursor-pointer"
 												onClick={() => {
 													setSelectedOption(user);
 												}}
 											>
+												<UserPhoto userID={user.ID} />
 												<StatusIcon
 													active={
 														users.find((user1) => user1.CommonName == user.CommonName)
