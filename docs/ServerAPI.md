@@ -107,6 +107,23 @@ długości 0. Natomiast dla konwersacji bezpośrednich liczba użytkowników mus
 być równa 2. W innym przypadku otrzymamy błąd. Nie trzeba podawać użytkownika,
 który tworzy czat. Jest on dodawany automatycznie.
 
+### GET /api/chat/metadata?chat-uuid=\<uuid>
+
+Podając uuid czatu otrzymamy dane tylko o danym czacie, np.:
+
+```json
+{
+    "ChatUUID": "b0d9b808-063f-4fe6-a2a5-0919b5228894",
+    "Encrypted": false,
+    "Group": false,
+    "GroupName": {
+        "String": "",
+        "Valid": false
+    },
+    "LastMessage": "2024-02-26T20:26:50.288812Z"
+}
+```
+
 ### GET /api/chat/messages?chat=\<uuid>&last-message=\<integer>
 
 Aby otrzymać listę 100 wiadomości dla konkretnych czatów, wysyłamy zapytanie

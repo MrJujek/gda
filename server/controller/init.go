@@ -53,8 +53,9 @@ func InitRouter() {
 	dMux.HandleFunc("POST /api/my/keys", addKeys)
 	dMux.HandleFunc("GET /api/my/chats", chatList)
 
+	dMux.HandleFunc("GET /api/chat/metadata", getChat)
 	dMux.HandleFunc("POST /api/chat", newChat)
-	dMux.HandleFunc("GET /api/chat/messages", GetMessages)
+	dMux.HandleFunc("GET /api/chat/messages", getMessages)
 	dMux.HandleFunc("GET /api/chat", websocketChat)
 
 	dMux.HandleFunc("POST /api/file", uploadFile)
