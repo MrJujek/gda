@@ -1,6 +1,7 @@
 package db_wrapper
 
 import (
+	"database/sql"
 	"fmt"
 	"log"
 	"regexp"
@@ -38,7 +39,7 @@ func createMessageTable(tx *sqlx.Tx, chat *Chat) error {
 	return nil
 }
 
-func CreateDirectChat() (uuid.UUID, error) {
+func CreateDirectChat(userId1, userId2 uint32) (uuid.UUID, error) {
 	var (
 		uuid uuid.UUID
 		chat Chat
@@ -54,6 +55,27 @@ func CreateDirectChat() (uuid.UUID, error) {
 	if err != nil {
 		return uuid, err
 	}
+
+    err = tx.QueryRowx(`
+        SELECT uc.chat_uuid
+	        FROM users_chats uc
+	        INNER JOIN chats ch ON ch.chat_uuid = uc.chat_uuid 
+	        WHERE ch.is_group = false AND (user_id = $1 OR user_id = $2)
+	        GROUP BY uc.chat_uuid
+	        HAVING COUNT(DISTINCT user_id) = 2;
+        `, userId1, userId2).Scan(&uuid)
+	if err != nil && err != sql.ErrNoRows {
+		nErr := tx.Rollback()
+		if nErr != nil {
+			return uuid, nErr
+		}
+
+		return uuid, err
+	}
+
+    if err != sql.ErrNoRows {
+        return uuid, nil
+    }
 
 	row := tx.QueryRowx("INSERT INTO chats DEFAULT VALUES RETURNING *")
 	err = row.StructScan(&chat)

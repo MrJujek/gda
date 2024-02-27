@@ -64,7 +64,7 @@ func newChat(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		chat_uuid, err = db.CreateDirectChat()
+		chat_uuid, err = db.CreateDirectChat(data.UserIds[0], data.UserIds[1])
 		if err != nil {
 			http.Error(w, "We couldn't create a chat for you. Please try again later.", http.StatusInternalServerError)
 			return
