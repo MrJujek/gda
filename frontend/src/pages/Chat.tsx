@@ -139,7 +139,7 @@ function Chat() {
 					</div>
 
 					<div className="flex space-x-4">
-						<div className={`${isLogoutVisible ? "" : "hidden"} sm:hidden`}>
+						<div className="hidden sm:block">
 							<Logout />
 						</div>
 						<ThemeToggle></ThemeToggle>
@@ -149,9 +149,8 @@ function Chat() {
 			</div>
 			<div className="flex h-screen bg-gray-200 dark:bg-gray-800 ">
 				<div
-					className={`${
-						isChatVisible ? "" : "hidden"
-					} w-64 bg-white p-4 shadow-lg border-r border-b-2 border-gray-300 dark:bg-gray-800 sm:hidden`}
+					className={`${isChatVisible ? "block" : "hidden"
+						} absolute sm:relative h-full w-screen z-10 sm:z-0 sm:w-64 bg-white p-4 shadow-lg border-r border-b-2 border-gray-300 dark:bg-gray-800 sm:block`}
 				>
 					<h2 className="text-2xl font-bold mb-4 dark:text-white">Czaty</h2>
 
@@ -163,9 +162,8 @@ function Chat() {
 							>
 								Użytkownicy
 								<svg
-									className={`w-4 h-4 transition-transform  ${
-										isUsersDropdownOpen ? "rotate-180" : ""
-									} `}
+									className={`w-4 h-4 transition-transform  ${isUsersDropdownOpen ? "rotate-180" : ""
+										} `}
 									xmlns="http://www.w3.org/2000/svg"
 									viewBox="0 0 20 20"
 									fill="currentColor"
@@ -217,9 +215,8 @@ function Chat() {
 							>
 								Grupy
 								<svg
-									className={`w-4 h-4 transition-transform ${
-										isGroupsDropdownOpen ? "rotate-180" : ""
-									}`}
+									className={`w-4 h-4 transition-transform ${isGroupsDropdownOpen ? "rotate-180" : ""
+										}`}
 									xmlns="http://www.w3.org/2000/svg"
 									viewBox="0 0 20 20"
 									fill="currentColor"
