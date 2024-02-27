@@ -13,7 +13,7 @@ services:
     ports:
       - '5432:5432'
     volumes:
-      - ./db_data:/var/lib/postgresql/data
+      - db:/var/lib/postgresql/data
 
   ### Go chat server
   server:
@@ -92,6 +92,8 @@ services:
   #
 
 volumes:
+  db:
+    driver: local
   ### DEV ONLY!!!
   # ldap-data:
   #   driver: local
