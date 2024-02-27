@@ -8,8 +8,8 @@ require (
 	github.com/jmoiron/sqlx v1.3.5
 	github.com/joho/godotenv v1.5.1
 	github.com/lib/pq v1.10.9
+	github.com/rs/cors v1.10.1
 	golang.org/x/crypto v0.13.0
-	golang.org/x/exp v0.0.0-20240213143201-ec583247a57a
 	nhooyr.io/websocket v1.8.10
 )
 
