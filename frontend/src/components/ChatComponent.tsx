@@ -65,7 +65,11 @@ function ChatComponent(props: Props) {
 	useEffect(() => {
 		const url = new URL(window.location.href);
 		url.pathname = "/api/chat";
-		url.protocol = "ws";
+		if (url.protocol == "https:") {
+			url.protocol = "wss:";
+		} else {
+			url.protocol = "ws:";
+		}
 
 		socketRef.current = new WebSocket(url.href);
 		socketRef.current.addEventListener("message", onReceiveMessage);
