@@ -1095,9 +1095,9 @@ video {
   --tw-ring-offset-width: 2px;
 }
 
-:is(.dark .dark\:bg-black) {
+:is(.dark .dark\:bg-gray-800) {
   --tw-bg-opacity: 1;
-  background-color: rgb(0 0 0 / var(--tw-bg-opacity));
+  background-color: rgb(31 41 55 / var(--tw-bg-opacity));
 }
 
 @media (min-width: 640px) {

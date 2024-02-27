@@ -38,8 +38,7 @@ function Chat() {
 	const [userId, setUserId] = useState<number>();
 	const [selectedUser, setSelectedUser] = useState<User | null>(null);
 	const [selectedGroup, setSelectedGroup] = useState<Chat | null>(null);
-	const [darkMode, setDarkMode] = useState(false); // State for dark mode toggle
-	const [betterAccess, setBetterAccess] = useState(false); // State for access toggle
+	const [betterAccess, setBetterAccess] = useState(false);
 	const [isUsersDropdownOpen, setIsUsersDropdownOpen] = useState(true);
 	const [isGroupsDropdownOpen, setIsGroupsDropdownOpen] = useState(false);
 
@@ -51,10 +50,6 @@ function Chat() {
 			}
 		})();
 	}, [getUser, navigate]);
-
-	useEffect(() => {
-		console.log("darkMode", darkMode);
-	}, [darkMode]);
 
 	useEffect(() => {
 		console.log("chats", chats);
@@ -109,9 +104,8 @@ function Chat() {
 	}, []);
 
 	return (
-		<div className={darkMode ? "dark" : ""}>
-			<div className="flex flex-col h-screen bg-gray-200 dark:bg-black">
-				<div className="flex justify-between items-center p-4 bg-white shadow-md border-b-2 border-gray-300">
+			<div className="flex flex-col h-screen bg-gray-200 dark:bg-gray-800">
+				<div className="flex justify-between items-center p-4 bg-white shadow-md border-b-2 border-gray-300 dark:bg-gray-800">
 					<img src={logo} alt="Logo" className="h-8 mr-4" />
 
 					<div className="flex-grow flex justify-between items-center">
@@ -131,13 +125,13 @@ function Chat() {
 
 						<div className="flex space-x-4">
 							<Logout />
-							<ThemeToggle setDarkMode={setDarkMode}></ThemeToggle>
+							<ThemeToggle></ThemeToggle>
 							<AccessToggle setBetterAccess={setBetterAccess}></AccessToggle>
 						</div>
 					</div>
 				</div>
-				<div className="flex h-screen bg-gray-200">
-					<div className="w-64 bg-white p-4 shadow-lg">
+				<div className="flex h-screen bg-gray-200 dark:bg-gray-800">
+					<div className="w-64 bg-white p-4 shadow-lg dark:bg-gray-800">
 						<h2 className="text-2xl font-bold mb-4">Czaty</h2>
 
 						{users && (
@@ -228,7 +222,6 @@ function Chat() {
 					<ChatComponent />
 				</div>
 			</div>
-		</div>
 	);
 }
 
