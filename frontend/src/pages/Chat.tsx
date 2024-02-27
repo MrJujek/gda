@@ -2,13 +2,12 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext.tsx";
 import Logout from "../components/Logout";
-import UserAutocomplete from "../components/UserAutocomplete.tsx";
-import GroupAutocomplete from "../components/GroupAutocomplete.tsx";
 import ThemeToggle from "../components/ThemeToggle.tsx";
 import logo from "../assets/logo.svg";
 import AccessToggle from "../components/AccessToggle.tsx";
 import ChatComponent from "../components/ChatComponent.tsx";
 import StatusIcon from "../components/StatusIcon";
+import Autocomplete from "../components/Autocomplete.tsx";
 
 type User = {
 	id: number;
@@ -36,8 +35,7 @@ function Chat() {
 	const [users, setUsers] = useState<User[]>([]);
 	const [chats, setChats] = useState<Chat[]>([]);
 	const [userId, setUserId] = useState<number>();
-	const [selectedUser, setSelectedUser] = useState<User | null>(null);
-	const [selectedGroup, setSelectedGroup] = useState<Chat | null>(null);
+	const [selectedOption, setSelectedOption] = useState<User | Chat | null>(null);
 	const [betterAccess, setBetterAccess] = useState(false);
 	const [isUsersDropdownOpen, setIsUsersDropdownOpen] = useState(true);
 	const [isGroupsDropdownOpen, setIsGroupsDropdownOpen] = useState(false);
@@ -56,31 +54,31 @@ function Chat() {
 	}, [chats]);
 
 	useEffect(() => {
-		console.log("creating chat - selectedUser", selectedUser);
+		console.log("creating chat - selectedOption", selectedOption);
 
-		(async () => {
-			if (selectedUser) {
-				const response = await fetch("/api/chat/", {
-					method: "POST",
-					body: JSON.stringify({ UserIds: [selectedUser.id] }),
-				});
+		// (async () => {
+		// 	if (selectedOption) {
+		// 		const response = await fetch("/api/chat/", {
+		// 			method: "POST",
+		// 			body: JSON.stringify({ UserIds: [selectedOption.id] }),
+		// 		});
 
-				console.log("response1", response);
-			}
-		})();
+		// 		console.log("response1", response);
+		// 	}
+		// })();
 
-		(async () => {
-			const response = await fetch("/api/my/chats", {
-				method: "GET",
-			});
+		// (async () => {
+		// 	const response = await fetch("/api/my/chats", {
+		// 		method: "GET",
+		// 	});
 
-			const data = await response.json();
+		// 	const data = await response.json();
 
-			console.log("data", data);
+		// 	console.log("data", data);
 
-			setChats(data);
-		})();
-	}, [selectedUser]);
+		// 	setChats(data);
+		// })();
+	}, [selectedOption]);
 
 	useEffect(() => {
 		(async () => {
@@ -109,14 +107,12 @@ function Chat() {
 				<img src={logo} alt="Logo" className="h-8 mr-4" />
 
 				<div className="flex-grow flex justify-between items-center">
-					<div className="flex space-x-4">
-						<UserAutocomplete
-							placeholder="Search users"
-							options={users}
-							setSelected={setSelectedUser}
+					<div className="flex space-x-4">		
+						<Autocomplete
 							currentUserId={userId!}
+							options={(chats ? [...users, ...chats] : [...users]) as (User|Chat)[]}
+							setSelectedOption={setSelectedOption}
 						/>
-						<GroupAutocomplete placeholder="Search groups" options={chats} setSelected={setSelectedGroup} />
 					</div>
 
 					<div className="flex space-x-4">
@@ -160,7 +156,7 @@ function Chat() {
 												key={user.id}
 												className="flex items-center px-4 py-2 hover:bg-gray-100 cursor-pointer"
 												onClick={() => {
-													setSelectedUser(user);
+													setSelectedOption(user);
 												}}
 											>
 												<StatusIcon
@@ -207,7 +203,7 @@ function Chat() {
 												key={chat.ChatUUI}
 												className="p-2 hover:bg-gray-100 cursor-pointer"
 												onClick={() => {
-													setSelectedGroup(chat);
+													setSelectedOption(chat);
 												}}
 											>
 												{chat.GroupName.String}
