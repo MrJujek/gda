@@ -113,7 +113,7 @@ function ChatComponent(props: Props) {
 					MsgType: "text",
 					Encrypted: false,
 				},
-			} satisfies PostChatRequest),
+			} satisfies PostChatRequest)
 		);
 	};
 
@@ -131,7 +131,7 @@ function ChatComponent(props: Props) {
 	};
 
 	return (
-		<div className="flex flex-col justify-between w-full">
+		<div className="flex flex-col justify-between w-full dark:text-white px-5 py-3 ">
 			<div ref={messagesContainerRef} className="overflow-auto">
 				Wiadomości
 				<ul>
@@ -141,11 +141,14 @@ function ChatComponent(props: Props) {
 				</ul>
 			</div>
 			{/* Form with a textarea and buttons at the bottom */}
-			<form onSubmit={handleSubmit} className="sticky bottom-0 flex items-center p-2 bg-white border-t w-full">
+			<form
+				onSubmit={handleSubmit}
+				className="sticky bottom-0 flex items-center p-2 bg-white border-t w-full dark:bg-gray-500"
+			>
 				<button
 					type="button"
 					onClick={handleFileButtonClick}
-					className="px-4 py-2 bg-gray-300 border-r border-gray-200"
+					className="px-4 py-2 bg-gray-300 border-r border-gray-200 dark:bg-gray-300"
 				>
 					{" + "}
 				</button>
@@ -156,7 +159,7 @@ function ChatComponent(props: Props) {
 						setEmojiPickerOpen((prevOpen) => !prevOpen);
 						console.log("emojiPickerOpen", emojiPickerOpen);
 					}}
-					className="px-4 py-2 bg-gray-300 border-l border-gray-200"
+					className="px-4 py-2 bg-gray-300 border-l border-gray-200 dark:bg-gray-300"
 				>
 					{" 😊 "}
 				</button>
@@ -164,7 +167,7 @@ function ChatComponent(props: Props) {
 				{emojiPickerOpen && <EmojiPicker onEmojiClick={onEmojiClick} />}
 
 				<TextareaAutosize
-					className="flex-grow mx-2 resize-none rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 w-full"
+					className="flex-grow mx-2 resize-none rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 w-full dark:bg-gray-500"
 					rows={1}
 					placeholder="Aa"
 					style={{ minWidth: "0" }}
