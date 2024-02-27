@@ -9,8 +9,8 @@ import ChatComponent from "../components/ChatComponent.tsx";
 import StatusIcon from "../components/StatusIcon";
 import Autocomplete from "../components/Autocomplete.tsx";
 
-type User = {
-	id: number;
+export type User = {
+	ID: number;
 	CommonName: string;
 	DisplayName: {
 		String: string;
@@ -19,7 +19,7 @@ type User = {
 	Active: boolean;
 };
 
-type Chat = {
+export type Chat = {
 	ChatUUI: string;
 	Encrypted: boolean;
 	Group: boolean;
@@ -56,16 +56,17 @@ function Chat() {
 	useEffect(() => {
 		console.log("creating chat - selectedOption", selectedOption);
 
-		// (async () => {
-		// 	if (selectedOption) {
-		// 		const response = await fetch("/api/chat/", {
-		// 			method: "POST",
-		// 			body: JSON.stringify({ UserIds: [selectedOption.id] }),
-		// 		});
+		(async () => {
+			if (selectedUser) {
+				const response = await fetch("/api/chat", {
+					method: "POST",
+					body: JSON.stringify({ UserIds: [selectedUser.ID] }),
+				});
+				const chatId = await response.text();
 
-		// 		console.log("response1", response);
-		// 	}
-		// })();
+				console.log("response1", response);
+			}
+		})();
 
 		// (async () => {
 		// 	const response = await fetch("/api/my/chats", {
@@ -87,7 +88,7 @@ function Chat() {
 			});
 			const data = (await response.json()) as User[];
 
-			setUserId(data.find((user) => user.CommonName === sessionStorage.getItem("name"))!.id);
+			setUserId(data.find((user) => user.CommonName === sessionStorage.getItem("name"))!.ID);
 
 			setUsers(data);
 		})();
@@ -153,7 +154,7 @@ function Chat() {
 									{users &&
 										users.map((user) => (
 											<div
-												key={user.id}
+												key={user.ID}
 												className="flex items-center px-4 py-2 hover:bg-gray-100 cursor-pointer"
 												onClick={() => {
 													setSelectedOption(user);
@@ -215,7 +216,7 @@ function Chat() {
 					)}
 				</div>
 
-				<ChatComponent />
+				<ChatComponent user={selectedUser} />
 			</div>
 		</div>
 	);
