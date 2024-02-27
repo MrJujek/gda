@@ -13,7 +13,7 @@ services:
     ports:
       - '5432:5432'
     volumes:
-      - ./db_data:/var/lib/postgresql/data
+      - db:/var/lib/postgresql/data
 
   ### Go chat server
   server:
@@ -27,7 +27,7 @@ services:
   ### DEV ONLY!!!
   #     LDAP_URL: ldap://openldap:389
     volumes:
-      - db:/app/data
+      - ./data:/app/data
       - ./config:/app/config
     ports:
       - 80:80
@@ -45,7 +45,7 @@ services:
       DB_HOST: db
     volumes:
       - ./backup:/backup
-      - db:/data
+      - ./data:/data
       - ./config:/config
     depends_on:
       - db
