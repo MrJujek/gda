@@ -13,10 +13,8 @@ function Autocomplete({ options, setSelectedOption, currentUserId }: Autocomplet
 	const inputRef = useRef<HTMLInputElement>(null);		
 
 	useEffect(() => {
-		setFilteredOptions(options.map(item => {
-			console.log("item", item);
-			
-			if ('id' in item && item.id === currentUserId) {
+		setFilteredOptions(options.map(item => {	
+			if ('ID' in item && item.ID === currentUserId) {				
 				return;
 			} else if ('CommonName' in item) {
 				return item.CommonName;
@@ -43,9 +41,7 @@ function Autocomplete({ options, setSelectedOption, currentUserId }: Autocomplet
 		setInputValue(value);
 
 		setFilteredOptions(options.map(item => {
-			console.log("item", item);
-
-			if ('id' in item && item.id === currentUserId) {
+			if ('ID' in item && item.ID === currentUserId) {
 				return;
 			} else if ('CommonName' in item) {
 				return item.CommonName;
@@ -60,7 +56,6 @@ function Autocomplete({ options, setSelectedOption, currentUserId }: Autocomplet
 
 	const handleOptionClick = (option: string) => {
 		setFilteredOptions([]);
-		console.log("option", option);
 
 		setSelectedOption(options.find((user) => {
 			if ('CommonName' in user) {
@@ -77,13 +72,13 @@ function Autocomplete({ options, setSelectedOption, currentUserId }: Autocomplet
 			<input
 				type="text"
 				value={inputValue}
-				onClick={() => {
+				onClick={() => {					
 					if (inputValue.length == 0) {
-						setFilteredOptions(options.map(item => {
-							if ('id' in item && item.id === currentUserId) {
+						setFilteredOptions(options.map(item => {						
+							if ('ID' in item && item.ID === currentUserId) {
 								return;
-							} else if ('DisplayName' in item) {
-								return item.DisplayName.String;
+							} else if ('DisplayName' in item) {						
+								return item.CommonName;
 							} else if ('ChatUUI' in item) {
 								return item.ChatUUI;
 							}
