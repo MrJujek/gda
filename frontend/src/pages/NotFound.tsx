@@ -4,18 +4,18 @@ import { useAuth } from "../contexts/AuthContext";
 import logo from "../assets/GDA-logos.webp";
 
 function NotFound() {
-	const { getUser } = useAuth();
+	const { loggedIn } = useAuth();
 
 	const navigate = useNavigate();
 
 	useEffect(() => {
 		(async () => {
-			const user = await getUser();
+			const user = await loggedIn();
 			if (!user) {
 				navigate("/");
 			}
 		})();
-	}, [navigate, getUser]);
+	}, [navigate, loggedIn]);
 
 	return (
 		<div className="flex min-h-full flex-col bg-white lg:relative">

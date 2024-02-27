@@ -31,7 +31,7 @@ export type Chat = {
 
 function Chat() {
 	const navigate = useNavigate();
-	const { getUser } = useAuth();
+	const { loggedIn, logout } = useAuth();
 	const [users, setUsers] = useState<User[]>([]);
 	const [chats, setChats] = useState<Chat[]>([]);
 	const [userId, setUserId] = useState<number>();
@@ -42,12 +42,12 @@ function Chat() {
 
 	useEffect(() => {
 		(async () => {
-			const user = await getUser();
-			if (user.status === "Authentication failed") {
-				navigate("/");
+			const logged = await loggedIn();
+			if (!logged) {
+				logout();
 			}
 		})();
-	}, [getUser, navigate]);
+	}, [loggedIn, logout, navigate]);
 
 	useEffect(() => {
 		console.log("creating chat - selectedOption", selectedOption);

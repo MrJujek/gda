@@ -1,10 +1,6 @@
 import React, { ReactNode, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 
-interface User {
-	status: string;
-}
-
 interface SignInData {
 	logged: boolean;
 	url: string;
@@ -12,7 +8,7 @@ interface SignInData {
 }
 
 interface AuthProvider {
-	getUser: () => Promise<User>;
+	loggedIn: () => Promise<boolean>;
 	signIn: (email: string, password: string) => Promise<SignInData>;
 	logout: () => Promise<void>;
 }
@@ -25,24 +21,18 @@ export function useAuth() {
 
 export function AuthProvider({ children }: { children: ReactNode }) {
 	const value = {
-		getUser: authenticate,
+		loggedIn,
 		signIn,
 		logout,
 	};
 
 	const navigate = useNavigate();
 
-	async function authenticate() {
+	async function loggedIn(): Promise<boolean> {
 		const response = await fetch("/api/session", {
 			method: "GET",
 		});
-
-		if (response.ok) {
-			return { status: "Logged in" } as User;
-		} else {
-			logout();
-			return { status: "Authentication failed" } as User;
-		}
+		return response.ok;
 	}
 
 	async function signIn(name: string, pass: string) {
