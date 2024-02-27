@@ -27,7 +27,7 @@ services:
   ### DEV ONLY!!!
   #     LDAP_URL: ldap://openldap:389
     volumes:
-      - ./data:/app/data
+      - db:/app/data
       - ./config:/app/config
     ports:
       - 80:80
@@ -45,7 +45,7 @@ services:
       DB_HOST: db
     volumes:
       - ./backup:/backup
-      - ./data:/data
+      - db:/data
       - ./config:/config
     depends_on:
       - db
@@ -92,6 +92,8 @@ services:
   #
 
 volumes:
+  db:
+    driver: local
   ### DEV ONLY!!!
   # ldap-data:
   #   driver: local
