@@ -135,9 +135,9 @@ function ChatComponent(props: Props) {
 					onClick={handleFileButtonClick}
 					className="px-4 py-2 bg-gray-300 border-r border-gray-200"
 				>
-					{" "}
-					+{" "}
+					{" + "}
 				</button>
+
 				<button
 					type="button"
 					onClick={() => {
@@ -148,6 +148,11 @@ function ChatComponent(props: Props) {
 				>
 					{" 😊 "}
 				</button>
+
+				{emojiPickerOpen && 
+					<EmojiPicker onEmojiClick={onEmojiClick} />
+				}
+
 				<TextareaAutosize
 					className="flex-grow mx-2 resize-none rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 w-full"
 					rows={1}
@@ -163,6 +168,7 @@ function ChatComponent(props: Props) {
 						}
 					}}
 				/>
+
 				<button
 					type="submit"
 					className="text-white bg-cornflower-blue border border-red-500 px-6 py-2 rounded-lg hover:bg-dark-cornflower-blue hover:border-red-600 focus:outline-none focus:ring-2 focus:ring-red-200 focus:ring-opacity-50 transition duration-300 ease-in-out"
@@ -171,7 +177,7 @@ function ChatComponent(props: Props) {
 					Wyślij
 				</button>
 			</form>
-			{emojiPickerOpen && <EmojiPicker onEmojiClick={onEmojiClick} />}
+
 			<input type="file" ref={fileInputRef} className="hidden" onChange={handleFileChange} />
 		</div>
 	);
