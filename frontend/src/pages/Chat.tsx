@@ -41,7 +41,6 @@ function Chat() {
 	const [selectedUser, setSelectedUser] = useState<User | null>(null);
 	const [selectedChat, setSelectedChat] = useState<Chat | null>(null);
 	const [selectedChatId, setSelectedChatId] = useState<string | null>(null);
-	const [betterAccess, setBetterAccess] = useState(false);
 	const [isUsersDropdownOpen, setIsUsersDropdownOpen] = useState(true);
 	const [isGroupsDropdownOpen, setIsGroupsDropdownOpen] = useState(false);
 	const [isChatVisible, setIsChatVisible] = useState(false);
@@ -71,20 +70,6 @@ function Chat() {
 
 	useEffect(() => {
 		(async () => {
-			const response = await fetch("/api/my/chats", {
-				method: "GET",
-			});
-
-			const data = await response.json();
-
-			console.log("data", data);
-
-			setChats(data);
-		})();
-	}, []);
-
-	useEffect(() => {
-		(async () => {
 			const response = await fetch("/api/users", {
 				method: "GET",
 			});
@@ -94,13 +79,17 @@ function Chat() {
 
 			setUsers(data);
 		})();
+
 		(async () => {
 			const response = await fetch("/api/my/chats", {
 				method: "GET",
 			});
 			const data = await response.json();
-			setChats(data);
-			console.log("chats", data);
+			
+			setChats(data.filter((chat:Chat) => chat.Group === true));
+			console.log("data", data);
+			console.log("chats", chats);
+			
 		})();
 	}, []);
 
@@ -195,37 +184,42 @@ function Chat() {
 							</button>
 							{isUsersDropdownOpen && (
 								<div className="mt-2" key={"users"}>
-									{users &&
-										users.map((user) => (
-											<div
-												key={user.ID}
-												className="rounded flex items-center px-4 py-2 hover:bg-gray-500 cursor-pointer dark:text-white"
-												onClick={async () => {
-													const response = await fetch("/api/chat", {
-														method: "POST",
-														body: JSON.stringify({ UserIds: [user.ID] }),
-													});
-													const chatId = await response.text();
-													setSelectedChatId(chatId);
-													setSelectedUser(user);
-												}}
-											>
-												<UserPhoto userID={user.ID} />
-												<StatusIcon
-													active={
-														users.find((user1) => user1.CommonName == user.CommonName)
-															?.Active || false
-													}
-												/>
-												<span className="ml-2">{user.CommonName}</span>
-											</div>
-										))}
+									{users.length > 0 &&
+										users.map((user) => {
+											if (user.ID === userId) {
+												return;
+											}
+
+											return (
+												<div
+													key={user.ID}
+													className="rounded flex items-center px-4 py-2 hover:bg-gray-500 cursor-pointer dark:text-white"
+													onClick={async () => {
+														const response = await fetch("/api/chat", {
+															method: "POST",
+															body: JSON.stringify({ UserIds: [user.ID] }),
+														});
+														const chatId = await response.text();
+														setSelectedChatId(chatId);
+														setSelectedUser(user);
+													}}
+												>
+													<UserPhoto userID={user.ID} />
+													<StatusIcon
+														active={
+															users.find((user1) => user1.CommonName == user.CommonName)
+																?.Active || false
+														}
+													/>
+													<span className="ml-2">{user.CommonName}</span>
+												</div>
+										)})}
 								</div>
 							)}
 						</div>
 					)}
 
-					{chats && (
+					{chats.length > 0 && (
 						<div className="mb-2">
 							<button
 								className="w-full text-left flex justify-between items-center dark:text-white"
@@ -251,18 +245,23 @@ function Chat() {
 							{isGroupsDropdownOpen && (
 								<div className="mt-2" key={"groups"}>
 									{chats &&
-										chats.map((chat) => (
-											<div
-												key={chat.ChatUUI}
-												className="p-2 hover:bg-gray-100 cursor-pointer"
-												onClick={() => {
-													setSelectedChatId(chat.ChatUUI);
-													setSelectedChat(chat);
-												}}
-											>
-												{chat.GroupName.String}
-											</div>
-										))}
+										chats.map((chat) => {
+											if (chat.Group === true) {
+												return (
+													<div
+														key={chat.ChatUUI}
+														className="p-2 hover:bg-gray-100 cursor-pointer"
+														onClick={() => {
+															setSelectedChatId(chat.ChatUUI);
+															setSelectedChat(chat);
+														}}
+													>
+														{chat.GroupName.String}
+													</div>
+												)		
+											}
+										})
+									}
 								</div>
 							)}
 						</div>
