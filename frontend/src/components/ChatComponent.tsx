@@ -55,6 +55,8 @@ function ChatComponent(props: Props) {
 	const fileInputRef = useRef<HTMLInputElement>(null);
 	const socketRef = useRef<WebSocket | null>(null);
 	const messagesContainerRef = useRef<HTMLDivElement>(null);
+	const [selectedFile, setSelectedFile] = useState<File | null>(null);
+	const [fileUUID, setFileUUID] = useState<string | null>(null);
 
 	function onReceiveMessage(e: MessageEvent) {
 		const res = JSON.parse(e.data) as ChatResponse;
@@ -115,6 +117,20 @@ function ChatComponent(props: Props) {
 				},
 			} satisfies PostChatRequest),
 		);
+		
+		// if (fileUUID) {
+		// 	socketRef.current?.send(
+		// 		JSON.stringify({
+		// 			Type: "message",
+		// 			Data: {
+		// 				ChatUUID: props.chatId!,
+		// 				FileUUID: fileUUID,
+		// 				MsgType: "photo",
+		// 				Encrypted: false,
+		// 			},
+		// 		} satisfies PostChatRequest),
+		// 	);
+		// }
 	};
 
 	const onEmojiClick = (emojiObject: { emoji: string }) => {
@@ -122,12 +138,31 @@ function ChatComponent(props: Props) {
 	};
 
 	const handleFileButtonClick = () => {
-		fileInputRef.current!.click();
+		fileInputRef.current!.click();		
 	};
 
+	useEffect(() => {
+		(async () => {
+			if (selectedFile && props.chatId) {
+				const formData = new FormData();
+				formData.append("file", selectedFile);
+				formData.append("chat-uuid", props.chatId!);
+
+				const response = await fetch("/api/file", {
+					method: "POST",
+					body: formData,
+				})
+				const json = await response.json();
+
+				setFileUUID(json.UUID);
+			}
+		})();
+	}, [selectedFile]);		
+
 	const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-		// Handle file selection
-		console.log(event.target.files);
+		if (event.target.files) {
+			setSelectedFile(event.target.files[0]);
+		}
 	};
 
 	return (
@@ -140,7 +175,7 @@ function ChatComponent(props: Props) {
 					))}
 				</ul>
 			</div>
-			{/* Form with a textarea and buttons at the bottom */}
+
 			<form onSubmit={handleSubmit} className="flex items-center p-2 bg-white border-t w-full relative">
 				<button
 					type="button"
