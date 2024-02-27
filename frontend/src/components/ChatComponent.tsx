@@ -176,7 +176,7 @@ function ChatComponent(props: Props) {
 				</ul>
 			</div>
 
-			<form onSubmit={handleSubmit} className="flex items-center p-2 bg-white border-t w-full relative">
+			<form onSubmit={handleSubmit} className="sticky bottom-0 flex items-center p-2 bg-white border-t w-full">
 				<button
 					type="button"
 					onClick={handleFileButtonClick}
@@ -196,9 +196,7 @@ function ChatComponent(props: Props) {
 					{" 😊 "}
 				</button>
 
-				{emojiPickerOpen && 
-					<EmojiPicker onEmojiClick={onEmojiClick} />
-				}
+				{emojiPickerOpen && <EmojiPicker onEmojiClick={onEmojiClick} />}
 
 				<TextareaAutosize
 					className="flex-grow mx-2 resize-none rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 w-full"

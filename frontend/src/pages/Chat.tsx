@@ -106,7 +106,7 @@ function Chat() {
 
 	return (
 		<div className="flex flex-col h-screen bg-gray-200 dark:bg-gray-800">
-			<div className="flex justify-between items-center p-4 bg-white shadow-md border-b-2 border-gray-300 dark:bg-gray-800">
+			<div className="z-50 sticky top-0 flex justify-between items-center p-4 bg-white shadow-md border-b-2 border-gray-300 dark:bg-gray-800">
 				<img
 					src={logo}
 					alt="Logo"
@@ -149,8 +149,9 @@ function Chat() {
 			</div>
 			<div className="flex h-screen bg-gray-200 dark:bg-gray-800 ">
 				<div
-					className={`${isChatVisible ? "block" : "hidden"
-						} absolute sm:relative h-full w-screen z-10 sm:z-0 sm:w-64 bg-white p-4 shadow-lg border-r border-b-2 border-gray-300 dark:bg-gray-800 sm:block`}
+					className={`${
+						isChatVisible ? "block" : "hidden"
+					} absolute sm:relative h-full w-screen z-10 sm:z-0 sm:w-64 bg-white p-4 shadow-lg border-r border-b-2 border-gray-300 dark:bg-gray-800 sm:block`}
 				>
 					<h2 className="text-2xl font-bold mb-4 dark:text-white">Czaty</h2>
 
@@ -162,8 +163,9 @@ function Chat() {
 							>
 								Użytkownicy
 								<svg
-									className={`w-4 h-4 transition-transform  ${isUsersDropdownOpen ? "rotate-180" : ""
-										} `}
+									className={`w-4 h-4 transition-transform  ${
+										isUsersDropdownOpen ? "rotate-180" : ""
+									} `}
 									xmlns="http://www.w3.org/2000/svg"
 									viewBox="0 0 20 20"
 									fill="currentColor"
@@ -209,14 +211,16 @@ function Chat() {
 
 					{chats && (
 						<div className="mb-2">
+							
 							<button
 								className="w-full text-left flex justify-between items-center dark:text-white"
 								onClick={() => setIsGroupsDropdownOpen(!isGroupsDropdownOpen)}
 							>
 								Grupy
 								<svg
-									className={`w-4 h-4 transition-transform ${isGroupsDropdownOpen ? "rotate-180" : ""
-										}`}
+									className={`w-4 h-4 transition-transform ${
+										isGroupsDropdownOpen ? "rotate-180" : ""
+									}`}
 									xmlns="http://www.w3.org/2000/svg"
 									viewBox="0 0 20 20"
 									fill="currentColor"
@@ -246,6 +250,27 @@ function Chat() {
 										))}
 								</div>
 							)}
+							<button
+								className="p-2 dark:text-black w-full text-left flex justify-between items-center hover:bg-gray-100 cursor-pointer dark:text-white"
+								onClick={() => {
+									/* Handle click event for new action */
+								}}
+							>
+								<svg
+									className="w-6 h-6"
+									xmlns="http://www.w3.org/2000/svg"
+									fill="none"
+									viewBox="0 0 24 24"
+									stroke="currentColor"
+								>
+									<path
+										strokeLinecap="round"
+										strokeLinejoin="round"
+										strokeWidth={2}
+										d="M12 6v12m6-6H6"
+									/>
+								</svg>
+							</button>
 						</div>
 					)}
 				</div>
