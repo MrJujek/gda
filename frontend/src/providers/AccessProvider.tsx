@@ -34,9 +34,9 @@ const AccessProvider = (props: { children: any }) => {
 	};
 
 	return (
-		<ThemeContext.Provider value={{ betterAccess, toggleAccess }}>
+		<AccessContext.Provider value={{ betterAccess, toggleAccess }}>
 			{props.children}
-		</ThemeContext.Provider>
+		</AccessContext.Provider>
   );
 };
 export default AccessProvider;
