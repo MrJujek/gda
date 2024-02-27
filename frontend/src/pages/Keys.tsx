@@ -1,12 +1,28 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import words from "../assets/lista_slow.json";
-import Logout from "../components/Logout";
+import { useAuth } from "../contexts/AuthContext";
 
 function Keys() {
 	const [keys, setKeys] = useState<string>("");
 
 	const navigate = useNavigate();
+	const { logout } = useAuth();
+
+	useEffect(() => {
+		async function qwe() {
+			const words = await getWords();
+			const salt = await getSalt();
+			const encKey = await createKeys();
+
+			base64PubKey = bufToBase64(await exportPubKey(encKey.publicKey));
+			const exportedPrivKey = await exportPrivKey(encKey.privateKey);
+
+			codePrivKey = await encryptEncKey(words, salt, exportedPrivKey);
+			passPrivKey = await encryptEncKey(pass!, salt, exportedPrivKey);
+		}
+		qwe();
+	}, []);
 
 	let base64PubKey: string, codePrivKey: string, passPrivKey: string;
 
@@ -95,21 +111,6 @@ function Keys() {
 		return bufToBase64(buf);
 	}
 
-	useEffect(() => {
-		async function qwe() {
-			const words = await getWords();
-			const salt = await getSalt();
-			const encKey = await createKeys();
-
-			base64PubKey = bufToBase64(await exportPubKey(encKey.publicKey));
-			const exportedPrivKey = await exportPrivKey(encKey.privateKey);
-
-			codePrivKey = await encryptEncKey(words, salt, exportedPrivKey);
-			passPrivKey = await encryptEncKey(pass!, salt, exportedPrivKey);
-		}
-		qwe();
-	}, []);
-
 	async function sendKeys() {
 		await fetch("/api/my/keys", {
 			method: "POST",
@@ -125,7 +126,7 @@ function Keys() {
 
 		sessionStorage.removeItem("pass");
 
-		Logout();
+		logout();
 	}
 
 	return (
