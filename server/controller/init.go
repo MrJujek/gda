@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"github.com/rs/cors"
 	"log"
 	"net/http"
 	"os"
@@ -37,6 +38,7 @@ func InitRouter() {
 		}
 	}
 
+	c := cors.AllowAll()
 	dMux := http.NewServeMux()
 
 	dMux.Handle("GET /", http.FileServer(http.Dir("./public")))
@@ -64,7 +66,7 @@ func InitRouter() {
 	if enableSecureServer != 0 {
 		sServer := &http.Server{
 			Addr:    ":" + securePort,
-			Handler: dMux,
+			Handler: c.Handler(dMux),
 		}
 
 		log.Print("Secure server listening on port " + securePort)
@@ -74,12 +76,16 @@ func InitRouter() {
 			Addr: ":" + port,
 			Handler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 				// can be done better for sure but good enough for now
-				http.Redirect(w, r, "https://"+r.Host+r.URL.String(), http.StatusMovedPermanently)
+				if r.URL.String() == "/api/chat" {
+					websocketChat(w, r)
+				} else {
+					http.Redirect(w, r, "https://"+r.Host+r.URL.String(), http.StatusMovedPermanently)
+				}
 			}),
 		}
 
 		log.Print("Server listening on port " + port)
-		server.ListenAndServe()
+		log.Fatal(server.ListenAndServe())
 	} else {
 		server := &http.Server{
 			Addr:    ":" + port,
@@ -87,7 +93,7 @@ func InitRouter() {
 		}
 
 		log.Print("Server listening on port " + port)
-		server.ListenAndServe()
+		log.Fatal(server.ListenAndServe())
 	}
 
 }

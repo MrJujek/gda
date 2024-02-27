@@ -1,34 +1,30 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { Routes, Route, BrowserRouter } from "react-router-dom";
+import { AuthProvider } from "./contexts/AuthContext";
+import SignIn from "./pages/SignIn";
+import NotFound from "./pages/NotFound";
+import Chat from "./pages/Chat";
+import Keys from "./pages/Keys";
+import ThemeProvider from "./providers/ThemeProvider";
+import AccessProvider from "./providers/AccessProvider";
 
 function App() {
-  const [count, setCount] = useState(0)
-
-  return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+	return (
+		<ThemeProvider>
+			<AccessProvider>
+				<BrowserRouter>
+					<AuthProvider>
+						<Routes>
+							<Route path="/" element={<SignIn />} />
+							<Route path="/signin" element={<SignIn />} />
+							<Route path="/chat" element={<Chat />} />
+							<Route path="/keys" element={<Keys />} />
+							<Route path="*" element={<NotFound />} />
+						</Routes>
+					</AuthProvider>
+				</BrowserRouter>
+			</AccessProvider>
+		</ThemeProvider>
+	);
 }
 
-export default App
+export default App;

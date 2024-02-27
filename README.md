@@ -55,7 +55,7 @@ umieszczamy w folderze `config`. Taki certyfikat możemy wygenerować za pomocą
 następujących poleceń.
 
 ```sh
-openssl req -x509 -newkey ec:<(openssl ecparam -name prime256v1) -keyout server.key -out server.crt -days 365
+openssl req -x509 -newkey ec:<(openssl ecparam -name prime256v1) -keyout server.key -out server.crt -days 365 -nodes
 ```
 
 Jeżeli chcemy by jego długość była inna, należy zmienić 365 na oczekiwaną liczbe
@@ -64,8 +64,8 @@ dni.
 
 ## Kopia zapasowa, migracje, itp. 
 
-Wszystkie dane, na których operuje ta aplikacja znajdują się w folderach
-`config` (o ile korzystamy z https), `data`, `db_data` oraz w plikach 
+Wszystkie dane, na których operuje ta aplikacja znajdują się w dockerowych
+volumach, folderach `config` (o ile korzystamy z https) oraz w plikach
 `docker-compose.yaml` i `.env` (o ile w ogóle go używamy). Kopiując to wszystko
 możemy przenieść naszą aplikację na dowolny inny system z dockerem lub stworzyć
 kopię zapasową. Aby uruchomić nasz serwer z tą konfiguracją, plikami, kwerendami 

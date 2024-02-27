@@ -56,7 +56,7 @@ func CreateDirectChat(userId1, userId2 uint32) (uuid.UUID, error) {
 		return uuid, err
 	}
 
-    err = tx.QueryRowx(`
+	err = db.QueryRowx(`
         SELECT uc.chat_uuid
 	        FROM users_chats uc
 	        INNER JOIN chats ch ON ch.chat_uuid = uc.chat_uuid 
@@ -65,17 +65,12 @@ func CreateDirectChat(userId1, userId2 uint32) (uuid.UUID, error) {
 	        HAVING COUNT(DISTINCT user_id) = 2;
         `, userId1, userId2).Scan(&uuid)
 	if err != nil && err != sql.ErrNoRows {
-		nErr := tx.Rollback()
-		if nErr != nil {
-			return uuid, nErr
-		}
-
 		return uuid, err
 	}
 
-    if err != sql.ErrNoRows {
-        return uuid, nil
-    }
+	if err == nil {
+		return uuid, nil
+	}
 
 	row := tx.QueryRowx("INSERT INTO chats DEFAULT VALUES RETURNING *")
 	err = row.StructScan(&chat)
@@ -187,10 +182,11 @@ func UserChats(user_id uint32) ([]Chat, error) {
 	defer db.Close()
 
 	err = db.Select(&chats, `
-        SELECT c.* 
-        FROM chats c 
-        INNER JOIN users_chats ON users_chats.chat_uuid = c.chat_uuid 
-        WHERE users_chats.user_id = $1`,
+        SELECT c.*
+            FROM chats c 
+            INNER JOIN users_chats uc ON uc.chat_uuid = c.chat_uuid 
+            WHERE uc.user_id = $1
+		    GROUP BY c.chat_uuid`,
 		user_id)
 	if err != nil {
 		return chats, err
@@ -200,10 +196,10 @@ func UserChats(user_id uint32) ([]Chat, error) {
 }
 
 func GetChat(userId uint32, chatUUID uuid.UUID) (Chat, error) {
-    var chat Chat
+	var chat Chat
 	db, err := getDbConn()
 	if err != nil {
-		return chat, err 
+		return chat, err
 	}
 	defer db.Close()
 
@@ -213,7 +209,7 @@ func GetChat(userId uint32, chatUUID uuid.UUID) (Chat, error) {
 		userId, chatUUID,
 	).Scan(&okInt)
 	if err != nil {
-		return chat, fmt.Errorf("Unauthorized") 
+		return chat, fmt.Errorf("Unauthorized")
 	}
 
 	err = db.QueryRowx(
@@ -221,10 +217,10 @@ func GetChat(userId uint32, chatUUID uuid.UUID) (Chat, error) {
 		chatUUID,
 	).Scan(&chat)
 	if err != nil {
-		return chat, err 
+		return chat, err
 	}
 
-    return chat, nil
+	return chat, nil
 }
 
 func UserHasAccessToChat(userId uint32, chatUUID uuid.UUID) bool {
