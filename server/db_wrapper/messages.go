@@ -31,8 +31,8 @@ func SaveMessage(ctx context.Context, msg Message, userId uint32) (Message, erro
 		return newMsg, err
 	}
 
-    // ignore error for this becouse its not really important
-    db.Exec("UPDATE chats SET last_message = now() WHERE chat_uuid = $1", msg.ChatUUID)
+	// ignore error for this becouse its not really important
+	db.Exec("UPDATE chats SET last_message = now() WHERE chat_uuid = $1", msg.ChatUUID)
 
 	return newMsg, err
 }

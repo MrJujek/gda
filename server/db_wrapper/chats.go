@@ -182,10 +182,11 @@ func UserChats(user_id uint32) ([]Chat, error) {
 	defer db.Close()
 
 	err = db.Select(&chats, `
-        SELECT c.* 
-        FROM chats c 
-        INNER JOIN users_chats ON users_chats.chat_uuid = c.chat_uuid 
-        WHERE users_chats.user_id = $1`,
+        SELECT c.*
+            FROM chats c 
+            INNER JOIN users_chats uc ON uc.chat_uuid = c.chat_uuid 
+            WHERE uc.user_id = $1
+		    GROUP BY c.chat_uuid`,
 		user_id)
 	if err != nil {
 		return chats, err
