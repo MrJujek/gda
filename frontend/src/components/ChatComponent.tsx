@@ -45,7 +45,7 @@ function ChatComponent(props: Props) {
 		setInputValue(""); // Clear the input after sending the message
 	};
 
-	const onEmojiClick = (emojiObject: { emoji: string }) => {
+	const onEmojiClick = (emojiObject: { emoji: string }) => {	
 		setInputValue((prevInputValue) => prevInputValue + emojiObject.emoji);
 	};
 
@@ -80,11 +80,13 @@ function ChatComponent(props: Props) {
 				</button>
 				<button
 					type="button"
-					onClick={() => setEmojiPickerOpen((prevOpen) => !prevOpen)}
+					onClick={() => {
+						setEmojiPickerOpen((prevOpen) => !prevOpen)
+						console.log("emojiPickerOpen", emojiPickerOpen)
+					}}
 					className="px-4 py-2 bg-gray-300 border-l border-gray-200"
 				>
-					{" "}
-					😊{" "}
+					{" 😊 "}
 				</button>
 				<TextareaAutosize
 					className="flex-grow mx-2 resize-none rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 w-full"
@@ -93,6 +95,7 @@ function ChatComponent(props: Props) {
 					style={{ minWidth: "0" }}
 					onChange={handleInputChange}
 					maxRows={5}
+					value={inputValue}
 				/>
 				<button
 					type="submit"
