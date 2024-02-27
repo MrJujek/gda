@@ -104,6 +104,22 @@ function ChatComponent(props: Props) {
 	}, [props.chat, props.user]);
 
 	const handleSubmit = (event?: React.FormEvent<HTMLFormElement>) => {
+		(async () => {
+			if (selectedFile && props.chatId) {
+				const formData = new FormData();
+				formData.append("file", selectedFile);
+				formData.append("chat-uuid", props.chatId!);
+
+				const response = await fetch("/api/file", {
+					method: "POST",
+					body: formData,
+				})
+				const json = await response.json();
+
+				setFileUUID(json.UUID);
+			}
+		})();
+
 		event?.preventDefault();
 		setInputValue(""); // Clear the input after sending the message
 		socketRef.current?.send(
@@ -142,21 +158,21 @@ function ChatComponent(props: Props) {
 	};
 
 	useEffect(() => {
-		(async () => {
-			if (selectedFile && props.chatId) {
-				const formData = new FormData();
-				formData.append("file", selectedFile);
-				formData.append("chat-uuid", props.chatId!);
+		console.log("selectedFile", selectedFile);
 
-				const response = await fetch("/api/file", {
-					method: "POST",
-					body: formData,
-				})
-				const json = await response.json();
+		if (selectedFile?.type.startsWith("image")){
+			console.log("image");
 
-				setFileUUID(json.UUID);
-			}
-		})();
+			const reader = new FileReader();
+			reader.onloadend = () => {
+				const base64 = reader.result;
+				console.log(base64);
+			};
+			reader.readAsDataURL(selectedFile);
+		} else if (selectedFile) {
+			console.log("not image");
+			
+		}
 	}, [selectedFile]);		
 
 	const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -191,12 +207,16 @@ function ChatComponent(props: Props) {
 						setEmojiPickerOpen((prevOpen) => !prevOpen);
 						console.log("emojiPickerOpen", emojiPickerOpen);
 					}}
-					className="px-4 py-2 bg-gray-300 border-l border-gray-200"
+					className="px-4 py-2 bg-gray-300 border-l border-gray-200 m-1"
 				>
 					{" 😊 "}
 				</button>
 
 				{emojiPickerOpen && <EmojiPicker onEmojiClick={onEmojiClick} />}
+
+				{selectedFile?.type.startsWith("image") && (
+					<img src={URL.createObjectURL(selectedFile)} alt="preview" className="w-10 h-10 rounded" />
+				)}
 
 				<TextareaAutosize
 					className="flex-grow mx-2 resize-none rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 w-full"
