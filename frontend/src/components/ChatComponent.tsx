@@ -99,11 +99,7 @@ function ChatComponent(props: Props) {
 					Wyślij
 				</button>
 			</form>
-			{emojiPickerOpen && (
-				<div className="absolute bottom-full mb-2 left-0">
-					<Picker onEmojiClick={onEmojiClick} />
-				</div>
-			)}
+			{emojiPickerOpen && <EmojiPicker onEmojiClick={onEmojiClick} />}
 			<input type="file" ref={fileInputRef} className="hidden" onChange={handleFileChange} />
 		</div>
 	);
