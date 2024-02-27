@@ -8,7 +8,7 @@ interface SignInData {
 }
 
 interface AuthProvider {
-	loggedIn: () => Promise<boolean>;
+	loggedIn: () => Promise<number | null>;
 	signIn: (email: string, password: string) => Promise<SignInData>;
 	logout: () => Promise<void>;
 }
@@ -28,11 +28,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
 	const navigate = useNavigate();
 
-	async function loggedIn(): Promise<boolean> {
+	async function loggedIn(): Promise<number | null> {
 		const response = await fetch("/api/session", {
 			method: "GET",
 		});
-		return response.ok;
+		if (response.ok) {
+			return Number(await response.text());
+		} else {
+			return null;
+		}
 	}
 
 	async function signIn(name: string, pass: string) {
