@@ -55,7 +55,7 @@ umieszczamy w folderze `config`. Taki certyfikat możemy wygenerować za pomocą
 następujących poleceń.
 
 ```sh
-openssl req -x509 -newkey ec:<(openssl ecparam -name prime256v1) -keyout server.key -out server.crt -days 365
+openssl req -x509 -newkey ec:<(openssl ecparam -name prime256v1) -keyout server.key -out server.crt -days 365 -nodes
 ```
 
 Jeżeli chcemy by jego długość była inna, należy zmienić 365 na oczekiwaną liczbe
