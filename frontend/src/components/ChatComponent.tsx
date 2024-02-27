@@ -3,9 +3,39 @@ import { type Chat, type User } from "../pages/Chat";
 import { EmojiPicker } from "./EmojiPicker";
 import TextareaAutosize from "react-textarea-autosize";
 
+type MsgType = "text";
+
 interface Message {
-	text: string;
+	Id: number;
+	AuthorId: number;
+	Timestamp: string;
+	MsgType: MsgType;
+	Encrypted: boolean;
+	Text: string;
+	FileUUID: string | null;
 }
+
+type PostChatRequest =
+	| {
+			Type: "message";
+			Data: {
+				ChatUUID: string;
+				Text: string;
+				MsgType: MsgType;
+				Encrypted: boolean;
+			};
+			// eslint-disable-next-line no-mixed-spaces-and-tabs
+	  }
+	| {
+			Type: "message";
+			Data: {
+				ChatUUID: string;
+				FileUUID: string;
+				MsgType: MsgType;
+				Encrypted: boolean;
+			};
+			// eslint-disable-next-line no-mixed-spaces-and-tabs
+	  };
 
 interface Props {
 	user: User | null;
@@ -18,39 +48,61 @@ function ChatComponent(props: Props) {
 	const [emojiPickerOpen, setEmojiPickerOpen] = useState(false);
 
 	const fileInputRef = useRef<HTMLInputElement>(null);
+	const socketRef = useRef<WebSocket | null>(null);
+
+	async function fetchMessages() {
+		if ((props.user || props.chat) && props.chatId) {
+			const res = await fetch(`/api/chat/messages?chat=${props.chatId}`);
+			const text = await res.text();
+
+			if (text === "null") {
+				setMessages([]);
+			} else {
+				const json = JSON.parse(text) as Message[];
+				setMessages(json);
+			}
+		}
+	}
+
+	function onReceiveMessage() {
+		fetchMessages();
+	}
 
 	useEffect(() => {
 		const url = new URL(window.location.href);
 		url.pathname = "/api/chat";
 		url.protocol = "ws";
 
-		const socket = new WebSocket(url.href);
+		socketRef.current = new WebSocket(url.href);
+		socketRef.current.addEventListener("message", onReceiveMessage);
 
-		async function open() {
-			if (props.user || props.chat) {
-				const res = await fetch(`/api/chat/messages?chat=${props.chatId}`);
-				const text = await res.text();
-
-				if (text === "null") {
-					setMessages([]);
-				} else {
-					const json = JSON.parse(text) as Message[];
-					setMessages(json);
-				}
-			}
-		}
-
-		socket.addEventListener("open", open);
 		return () => {
-			socket.removeEventListener("open", open);
+			socketRef.current?.close();
 		};
-	}, [props.chat, props.chatId, props.user]);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
 
-	const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-		event.preventDefault();
-		// Handle form submission
-		console.log(inputValue);
+	useEffect(() => {
+		fetchMessages();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [props.chat, props.user]);
+
+	const handleSubmit = (event?: React.FormEvent<HTMLFormElement>) => {
+		event?.preventDefault();
 		setInputValue(""); // Clear the input after sending the message
+		socketRef.current?.send(
+			JSON.stringify({
+				Type: "message",
+				Data: {
+					ChatUUID: props.chatId!,
+					Text: inputValue,
+					MsgType: "text",
+					Encrypted: false,
+				},
+			} satisfies PostChatRequest),
+		);
+
+		fetchMessages();
 	};
 
 	const onEmojiClick = (emojiObject: { emoji: string }) => {
@@ -72,7 +124,7 @@ function ChatComponent(props: Props) {
 				Wiadomości
 				<ul>
 					{messages.map((message, index) => (
-						<li key={index}>{message.text}</li>
+						<li key={index}>{message.Text}</li>
 					))}
 				</ul>
 			</div>
@@ -107,7 +159,7 @@ function ChatComponent(props: Props) {
 					onKeyDown={(e) => {
 						if (e.key === "Enter" && !e.shiftKey) {
 							e.preventDefault();
-							// send message
+							handleSubmit();
 						}
 					}}
 				/>

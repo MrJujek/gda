@@ -155,15 +155,13 @@ function Chat() {
 												key={user.ID}
 												className="flex items-center px-4 py-2 hover:bg-gray-100 cursor-pointer"
 												onClick={async () => {
-													setSelectedUser(user);
-													setSelectedChat(null);
-
 													const response = await fetch("/api/chat", {
 														method: "POST",
 														body: JSON.stringify({ UserIds: [user.ID] }),
 													});
 													const chatId = await response.text();
 													setSelectedChatId(chatId);
+													setSelectedUser(user);
 												}}
 											>
 												<StatusIcon
@@ -211,8 +209,8 @@ function Chat() {
 												key={chat.ChatUUI}
 												className="p-2 hover:bg-gray-100 cursor-pointer"
 												onClick={() => {
+													setSelectedChatId(chat.ChatUUI);
 													setSelectedChat(chat);
-													setSelectedUser(null);
 												}}
 											>
 												{chat.GroupName.String}
