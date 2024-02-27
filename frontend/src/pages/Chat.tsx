@@ -106,7 +106,7 @@ function Chat() {
 
 	return (
 		<div className="flex flex-col h-screen bg-gray-200 dark:bg-gray-800">
-			<div className="flex justify-between items-center p-4 bg-white shadow-md border-b-2 border-gray-300 dark:bg-gray-800">
+			<div className="z-50 sticky top-0 flex justify-between items-center p-4 bg-white shadow-md border-b-2 border-gray-300 dark:bg-gray-800">
 				<img
 					src={logo}
 					alt="Logo"
