@@ -71,20 +71,6 @@ function Chat() {
 
 	useEffect(() => {
 		(async () => {
-			const response = await fetch("/api/my/chats", {
-				method: "GET",
-			});
-
-			const data = await response.json();
-
-			console.log("data", data);
-
-			setChats(data);
-		})();
-	}, []);
-
-	useEffect(() => {
-		(async () => {
 			const response = await fetch("/api/users", {
 				method: "GET",
 			});
