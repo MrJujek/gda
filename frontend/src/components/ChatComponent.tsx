@@ -83,9 +83,6 @@ function ChatComponent(props: Props) {
 			socketRef.current = new WebSocket(url.href);
 			socketRef.current.addEventListener("message", onReceiveMessage);
 
-			// Scroll to the bottom of the messages container
-			messagesContainerRef.current?.scrollTo(0, messagesContainerRef.current?.scrollHeight);
-
 			return () => {
 				socketRef.current?.close();
 			};
@@ -103,6 +100,12 @@ function ChatComponent(props: Props) {
 				const json = JSON.parse(text) as Message[];
 				setMessages(json);
 			}
+
+			// Scroll to the bottom of the messages container
+			setTimeout(() => {
+				messagesContainerRef.current?.scrollTo(0, messagesContainerRef.current?.scrollHeight);
+				document.documentElement.scrollTo(0, document.documentElement.scrollHeight);
+			});
 		}
 	}
 	useEffect(() => {
@@ -138,7 +141,7 @@ function ChatComponent(props: Props) {
 					MsgType: "text",
 					Encrypted: false,
 				},
-			} satisfies PostChatRequest)
+			} satisfies PostChatRequest),
 		);
 
 		if (fileUUID) {
