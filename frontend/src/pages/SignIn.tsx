@@ -122,7 +122,7 @@ function SignIn() {
 					</form>
 				</div>
 			</div>
-			<div>
+			<div className="flex items-center space-x-4 justify-center p-4">
 				<ThemeToggle></ThemeToggle>
 				<AccessToggle></AccessToggle>
 			</div>
