@@ -35,7 +35,7 @@ function Chat() {
 	const [users, setUsers] = useState<User[]>([]);
 	const [chats, setChats] = useState<Chat[]>([]);
 	const [userId, setUserId] = useState<number>();
-	const [selectedOption, setSelectedOption] = useState<User |Chat | null>(null);
+	const [selectedOption, setSelectedOption] = useState<User | Chat | null>(null);
 	const [betterAccess, setBetterAccess] = useState(false);
 	const [isUsersDropdownOpen, setIsUsersDropdownOpen] = useState(true);
 	const [isGroupsDropdownOpen, setIsGroupsDropdownOpen] = useState(false);
@@ -49,23 +49,22 @@ function Chat() {
 		})();
 	}, [getUser, navigate]);
 
-
-
 	useEffect(() => {
 		console.log("creating chat - selectedOption", selectedOption);
 
-		// (async () => {
-		// 	if (selectedUser) {
-		// 		const response = await fetch("/api/chat", {
-		// 			method: "POST",
-		// 			body: JSON.stringify({ UserIds: [selectedUser.ID] }),
-		// 		});
-		// 		const chatId = await response.text();
+		(async () => {
+			if (selectedOption && typeof selectedOption.ID === "number") {
+				const selectedUser = selectedOption as User;
+				const response = await fetch("/api/chat", {
+					method: "POST",
+					body: JSON.stringify({ UserIds: [selectedUser.ID] }),
+				});
+				const chatId = await response.text();
 
-		// 		const messages = await fetch(`/api/chat/messages?chat=${chatId}`);
-		// 		console.log(await messages.json());
-		// 	}
-		// })();
+				const messages = await fetch(`/api/chat/messages?chat=${chatId}`);
+				console.log(await messages.json());
+			}
+		})();
 
 		(async () => {
 			const response = await fetch("/api/my/chats", {
@@ -108,7 +107,7 @@ function Chat() {
 
 				<div className="flex-grow flex justify-between items-center">
 					<div className="flex space-x-4">
-						<Autocomplete 
+						<Autocomplete
 							currentUserId={userId!}
 							options={(chats ? [...users, ...chats] : [...users]) as (User | Chat)[]}
 							setSelectedOption={setSelectedOption}
@@ -195,6 +194,7 @@ function Chat() {
 									/>
 								</svg>
 							</button>
+
 							{isGroupsDropdownOpen && (
 								<div className="mt-2" key={"groups"}>
 									{chats &&
@@ -215,7 +215,7 @@ function Chat() {
 					)}
 				</div>
 
-				<ChatComponent user={selectedUser} />
+				<ChatComponent option={selectedOption} />
 			</div>
 		</div>
 	);

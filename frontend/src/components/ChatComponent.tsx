@@ -1,22 +1,35 @@
 import { useEffect, useState, useRef } from "react";
 import Picker from "emoji-picker-react";
+import { type Chat, type User } from "../pages/Chat";
 
 interface Message {
 	text: string;
 }
 
-function ChatComponent() {
+interface Props {
+	option: User | Chat | null;
+}
+function ChatComponent(props: Props) {
 	const [messages, setMessages] = useState<Message[]>([]);
 	const [inputValue, setInputValue] = useState<string>("");
-	const [emojiPickerOpen, setEmojiPickerOpen] = useState<boolean>(false);
+	const [emojiPickerOpen, setEmojiPickerOpen] = useState(false);
 
 	const fileInputRef = useRef<HTMLInputElement>(null);
 
 	useEffect(() => {
-		const socket = new WebSocket(`ws://localhost:3000/api/chat`);
-		socket.onmessage = (event) => {
-			const message = JSON.parse(event.data);
-			setMessages((prevMessages) => [...prevMessages, message]);
+		const url = new URL(window.location.href);
+		url.pathname = "/api/chat";
+		url.protocol = "ws";
+
+		const socket = new WebSocket(url.href);
+
+		function open(event: Event) {
+			console.log("WebSocket opened");
+		}
+
+		socket.addEventListener("open", open);
+		return () => {
+			socket.removeEventListener("open", open);
 		};
 	}, []);
 
