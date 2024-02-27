@@ -5,7 +5,7 @@ interface Props {
 }
 export function EmojiPicker(props: Props) {
 	return (
-		<div className="absolute bottom-full mb-2 left-0">
+		<div id="lego" className="absolute mb-2 left-[20%] bottom-12 translate-x-[-20%]">
 			<Picker onEmojiClick={props.onEmojiClick} />
 		</div>
 	);

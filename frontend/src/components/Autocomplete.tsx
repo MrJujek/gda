@@ -97,8 +97,14 @@ function Autocomplete({ options, setSelectedOption, currentUserId }: Autocomplet
 
 					if (filteredOptions.length == 0) return 
 
-					// TODO open chat for user
-					console.log(filteredOptions[0])
+					setSelectedOption(options.find((user) => {
+						if ('CommonName' in user) {
+							return user.CommonName === filteredOptions[0];
+						} else if ('GroupName' in user) {
+							return user.GroupName.String === filteredOptions[0];
+						}
+						return;
+					}) || null);
 				}}
 				onChange={handleInputChange}
 				className="text-lg dark:bg-gray-800 dark:text-white border border-gray-500 placeholder:text-gray-500 rounded-md px-4 py-2 w-full duration-100 transition"

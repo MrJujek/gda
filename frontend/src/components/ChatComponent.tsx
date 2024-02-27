@@ -3,12 +3,44 @@ import { type Chat, type User } from "../pages/Chat";
 import { EmojiPicker } from "./EmojiPicker";
 import TextareaAutosize from "react-textarea-autosize";
 
+type MsgType = "text";
+
 interface Message {
-	text: string;
+	Id: number;
+	AuthorId: number;
+	Timestamp: string;
+	MsgType: MsgType;
+	Encrypted: boolean;
+	Text: string;
+	FileUUID: string | null;
 }
 
+type PostChatRequest =
+	| {
+			Type: "message";
+			Data: {
+				ChatUUID: string;
+				Text: string;
+				MsgType: MsgType;
+				Encrypted: boolean;
+			};
+			// eslint-disable-next-line no-mixed-spaces-and-tabs
+	  }
+	| {
+			Type: "message";
+			Data: {
+				ChatUUID: string;
+				FileUUID: string;
+				MsgType: MsgType;
+				Encrypted: boolean;
+			};
+			// eslint-disable-next-line no-mixed-spaces-and-tabs
+	  };
+
 interface Props {
-	option: User | Chat | null;
+	user: User | null;
+	chat: Chat | null;
+	chatId: string | null;
 }
 function ChatComponent(props: Props) {
 	const [messages, setMessages] = useState<Message[]>([]);
@@ -16,33 +48,61 @@ function ChatComponent(props: Props) {
 	const [emojiPickerOpen, setEmojiPickerOpen] = useState(false);
 
 	const fileInputRef = useRef<HTMLInputElement>(null);
+	const socketRef = useRef<WebSocket | null>(null);
+
+	async function fetchMessages() {
+		if ((props.user || props.chat) && props.chatId) {
+			const res = await fetch(`/api/chat/messages?chat=${props.chatId}`);
+			const text = await res.text();
+
+			if (text === "null") {
+				setMessages([]);
+			} else {
+				const json = JSON.parse(text) as Message[];
+				setMessages(json);
+			}
+		}
+	}
+
+	function onReceiveMessage() {
+		fetchMessages();
+	}
 
 	useEffect(() => {
 		const url = new URL(window.location.href);
 		url.pathname = "/api/chat";
 		url.protocol = "ws";
 
-		const socket = new WebSocket(url.href);
+		socketRef.current = new WebSocket(url.href);
+		socketRef.current.addEventListener("message", onReceiveMessage);
 
-		function open(event: Event) {
-			console.log("WebSocket opened");
-		}
-
-		socket.addEventListener("open", open);
 		return () => {
-			socket.removeEventListener("open", open);
+			socketRef.current?.close();
 		};
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
-	const handleInputChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-		setInputValue(event.target.value);
-	};
+	useEffect(() => {
+		fetchMessages();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [props.chat, props.user]);
 
-	const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-		event.preventDefault();
-		// Handle form submission
-		console.log(inputValue);
+	const handleSubmit = (event?: React.FormEvent<HTMLFormElement>) => {
+		event?.preventDefault();
 		setInputValue(""); // Clear the input after sending the message
+		socketRef.current?.send(
+			JSON.stringify({
+				Type: "message",
+				Data: {
+					ChatUUID: props.chatId!,
+					Text: inputValue,
+					MsgType: "text",
+					Encrypted: false,
+				},
+			} satisfies PostChatRequest),
+		);
+
+		fetchMessages();
 	};
 
 	const onEmojiClick = (emojiObject: { emoji: string }) => {
@@ -64,7 +124,7 @@ function ChatComponent(props: Props) {
 				Wiadomości
 				<ul>
 					{messages.map((message, index) => (
-						<li key={index}>{message.text}</li>
+						<li key={index}>{message.Text}</li>
 					))}
 				</ul>
 			</div>
@@ -80,19 +140,28 @@ function ChatComponent(props: Props) {
 				</button>
 				<button
 					type="button"
-					onClick={() => setEmojiPickerOpen((prevOpen) => !prevOpen)}
+					onClick={() => {
+						setEmojiPickerOpen((prevOpen) => !prevOpen);
+						console.log("emojiPickerOpen", emojiPickerOpen);
+					}}
 					className="px-4 py-2 bg-gray-300 border-l border-gray-200"
 				>
-					{" "}
-					😊{" "}
+					{" 😊 "}
 				</button>
 				<TextareaAutosize
 					className="flex-grow mx-2 resize-none rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 w-full"
 					rows={1}
 					placeholder="Aa"
 					style={{ minWidth: "0" }}
-					onChange={handleInputChange}
+					onChange={(e) => setInputValue(e.target.value)}
 					maxRows={5}
+					value={inputValue}
+					onKeyDown={(e) => {
+						if (e.key === "Enter" && !e.shiftKey) {
+							e.preventDefault();
+							handleSubmit();
+						}
+					}}
 				/>
 				<button
 					type="submit"

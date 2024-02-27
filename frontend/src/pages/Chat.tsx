@@ -8,9 +8,12 @@ import logo from "../assets/logo.svg";
 import AccessToggle from "../components/AccessToggle.tsx";
 import ChatComponent from "../components/ChatComponent.tsx";
 import StatusIcon from "../components/StatusIcon";
+import { userOrChat } from "../utils.ts";
+import UserPhoto from "../components/UserPhoto.tsx";
 
 export type User = {
 	ID: number;
+	ChatUUI: string;
 	CommonName: string;
 	DisplayName: {
 		String: string;
@@ -35,7 +38,9 @@ function Chat() {
 	const [users, setUsers] = useState<User[]>([]);
 	const [chats, setChats] = useState<Chat[]>([]);
 	const [userId, setUserId] = useState<number>();
-	const [selectedOption, setSelectedOption] = useState<User | Chat | null>(null);
+	const [selectedUser, setSelectedUser] = useState<User | null>(null);
+	const [selectedChat, setSelectedChat] = useState<Chat | null>(null);
+	const [selectedChatId, setSelectedChatId] = useState<string | null>(null);
 	const [betterAccess, setBetterAccess] = useState(false);
 	const [isUsersDropdownOpen, setIsUsersDropdownOpen] = useState(true);
 	const [isGroupsDropdownOpen, setIsGroupsDropdownOpen] = useState(false);
@@ -50,22 +55,6 @@ function Chat() {
 	}, [loggedIn, logout, navigate]);
 
 	useEffect(() => {
-		console.log("creating chat - selectedOption", selectedOption);
-
-		(async () => {
-			if (selectedOption && typeof selectedOption.ID === "number") {
-				const selectedUser = selectedOption as User;
-				const response = await fetch("/api/chat", {
-					method: "POST",
-					body: JSON.stringify({ UserIds: [selectedUser.ID] }),
-				});
-				const chatId = await response.text();
-
-				const messages = await fetch(`/api/chat/messages?chat=${chatId}`);
-				console.log(await messages.json());
-			}
-		})();
-
 		(async () => {
 			const response = await fetch("/api/my/chats", {
 				method: "GET",
@@ -77,7 +66,7 @@ function Chat() {
 
 			setChats(data);
 		})();
-	}, [selectedOption]);
+	}, []);
 
 	useEffect(() => {
 		(async () => {
@@ -110,14 +99,26 @@ function Chat() {
 						<Autocomplete
 							currentUserId={userId!}
 							options={(chats ? [...users, ...chats] : [...users]) as (User | Chat)[]}
-							setSelectedOption={setSelectedOption}
+							setSelectedOption={(option) => {
+								if (option === null) {
+									return;
+								}
+
+								// @ts-expect-error jebać ten state
+								if (userOrChat(option) === "user") {
+									setSelectedUser(option as User);
+									// @ts-expect-error jebać ten state
+								} else if (userOrChat(option) === "chat") {
+									setSelectedChat(option as Chat);
+								}
+							}}
 						/>
 					</div>
 
 					<div className="flex space-x-4">
 						<Logout />
 						<ThemeToggle></ThemeToggle>
-						<AccessToggle setBetterAccess={setBetterAccess}></AccessToggle>
+						<AccessToggle></AccessToggle>
 					</div>
 				</div>
 			</div>
@@ -153,11 +154,18 @@ function Chat() {
 										users.map((user) => (
 											<div
 												key={user.ID}
-												className="flex items-center px-4 py-2 hover:bg-gray-100 cursor-pointer"
-												onClick={() => {
-													setSelectedOption(user);
+												className="rounded flex items-center px-4 py-2 hover:bg-gray-100 cursor-pointer"
+												onClick={async () => {
+													const response = await fetch("/api/chat", {
+														method: "POST",
+														body: JSON.stringify({ UserIds: [user.ID] }),
+													});
+													const chatId = await response.text();
+													setSelectedChatId(chatId);
+													setSelectedUser(user);
 												}}
 											>
+												<UserPhoto userID={user.ID} />
 												<StatusIcon
 													active={
 														users.find((user1) => user1.CommonName == user.CommonName)
@@ -203,7 +211,8 @@ function Chat() {
 												key={chat.ChatUUI}
 												className="p-2 hover:bg-gray-100 cursor-pointer"
 												onClick={() => {
-													setSelectedOption(chat);
+													setSelectedChatId(chat.ChatUUI);
+													setSelectedChat(chat);
 												}}
 											>
 												{chat.GroupName.String}
@@ -215,7 +224,7 @@ function Chat() {
 					)}
 				</div>
 
-				<ChatComponent option={selectedOption} />
+				<ChatComponent user={selectedUser} chat={selectedChat} chatId={selectedChatId} />
 			</div>
 		</div>
 	);
