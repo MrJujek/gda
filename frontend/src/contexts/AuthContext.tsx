@@ -1,77 +1,69 @@
-import React, { ReactNode, useContext, useState } from "react";
+import React, { ReactNode, useContext } from "react";
+import { useNavigate } from "react-router-dom";
 
 interface User {
-    status: string;
+	status: string;
 }
 
 interface SignInData {
-    logged: boolean;
-    url: string;
-    message?: string;
+	logged: boolean;
+	url: string;
+	message?: string;
 }
 
 interface AuthProvider {
-    user: User | null;
-    signIn: (email: string, password: string) => Promise<SignInData>;
-    logout: () => { loggedOut?: boolean };
-    setUser: React.Dispatch<React.SetStateAction<User | null>>;
+	getUser: () => Promise<User>;
+	signIn: (email: string, password: string) => Promise<SignInData>;
+	logout: () => Promise<void>;
 }
 
 export const AuthContext = React.createContext({} as AuthProvider);
 
 export function useAuth() {
-    return useContext(AuthContext);
+	return useContext(AuthContext);
 }
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-    const [user, setUser] = useState<User | null>(null);
+	const value = {
+		getUser: authenticate,
+		signIn,
+		logout,
+	};
 
-    const value = {
-        user,
-        signIn,
-        logout,
-        setUser,
-    };
+	const navigate = useNavigate();
 
-    async function authenticate() {
-        const response = await fetch("/api/session", {
-            method: "GET",
-        });
+	async function authenticate() {
+		const response = await fetch("/api/session", {
+			method: "GET",
+		});
 
-        if (response.ok) {
-            return { status: "Logged in" } as User;
-        }
+		if (response.ok) {
+			return { status: "Logged in" } as User;
+		} else {
+			logout();
+			return { status: "Authentication failed" } as User;
+		}
+	}
 
-        logout();
-        return { status: "Authentication failed" } as User;
-    }
+	async function signIn(name: string, pass: string) {
+		const response = await fetch("/api/session", {
+			method: "POST",
+			body: JSON.stringify({
+				user: name,
+				pass: pass,
+			}),
+		});
 
-    async function signIn(name: string, pass: string) {
-        const response = await fetch("/api/session", {
-            method: "POST",
-            body: JSON.stringify({
-                user: name,
-                pass: pass
-            })
-        });
+		if (response.ok) {
+			return { logged: true, url: response.url || "/chat" } as SignInData;
+		}
+		return { logged: false, message: "Authentication failed" } as SignInData;
+	}
 
-        if (response.ok) {
-            setUser(await authenticate());
+	async function logout() {
+		await fetch("/api/session", { method: "DELETE" });
+		navigate("/");
+	}
 
-            return { logged: true, url: response.url || "/chat" } as SignInData;
-        }
-        return { logged: false, message: "Authentication failed" } as SignInData;
-    }
-
-    function logout() {
-        setUser(null);
-
-        return { loggedOut: true };
-    }
-
-    return (
-        <AuthContext.Provider value={value}>
-            {children}
-        </AuthContext.Provider>
-    );
+	return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
