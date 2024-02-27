@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from "react";
-import Picker from "emoji-picker-react";
 import { type Chat, type User } from "../pages/Chat";
+import { EmojiPicker } from "./EmojiPicker";
+import TextareaAutosize from "react-textarea-autosize";
 
 interface Message {
 	text: string;
@@ -85,12 +86,14 @@ function ChatComponent(props: Props) {
 					{" "}
 					😊{" "}
 				</button>
-				<textarea
+				<TextareaAutosize
 					className="flex-grow mx-2 resize-none rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 w-full"
 					rows={1}
 					placeholder="Aa"
 					style={{ minWidth: "0" }}
-				></textarea>
+					onChange={handleInputChange}
+					maxRows={5}
+				/>
 				<button
 					type="submit"
 					className="text-white bg-cornflower-blue border border-red-500 px-6 py-2 rounded-lg hover:bg-dark-cornflower-blue hover:border-red-600 focus:outline-none focus:ring-2 focus:ring-red-200 focus:ring-opacity-50 transition duration-300 ease-in-out"
