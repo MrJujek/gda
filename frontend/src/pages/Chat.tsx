@@ -136,6 +136,22 @@ function Chat() {
 								}
 							}}
 						/>
+						<button
+							className="p-2 dark:text-black  text-left flex justify-between items-center hover:bg-gray-100 cursor-pointer dark:text-white"
+							onClick={() => {
+								/* Handle click event for new action */
+							}}
+						>
+							<svg
+								className="w-6 h-6"
+								xmlns="http://www.w3.org/2000/svg"
+								fill="none"
+								viewBox="0 0 24 24"
+								stroke="currentColor"
+							>
+								<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v12m6-6H6" />
+							</svg>
+						</button>
 					</div>
 
 					<div className="flex space-x-4">
@@ -211,7 +227,6 @@ function Chat() {
 
 					{chats && (
 						<div className="mb-2">
-							
 							<button
 								className="w-full text-left flex justify-between items-center dark:text-white"
 								onClick={() => setIsGroupsDropdownOpen(!isGroupsDropdownOpen)}
@@ -250,27 +265,6 @@ function Chat() {
 										))}
 								</div>
 							)}
-							<button
-								className="p-2 dark:text-black w-full text-left flex justify-between items-center hover:bg-gray-100 cursor-pointer dark:text-white"
-								onClick={() => {
-									/* Handle click event for new action */
-								}}
-							>
-								<svg
-									className="w-6 h-6"
-									xmlns="http://www.w3.org/2000/svg"
-									fill="none"
-									viewBox="0 0 24 24"
-									stroke="currentColor"
-								>
-									<path
-										strokeLinecap="round"
-										strokeLinejoin="round"
-										strokeWidth={2}
-										d="M12 6v12m6-6H6"
-									/>
-								</svg>
-							</button>
 						</div>
 					)}
 				</div>
