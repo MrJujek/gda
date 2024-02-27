@@ -3,6 +3,7 @@ package controller
 import (
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 
@@ -118,7 +119,7 @@ func logout(w http.ResponseWriter, r *http.Request) {
 }
 
 func checkSession(w http.ResponseWriter, r *http.Request) {
-	_, err := getSession(r)
+	session, err := getSession(r)
 	if err != nil {
 		if err == sql.ErrNoRows || err == http.ErrNoCookie {
 			http.Error(w,
@@ -136,6 +137,6 @@ func checkSession(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Write([]byte("ok"))
+	w.Write([]byte(fmt.Sprint(session.UserId)))
 	return
 }
