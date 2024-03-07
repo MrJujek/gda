@@ -222,7 +222,6 @@ function Chat() {
 						<div className="hidden sm:block">
 							<Logout />
 						</div>
-						asdasasdasdasdasdasdsaddsasddsa
 						<ThemeToggle></ThemeToggle>
 						<AccessToggle></AccessToggle>
 					</div>

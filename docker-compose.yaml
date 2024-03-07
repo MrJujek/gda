@@ -18,9 +18,12 @@ services:
   frontend:
     build: ./frontend
     hostname: frontend
-    restart: unless-stopped
+    restart: always
     volumes:
-      - ./frontend:/app
+      - type: bind
+        source: ./frontend
+        target: /frontend
+      - /frontend/node_modules
     ports:
       - 3000:3000
 
