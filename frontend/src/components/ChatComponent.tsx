@@ -129,20 +129,22 @@ function ChatComponent(props: Props) {
 				setFileUUID(json.UUID);
 			}
 		})();
+		if (inputValue.trim().length > 0) {
+			socketRef.current?.send(
+				JSON.stringify({
+					Type: "message",
+					Data: {
+						ChatUUID: props.chatId!,
+						Text: inputValue,
+						MsgType: "text",
+						Encrypted: false,
+					},
+				} satisfies PostChatRequest),
+			);
+		}
 
 		event?.preventDefault();
-		setInputValue(""); // Clear the input after sending the message
-		socketRef.current?.send(
-			JSON.stringify({
-				Type: "message",
-				Data: {
-					ChatUUID: props.chatId!,
-					Text: inputValue,
-					MsgType: "text",
-					Encrypted: false,
-				},
-			} satisfies PostChatRequest),
-		);
+		setInputValue("");
 
 		if (fileUUID) {
 			socketRef.current?.send(
