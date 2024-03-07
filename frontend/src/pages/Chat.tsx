@@ -59,29 +59,16 @@ function Chat() {
 		} else {
 			setSelectedCreateUsers([...selectedCreateUsers, user]);
 		}
-	};
-
-	useEffect(() => {
-		console.log("chats",chats);
-	}, [chats]);
-		
+	};		
 
 	const handleCreateChat = () => {
-		(async () => {
-			console.log("selected ids:",selectedCreateUsers.map(u => u.ID));
-			
+		(async () => {	
 			const response = await fetch("/api/chat", {
 				method: "POST",
 				body: JSON.stringify({ UserIds: selectedCreateUsers.map(u => u.ID), Group: true, GroupName: groupName}),
-			});
+			});			
 
-			console.log(response);
-			
-
-			const chatId = await response.text();
-
-			console.log(chatId);
-			
+			const chatId = await response.text();			
 
 			setSelectedChatId(chatId);
 			setSelectedChat(chats.find(chat => chat.ChatUUI === chatId)!);
@@ -227,7 +214,10 @@ function Chat() {
 					</div>
 				</div>
 			</div>
-			<div className="flex h-screen bg-gray-200 dark:bg-gray-800 ">
+			<div 
+				className="flex bg-gray-200 dark:bg-gray-800"
+				style={{height: "calc(100vh - 80px)"}}
+			>
 				<div
 					className={`${
 						isChatVisible ? "block" : "hidden"

@@ -129,6 +129,7 @@ function ChatComponent(props: Props) {
 				setFileUUID(json.UUID);
 			}
 		})();
+		
 		if (inputValue.trim().length > 0) {
 			socketRef.current?.send(
 				JSON.stringify({
