@@ -47,33 +47,46 @@ function Chat() {
 	const [isLogoutVisible, setIsLogoutVisible] = useState(false);
 	const [showCreateDropdown, setShowCreateDropdown] = useState(false);
 	const [selectedCreateUsers, setSelectedCreateUsers] = useState<User[]>([]);
-	const [groupName, setGroupName] = useState<string>('');
+	const [groupName, setGroupName] = useState<string>("");
 
 	const toggleCreateDropdown = () => {
 		setShowCreateDropdown(!showCreateDropdown);
 	};
 
 	const handleUserSelection = (user: User) => {
-		if (selectedCreateUsers.some(u => u.ID === user.ID)) {
-			setSelectedCreateUsers(selectedCreateUsers.filter(u => u.ID !== user.ID));
+		if (selectedCreateUsers.some((u) => u.ID === user.ID)) {
+			setSelectedCreateUsers(selectedCreateUsers.filter((u) => u.ID !== user.ID));
 		} else {
 			setSelectedCreateUsers([...selectedCreateUsers, user]);
 		}
 	};		
 
 	const handleCreateChat = () => {
-		(async () => {	
+		(async () => {
+			console.log(
+				"selected ids:",
+				selectedCreateUsers.map((u) => u.ID)
+			);
+
 			const response = await fetch("/api/chat", {
 				method: "POST",
-				body: JSON.stringify({ UserIds: selectedCreateUsers.map(u => u.ID), Group: true, GroupName: groupName}),
-			});			
+				body: JSON.stringify({
+					UserIds: selectedCreateUsers.map((u) => u.ID),
+					Group: true,
+					GroupName: groupName,
+				}),
+			});
 
-			const chatId = await response.text();			
+			console.log(response);
+
+			const chatId = await response.text();
+
+			console.log(chatId);
+			
 
 			setSelectedChatId(chatId);
-			setSelectedChat(chats.find(chat => chat.ChatUUI === chatId)!);
+			setSelectedChat(chats.find((chat) => chat.ChatUUI === chatId)!);
 		})();
-
 	};
 
 	const toggleChat = () => {
@@ -115,11 +128,10 @@ function Chat() {
 				method: "GET",
 			});
 			const data = await response.json();
-			
-			setChats(data.filter((chat:Chat) => chat.Group === true));
+
+			setChats(data.filter((chat: Chat) => chat.Group === true));
 			console.log("data", data);
 			console.log("chats", chats);
-			
 		})();
 	}, []);
 
@@ -169,40 +181,47 @@ function Chat() {
 									viewBox="0 0 24 24"
 									stroke="currentColor"
 								>
-									<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v12m6-6H6" />
+									<path
+										strokeLinecap="round"
+										strokeLinejoin="round"
+										strokeWidth={2}
+										d="M12 6v12m6-6H6"
+									/>
 								</svg>
 							</button>
 							{showCreateDropdown && (
 								<div className="absolute mt-2 bg-white rounded border border-gray-300 shadow-lg z-10">
-								{users.map(user => (
-									<label key={user.ID} className="block p-2 hover:bg-gray-100 cursor-pointer">
+									{users.map((user) => (
+										<label key={user.ID} className="block p-2 hover:bg-gray-100 cursor-pointer">
+											<input
+												type="checkbox"
+												className="mr-2"
+												checked={
+													user.ID === userId ||
+													selectedCreateUsers.some((u) => u.ID === user.ID)
+												}
+												onChange={() => handleUserSelection(user)}
+												disabled={user.ID === userId}
+											/>
+											{user.CommonName}
+										</label>
+									))}
 									<input
-										type="checkbox"
-										className="mr-2"
-										checked={user.ID === userId || selectedCreateUsers.some(u => u.ID === user.ID)}
-										onChange={() => handleUserSelection(user)}
-										disabled={user.ID === userId}
+										type="text"
+										className="w-full p-2 mt-2 border border-gray-300 rounded"
+										placeholder="Nazwa grupy"
+										value={groupName}
+										onChange={(e) => setGroupName(e.target.value)}
 									/>
-									{user.CommonName}
-									</label>
-								))}
-								<input
-									type="text"
-									className="w-full p-2 mt-2 border border-gray-300 rounded"
-									placeholder="Nazwa grupy"
-									value={groupName}
-									onChange={e => setGroupName(e.target.value)}
-								/>
-								<button
-									className="w-full p-2 mt-2 bg-blue-500 text-white hover:bg-blue-600 rounded p-1"
-									onClick={handleCreateChat}
-								>
-									Create Chat
-								</button>
+									<button
+										className="w-full p-2 mt-2 bg-blue-500 text-white hover:bg-blue-600 rounded p-1"
+										onClick={handleCreateChat}
+									>
+										Create Chat
+									</button>
 								</div>
 							)}
 						</div>
-						
 					</div>
 
 					<div className="flex space-x-4">
@@ -221,7 +240,7 @@ function Chat() {
 				<div
 					className={`${
 						isChatVisible ? "block" : "hidden"
-					} absolute sm:relative h-full w-screen z-10 sm:z-0 sm:w-64 bg-white p-4 shadow-lg border-r border-b-2 border-gray-300 dark:bg-gray-800 sm:block`}
+					} absolute sm:relative h-full w-screen z-10 sm:z-0 sm:w-64 bg-white p-4 shadow-lg border-r border-b-2 border-gray-300 dark:bg-gray-800 sm:block flex flex-col h-screen`}
 				>
 					<h2 className="text-2xl font-bold mb-4 dark:text-white">Czaty</h2>
 
@@ -278,7 +297,8 @@ function Chat() {
 													/>
 													<span className="ml-2">{user.CommonName}</span>
 												</div>
-										)})}
+											);
+										})}
 								</div>
 							)}
 						</div>
@@ -287,7 +307,7 @@ function Chat() {
 					{chats.length > 0 && (
 						<div className="mb-2">
 							<button
-								className="w-full text-left flex justify-between items-center dark:text-white"
+								className="w-full text-left flex justify-between items-center dark:text-white "
 								onClick={() => setIsGroupsDropdownOpen(!isGroupsDropdownOpen)}
 							>
 								Grupy
@@ -308,14 +328,14 @@ function Chat() {
 							</button>
 
 							{isGroupsDropdownOpen && (
-								<div className="mt-2" key={"groups"}>
+								<div className="mt-2 overflow-y-scroll" key={"groups"}>
 									{chats &&
 										chats.map((chat) => {
 											if (chat.Group === true) {
 												return (
 													<div
 														key={chat.ChatUUI}
-														className="p-2 hover:bg-gray-100 cursor-pointer"
+														className="rounded flex items-center px-4 py-2 hover:bg-gray-500 cursor-pointer dark:text-white"
 														onClick={() => {
 															setSelectedChatId(chat.ChatUUI);
 															setSelectedChat(chat);
@@ -323,10 +343,9 @@ function Chat() {
 													>
 														{chat.GroupName.String}
 													</div>
-												)		
+												);
 											}
-										})
-									}
+										})}
 								</div>
 							)}
 						</div>
