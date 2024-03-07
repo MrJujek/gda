@@ -15,6 +15,15 @@ services:
     volumes:
       - db:/var/lib/postgresql/data
 
+  frontend:
+    build: ./frontend
+    hostname: frontend
+    restart: unless-stopped
+    volumes:
+      - ./frontend:/app
+    ports:
+      - 3000:3000
+
   ### Go chat server
   server:
     build: ./server

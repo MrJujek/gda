@@ -5,7 +5,7 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-const apiHost = "localhost";
+const apiHost = "server";
 const keyPath = process.env.GDA_KEY_PATH || "./config/server.key";
 const certPath = process.env.GDA_CERT_PATH || "./config/server.crt";
 
@@ -37,6 +37,7 @@ export default defineConfig({
 		cors: false,
 		proxy: proxyConfig,
 		https: httpsConfig,
+		host: "0.0.0.0",
 	},
 	preview: {
 		port: 3000,
