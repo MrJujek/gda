@@ -1,36 +1,99 @@
 package controller
 
 import (
+	"github.com/rs/cors"
 	"log"
 	"net/http"
+	"os"
 	u "server/util"
-
-	"github.com/gorilla/mux"
-	// "github.com/gorilla/websocket"
 )
 
 var (
-	key string
+// key string
+)
+
+const (
+	RedirectAfterFirstLogin = "/first_login.html"
+	RedirectAfterLogin      = "/chat.html"
+	RedirectAfterPassChange = "/reencrypt.html"
 )
 
 func InitRouter() {
 	port := u.EnvOr("GDA_PORT", "80")
-	key = u.EnvExit("SESSION_KEY")
-	r := mux.NewRouter()
+	enableSecureServer := u.EnvOrInt("GDA_SECURE_SERVER", 0)
+	securePort := u.EnvOr("GDA_SECURE_PORT", "443")
+	certPath := u.EnvOr("GDA_CERT_PATH", "./config/server.crt")
+	keyPath := u.EnvOr("GDA_KEY_PATH", "./config/server.key")
+	// key = u.EnvExit("SESSION_KEY")
 
-	r.HandleFunc("/api/session", login).Methods("POST")
-	r.HandleFunc("/api/session", logout).Methods("DELETE")
-	r.HandleFunc("/api/session", checkSession).Methods("GET")
+	_, err := os.Stat(UploadDir)
+	if err != nil {
+		if os.IsNotExist(err) {
+			err := os.MkdirAll(UploadDir, 0700)
+			if err != nil {
+				panic("Unable create data directory")
+			}
+		} else {
+			panic("Unable check if data directory exists")
+		}
+	}
 
-	r.HandleFunc("/api/users", userList).Methods("GET")
+	c := cors.AllowAll()
+	dMux := http.NewServeMux()
 
-	r.HandleFunc("/api/chat", func(w http.ResponseWriter, r *http.Request) {
-		// TODO
-		w.Write([]byte("chat"))
-	})
+	dMux.Handle("GET /", http.FileServer(http.Dir("./public")))
 
-	http.Handle("/", r)
+	dMux.HandleFunc("POST /api/session", login)
+	dMux.HandleFunc("DELETE /api/session", logout)
+	dMux.HandleFunc("GET /api/session", checkSession)
 
-	log.Print("Server listening on port " + port)
-	http.ListenAndServe(":"+port, nil)
+	dMux.HandleFunc("GET /api/users", userList)
+	dMux.HandleFunc("GET /api/users/photo", userPhoto)
+
+	dMux.HandleFunc("GET /api/my/salt", getSalt)
+	dMux.HandleFunc("GET /api/my/keys", getKeys)
+	dMux.HandleFunc("POST /api/my/keys", addKeys)
+	dMux.HandleFunc("GET /api/my/chats", chatList)
+
+	dMux.HandleFunc("GET /api/chat/metadata", getChat)
+	dMux.HandleFunc("POST /api/chat", newChat)
+	dMux.HandleFunc("GET /api/chat/messages", getMessages)
+	dMux.HandleFunc("GET /api/chat", websocketChat)
+
+	dMux.HandleFunc("POST /api/file", uploadFile)
+	dMux.HandleFunc("GET /api/file", getFile)
+
+	if enableSecureServer != 0 {
+		sServer := &http.Server{
+			Addr:    ":" + securePort,
+			Handler: c.Handler(dMux),
+		}
+
+		log.Print("Secure server listening on port " + securePort)
+		go sServer.ListenAndServeTLS(certPath, keyPath)
+
+		server := &http.Server{
+			Addr: ":" + port,
+			Handler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				// can be done better for sure but good enough for now
+				if r.URL.String() == "/api/chat" {
+					websocketChat(w, r)
+				} else {
+					http.Redirect(w, r, "https://"+r.Host+r.URL.String(), http.StatusMovedPermanently)
+				}
+			}),
+		}
+
+		log.Print("Server listening on port " + port)
+		log.Fatal(server.ListenAndServe())
+	} else {
+		server := &http.Server{
+			Addr:    ":" + port,
+			Handler: dMux,
+		}
+
+		log.Print("Server listening on port " + port)
+		log.Fatal(server.ListenAndServe())
+	}
+
 }

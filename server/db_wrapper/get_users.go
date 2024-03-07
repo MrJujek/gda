@@ -19,23 +19,47 @@ func GetUsers() ([]User, error) {
 		return nil, err
 	}
 
+	for i, _ := range users {
+		if users[i].ActiveCount > 0 {
+			users[i].Active = true
+		}
+	}
+
 	return users, nil
 }
 
-func GetUserId(userdn string) (uint32, error) {
+func GetUserByDN(userdn string) (User, error) {
 	var user User
+
 	db, err := getDbConn()
 	if err != nil {
 		log.Print(db)
-		return 0, err
+		return user, err
 	}
 	defer db.Close()
 
-	err = db.Get(&user, "SELECT id FROM users WHERE ldap_dn = $1", userdn)
+	err = db.Get(&user, "SELECT * FROM users WHERE ldap_dn = $1", userdn)
 	if err != nil {
 		log.Print(err)
-		return 0, err
+		return user, err
 	}
 
-	return user.ID, nil
+	return user, nil
+}
+
+func GetUserById(userId uint32) (User, error) {
+	var user User
+
+	db, err := getDbConn()
+	if err != nil {
+		return user, err
+	}
+	defer db.Close()
+
+	err = db.Get(&user, "SELECT * FROM users WHERE id = $1", userId)
+	if err != nil {
+		return user, err
+	}
+
+	return user, nil
 }

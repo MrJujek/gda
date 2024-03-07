@@ -1,15 +1,16 @@
 package controller
 
 import (
+	"database/sql"
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 
 	db "server/db_wrapper"
+	encr "server/encryption"
 	lw "server/ldap_wrapper"
 )
-
-// TODO better session flow
 
 type loginData struct {
 	User string `json:"user"`
@@ -23,7 +24,7 @@ func login(w http.ResponseWriter, r *http.Request) {
 	err := d.Decode(&loginData)
 	if err != nil {
 		log.Print(err)
-		http.Error(w, "There was something wrong with your request", http.StatusBadRequest)
+		http.Error(w, "There was something wrong with your request body", http.StatusBadRequest)
 		return
 	}
 
@@ -43,7 +44,7 @@ func login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	id, err := db.GetUserId(userdn)
+	user, err := db.GetUserByDN(userdn)
 	if err != nil {
 		http.Error(w,
 			"Something went wrong during id acquisition",
@@ -52,74 +53,62 @@ func login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	store, err := getStore()
-	if err != nil {
-		log.Print(err)
-		http.Error(w,
-			"Something went wrong during session establishment",
-			http.StatusInternalServerError,
-		)
-		return
-	}
-	defer store.Close()
+	sessionType := db.SessionNormal
 
-	session, err := store.New(r, "session-gda")
-	if err != nil {
-		log.Print(err)
-		http.Error(w,
-			"Something went wrong during session establishment",
-			http.StatusInternalServerError,
-		)
-		return
+	if !user.PassEncPrivateKey.Valid {
+		sessionType = db.SessionFirstLogin
+	} else {
+		ok, err = encr.CheckIfPasswordMatches(user, loginData.Pass)
+		if err != nil {
+			http.Error(w,
+				"Something went wrong during session creation - password check error",
+				http.StatusInternalServerError,
+			)
+			return
+		}
+		if !ok {
+			sessionType = db.SessionKeyUpdate
+		}
 	}
 
-	session.Values["ldap_name"] = loginData.User
-	session.Values["id"] = id
-	session.Options.HttpOnly = true
-	session.Options.Secure = true
-
-	err = session.Save(r, w)
+	err = newSession(w, user.ID, sessionType)
 	if err != nil {
 		log.Print(err)
 		http.Error(w,
-			"Something went wrong during session establishment",
+			"Something went wrong during session creation",
 			http.StatusInternalServerError,
 		)
 		return
 	}
 
-	w.Write([]byte("ok"))
+	if sessionType == db.SessionFirstLogin {
+		http.Redirect(w, r, RedirectAfterFirstLogin, http.StatusSeeOther)
+		return
+	}
+
+	if sessionType == db.SessionKeyUpdate {
+		http.Redirect(w, r, RedirectAfterPassChange, http.StatusSeeOther)
+		return
+	}
+
+	http.Redirect(w, r, RedirectAfterLogin, http.StatusSeeOther)
 	return
 }
 
 func logout(w http.ResponseWriter, r *http.Request) {
-	store, err := getStore()
+	err := delSession(w, r)
 	if err != nil {
-		log.Print(err)
-		http.Error(w,
-			"Something went wrong with your session",
-			http.StatusInternalServerError,
-		)
-		return
-	}
-	defer store.Close()
+		if err == sql.ErrNoRows || err == http.ErrNoCookie {
+			http.Error(w,
+				"You are not authorized to access this resource",
+				http.StatusUnauthorized,
+			)
+			return
+		}
 
-	session, err := store.Get(r, "session-gda")
-	if err != nil {
 		log.Print(err)
 		http.Error(w,
-			"Something went wrong with your session",
-			http.StatusInternalServerError,
-		)
-		return
-	}
-
-	session.Options.MaxAge = -1
-	err = session.Save(r, w)
-	if err != nil {
-		log.Print(err)
-		http.Error(w,
-			"Something went wrong with your session",
+			"Something went wrong during session deletion",
 			http.StatusInternalServerError,
 		)
 		return
@@ -130,8 +119,16 @@ func logout(w http.ResponseWriter, r *http.Request) {
 }
 
 func checkSession(w http.ResponseWriter, r *http.Request) {
-	store, err := getStore()
+	session, err := getSession(r)
 	if err != nil {
+		if err == sql.ErrNoRows || err == http.ErrNoCookie {
+			http.Error(w,
+				"You are not authorized to access this resource",
+				http.StatusUnauthorized,
+			)
+			return
+		}
+
 		log.Print(err)
 		http.Error(w,
 			"Something went wrong with your session",
@@ -139,28 +136,7 @@ func checkSession(w http.ResponseWriter, r *http.Request) {
 		)
 		return
 	}
-	defer store.Close()
 
-	session, err := store.Get(r, "session-gda")
-	if err != nil {
-		log.Print(err)
-		http.Error(w,
-			"Something went wrong with your session",
-			http.StatusInternalServerError,
-		)
-		return
-	}
-
-	val := session.Values["ldap_name"]
-	if val == nil {
-		// http.Redirect(w, r, "/login", http.StatusSeeOther)
-
-		w.WriteHeader(http.StatusUnauthorized)
-		w.Write([]byte("no session"))
-		return
-	}
-
-	name := val.(string)
-	w.Write([]byte(name))
+	w.Write([]byte(fmt.Sprint(session.UserId)))
 	return
 }
