@@ -47,33 +47,36 @@ function Chat() {
 	const [isLogoutVisible, setIsLogoutVisible] = useState(false);
 	const [showCreateDropdown, setShowCreateDropdown] = useState(false);
 	const [selectedCreateUsers, setSelectedCreateUsers] = useState<User[]>([]);
-	const [groupName, setGroupName] = useState<string>('');
+	const [groupName, setGroupName] = useState<string>("");
 
 	const toggleCreateDropdown = () => {
 		setShowCreateDropdown(!showCreateDropdown);
 	};
 
 	const handleUserSelection = (user: User) => {
-		if (selectedCreateUsers.some(u => u.ID === user.ID)) {
-			setSelectedCreateUsers(selectedCreateUsers.filter(u => u.ID !== user.ID));
+		if (selectedCreateUsers.some((u) => u.ID === user.ID)) {
+			setSelectedCreateUsers(selectedCreateUsers.filter((u) => u.ID !== user.ID));
 		} else {
 			setSelectedCreateUsers([...selectedCreateUsers, user]);
 		}
-	};		
+	};
 
 	const handleCreateChat = () => {
-		(async () => {	
+		(async () => {
 			const response = await fetch("/api/chat", {
 				method: "POST",
-				body: JSON.stringify({ UserIds: selectedCreateUsers.map(u => u.ID), Group: true, GroupName: groupName}),
-			});			
+				body: JSON.stringify({
+					UserIds: selectedCreateUsers.map((u) => u.ID),
+					Group: true,
+					GroupName: groupName,
+				}),
+			});
 
-			const chatId = await response.text();			
+			const chatId = await response.text();
 
 			setSelectedChatId(chatId);
-			setSelectedChat(chats.find(chat => chat.ChatUUI === chatId)!);
+			setSelectedChat(chats.find((chat) => chat.ChatUUI === chatId)!);
 		})();
-
 	};
 
 	const toggleChat = () => {
@@ -115,10 +118,10 @@ function Chat() {
 				method: "GET",
 			});
 			const data = await response.json();
-			
-			setChats(data.filter((chat:Chat) => chat.Group === true));
+
+			setChats(data.filter((chat: Chat) => chat.Group === true));
 			console.log("data", data);
-			console.log("chats", chats);	
+			console.log("chats", chats);
 		})();
 	}, []);
 
@@ -168,40 +171,47 @@ function Chat() {
 									viewBox="0 0 24 24"
 									stroke="currentColor"
 								>
-									<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v12m6-6H6" />
+									<path
+										strokeLinecap="round"
+										strokeLinejoin="round"
+										strokeWidth={2}
+										d="M12 6v12m6-6H6"
+									/>
 								</svg>
 							</button>
 							{showCreateDropdown && (
 								<div className="absolute mt-2 bg-white rounded border border-gray-300 shadow-lg z-10">
-								{users.map(user => (
-									<label key={user.ID} className="block p-2 hover:bg-gray-100 cursor-pointer">
+									{users.map((user) => (
+										<label key={user.ID} className="block p-2 hover:bg-gray-100 cursor-pointer">
+											<input
+												type="checkbox"
+												className="mr-2"
+												checked={
+													user.ID === userId ||
+													selectedCreateUsers.some((u) => u.ID === user.ID)
+												}
+												onChange={() => handleUserSelection(user)}
+												disabled={user.ID === userId}
+											/>
+											{user.CommonName}
+										</label>
+									))}
 									<input
-										type="checkbox"
-										className="mr-2"
-										checked={user.ID === userId || selectedCreateUsers.some(u => u.ID === user.ID)}
-										onChange={() => handleUserSelection(user)}
-										disabled={user.ID === userId}
+										type="text"
+										className="w-full p-2 mt-2 border border-gray-300 rounded"
+										placeholder="Nazwa grupy"
+										value={groupName}
+										onChange={(e) => setGroupName(e.target.value)}
 									/>
-									{user.CommonName}
-									</label>
-								))}
-								<input
-									type="text"
-									className="w-full p-2 mt-2 border border-gray-300 rounded"
-									placeholder="Nazwa grupy"
-									value={groupName}
-									onChange={e => setGroupName(e.target.value)}
-								/>
-								<button
-									className="w-full p-2 mt-2 bg-blue-500 text-white hover:bg-blue-600 rounded p-1"
-									onClick={handleCreateChat}
-								>
-									Create Chat
-								</button>
+									<button
+										className="w-full p-2 mt-2 bg-blue-500 text-white hover:bg-blue-600 rounded p-1"
+										onClick={handleCreateChat}
+									>
+										Create Chat
+									</button>
 								</div>
 							)}
 						</div>
-						
 					</div>
 
 					<div className="flex space-x-4">
@@ -213,10 +223,7 @@ function Chat() {
 					</div>
 				</div>
 			</div>
-			<div 
-				className="flex bg-gray-200 dark:bg-gray-800"
-				style={{height: "calc(100vh - 80px)"}}
-			>
+			<div className="flex bg-gray-200 dark:bg-gray-800" style={{ height: "calc(100vh - 80px)" }}>
 				<div
 					className={`${
 						isChatVisible ? "block" : "hidden"
@@ -277,7 +284,8 @@ function Chat() {
 													/>
 													<span className="ml-2">{user.CommonName}</span>
 												</div>
-										)})}
+											);
+										})}
 								</div>
 							)}
 						</div>
@@ -314,7 +322,7 @@ function Chat() {
 												return (
 													<div
 														key={chat.ChatUUI}
-														className="p-2 hover:bg-gray-100 cursor-pointer"
+														className="rounded flex items-center px-4 py-2 hover:bg-gray-500 cursor-pointer dark:text-white"
 														onClick={() => {
 															setSelectedChatId(chat.ChatUUI);
 															setSelectedChat(chat);
@@ -322,10 +330,9 @@ function Chat() {
 													>
 														{chat.GroupName.String}
 													</div>
-												)		
+												);
 											}
-										})
-									}
+										})}
 								</div>
 							)}
 						</div>
