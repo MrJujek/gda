@@ -38,11 +38,15 @@ export default defineConfig({
 		proxy: proxyConfig,
 		https: httpsConfig,
 		host: "0.0.0.0",
+		watch: {
+			usePolling: true,
+			interval: 100,
+		},
 	},
 	preview: {
 		port: 3000,
 		cors: false,
 		proxy: proxyConfig,
 		https: httpsConfig,
-	},
+	}
 });
